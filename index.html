@@ -450,6 +450,13 @@
             }
         }
 
+        // មុខងារចុចលើផ្ទៃទទេ ដើម្បីបិទ Keyboard (Auto-dismiss) ស្វ័យប្រវត្តិ
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('input') && !event.target.closest('select') && !event.target.closest('button') && !event.target.closest('.pkg-option-btn')) {
+                dismissKeyboard();
+            }
+        });
+
         function getMasterPin() { return localStorage.getItem('pree_master_pin') || '9999'; }
         function getMasterQR() { return localStorage.getItem('pree_master_qr') || ''; }
         function getClients() { const stored = localStorage.getItem('pree_clients_list'); return stored ? JSON.parse(stored) : []; }
@@ -547,7 +554,6 @@
             } else {
                 uploadBtn.classList.add('active');
                 if (currentRole === 'master') {
-                    // បើ Master ចុចប៊ូតុងទី២ ឱ្យលេចចេញផ្ទាំងដាក់បញ្ចូលរឿងនៅខាងក្រៅ
                     const uploadSec = document.getElementById('masterOwnerUploadSection');
                     uploadSec.style.display = uploadSec.style.display === 'block' ? 'none' : 'block';
                 } else {
