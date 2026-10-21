@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PREE WIE Shop - Multi-Channel Platform</title>
+    <title>PREE WIE Shop - Secure Master Platform</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -36,6 +36,15 @@
         .btn-action { background: #22c55e; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 5px; }
         .btn-secondary { background: #334155; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; }
 
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+        .stat-card { background: #0f172a; border: 1px solid #1e293b; padding: 10px; border-radius: 8px; text-align: center; }
+        .stat-card .title { font-size: 10px; color: #94a3b8; margin-bottom: 4px; }
+        .stat-card .value { font-size: 15px; font-weight: bold; color: #22c55e; }
+
+        .report-list { max-height: 150px; overflow-y: auto; background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 8px; margin-bottom: 12px; font-size: 11px; }
+        .report-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1e293b; }
+
         .client-item { background: #0f172a; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 12px; border: 1px solid #1e293b; }
 
         .pkg-card { background: #0f172a; border: 1px solid #3b82f6; border-radius: 10px; padding: 12px; margin-bottom: 10px; }
@@ -62,7 +71,7 @@
 
         .empty-box { grid-column: span 2; text-align: center; padding: 40px 20px; color: #64748b; font-size: 14px; }
 
-        /* Bottom Nav - តែមួយគត់ចំកណ្តាល */
+        /* Bottom Nav */
         .bottom-nav-single { position: fixed; bottom: 0; left: 0; right: 0; background: #0f172a; border-top: 1px solid #1e293b; display: flex; justify-content: center; padding: 12px 0; z-index: 100; }
         .bottom-item-center { color: #2563eb; font-size: 13px; font-weight: bold; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .bottom-item-center i { font-size: 22px; }
@@ -134,15 +143,42 @@
         <button class="btn-action" style="background: #2563eb;" onclick="processLogin()">ចូលប្រព័ន្ធ (Login)</button>
     </div>
 
-    <!-- Master Owner Dashboard -->
+    <!-- Master Owner Dashboard (មានទិន្នន័យគ្រប់ជ្រុងជ្រោយ) -->
     <div id="masterAdminPanel" class="panel-box">
         <h3>
-            <span>👑 Master Owner Dashboard</span>
+            <span>👑 Master Owner Dashboard (Analytics)</span>
             <i class="fa-solid fa-xmark close-btn" onclick="closePanels()"></i>
         </h3>
 
+        <!-- Master Analytics Summary -->
+        <h4 style="font-size: 12px; color: #38bdf8; margin-bottom: 6px;">📊 ស្ថិតិការទិញវីដេអូសរុប (អតិថិជនទូទៅ)៖</h4>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="title">អ្នកទិញសរុប</div>
+                <div class="value" id="masterTotalBuyers">0 នាក់</div>
+            </div>
+            <div class="stat-card">
+                <div class="title">ទឹកលុយសរុប</div>
+                <div class="value" id="masterTotalRev">$0.00</div>
+            </div>
+        </div>
+        <div class="report-list" id="masterSalesHistory"></div>
+
+        <!-- Master Client Package & Status Analytics -->
+        <h4 style="font-size: 12px; color: #38bdf8; margin-bottom: 6px;">👥 ស្ថានភាព Client & សុពលភាពកញ្ចប់៖</h4>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="title">Client នៅសកម្ម (Active)</div>
+                <div class="value" id="masterActiveClientsCount" style="color:#22c55e;">0 នាក់</div>
+            </div>
+            <div class="stat-card">
+                <div class="title">Client ផុតសុពលភាព (Expired)</div>
+                <div class="value" id="masterExpiredClientsCount" style="color:#ef4444;">0 នាក់</div>
+            </div>
+        </div>
+
         <div style="background: #0f172a; border: 1px solid #3b82f6; padding: 12px; border-radius: 10px; margin-bottom: 15px;">
-            <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">⚙️ កំណត់តម្លៃកញ្ចប់ជួល (សម្រាប់ឱ្យ Client ទិញ)៖</h4>
+            <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">⚙️ កំណត់តម្លៃកញ្ចប់ជួល (Master Control Only)៖</h4>
             <div class="form-group">
                 <label>ឈ្មោះកញ្ចប់៖</label>
                 <input type="text" id="ownerPkgTitle" class="form-control" value="កញ្ចប់ VIP (1 ខែ)">
@@ -152,14 +188,14 @@
                 <input type="number" id="ownerPkgDays" class="form-control" value="30">
             </div>
             <div class="form-group">
-                <label>កំណត់តម្លៃ ($) (បងជាអ្នកកំណត់)៖</label>
+                <label>កំណត់តម្លៃ ($)៖</label>
                 <input type="text" id="ownerPkgPrice" class="form-control" value="$10.00">
             </div>
             <button class="btn-secondary" style="background: #2563eb; width: 100%;" onclick="saveOwnerPackage()">💾 រក្សាទុកកញ្ចប់នេះ</button>
         </div>
 
         <div style="margin-bottom: 12px; background: #0f172a; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 12px; color: #94a3b8;">កូដសម្ងាត់ Master PIN</span>
+            <span style="font-size: 12px; color: #94a3b8;">កូដសម្ងាត់ Master PIN (Default: 9999)</span>
             <button class="btn-secondary" onclick="changeMasterPin()">🔑 ប្តូរ PIN ខ្លួនឯង</button>
         </div>
 
@@ -175,7 +211,7 @@
 
         <hr style="border-color: #1e293b; margin: 15px 0;">
 
-        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">📋 បញ្ជី Client និងថ្ងៃផុតកំណត់៖</h4>
+        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">📋 បញ្ជី Client លេខរៀង និងសុពលភាព៖</h4>
         <div id="masterClientList"></div>
 
         <hr style="border-color: #1e293b; margin: 15px 0;">
@@ -186,7 +222,7 @@
             <input type="text" id="ownerMovieTitle" class="form-control" placeholder="ចំណងជើងរឿង...">
         </div>
         <div class="form-group">
-            <label>២. ជ្រើសរើសរូបភាព Poster ពីទូរស័ព្ទ ឬកុំព្យូទ័រ៖</label>
+            <label>២. ជ្រើសរើសរូបភាព Poster ពីទូរស័ព្ទ៖</label>
             <input type="file" id="ownerPosterFile" accept="image/*" class="form-control">
         </div>
         <div class="form-group">
@@ -200,7 +236,7 @@
         <button class="btn-action" onclick="addOwnerMovie()">💾 ដាក់បញ្ចូលរឿង</button>
     </div>
 
-    <!-- Client Admin Panel -->
+    <!-- Client Admin Panel (មានទិន្នន័យប្រវត្តិអ្នកទិញរឿងខ្លួនឯង) -->
     <div id="clientAdminPanel" class="panel-box">
         <h3>
             <span id="clientPanelTitle">🎬 Client Admin Panel</span>
@@ -211,6 +247,20 @@
             <div>ស្ថានភាពគណនី៖ <strong style="color: #22c55e;" id="clientStatusText">សកម្ម (Active)</strong></div>
             <div>ថ្ងៃផុតកំណត់៖ <span id="clientExpireDate">--/--/----</span></div>
         </div>
+
+        <!-- Client Sales Analytics -->
+        <h4 style="font-size: 12px; color: #38bdf8; margin-bottom: 6px;">📊 ប្រវត្តិអតិថិជនទិញរឿងក្នុង Channel ខ្ញុំ៖</h4>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="title">ចំនួនអ្នកទិញសរុប</div>
+                <div class="value" id="clientTotalBuyers">0 នាក់</div>
+            </div>
+            <div class="stat-card">
+                <div class="title">ទឹកលុយសរុប</div>
+                <div class="value" id="clientTotalRev">$0.00</div>
+            </div>
+        </div>
+        <div class="report-list" id="clientSalesHistory"></div>
 
         <div style="margin-bottom: 12px; background: #0f172a; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-size: 12px; color: #94a3b8;">កូដសម្ងាត់ PIN របស់ខ្ញុំ</span>
@@ -261,7 +311,8 @@
             <div id="payPrice" style="font-size: 18px; font-weight: bold; color: #22c55e; margin-bottom: 10px;">$10.00</div>
             <p style="font-size: 11px; color: #94a3b8;">សូម Scan QR Code ខាងក្រោមដើម្បីបង់ប្រាក់៖</p>
             <img id="payQrImg" class="payment-qr" src="" alt="QR Code" onerror="this.src='https://via.placeholder.com/180?text=No+QR+Code'">
-            <button class="btn-action" style="background: #ef4444; margin-top: 10px;" onclick="closePaymentModal()">បិទ (Close)</button>
+            <button class="btn-action" style="background: #22c55e; margin-top: 10px;" onclick="confirmPaymentSuccess()">✅ បានបង់ប្រាក់រួចរាល់</button>
+            <button class="btn-action" style="background: #ef4444; margin-top: 5px;" onclick="closePaymentModal()">បិទ (Close)</button>
         </div>
     </div>
 
@@ -283,6 +334,8 @@
         function saveClients(clients) { localStorage.setItem('pree_clients_list', JSON.stringify(clients)); }
         function getMovies() { const stored = localStorage.getItem('pree_multi_movies'); return stored ? JSON.parse(stored) : []; }
         function saveMovies(movies) { localStorage.setItem('pree_multi_movies', JSON.stringify(movies)); }
+        function getSales() { const stored = localStorage.getItem('pree_sales_records'); return stored ? JSON.parse(stored) : []; }
+        function saveSales(sales) { localStorage.setItem('pree_sales_records', JSON.stringify(sales)); }
 
         function getPackageConfig() {
             const stored = localStorage.getItem('pree_pkg_config');
@@ -296,6 +349,7 @@
         let currentRole = localStorage.getItem('pree_session_role') || 'user';
         let loggedInClientId = localStorage.getItem('pree_session_client_id') || null;
         let currentChannel = 'owner';
+        let activePurchaseMovie = null;
 
         function checkAutoLogin() {
             if (currentRole === 'master') {
@@ -315,6 +369,7 @@
         function openAdminPanelOrLogin() {
             if (currentRole === 'master') {
                 closePanels();
+                renderMasterAnalytics();
                 renderMasterClientList();
                 loadOwnerPackageInputs();
                 document.getElementById('ownerQrInput').value = getMasterQR();
@@ -341,12 +396,76 @@
                         document.getElementById('uploadFormContainer').style.display = 'block';
                     }
 
+                    renderClientAnalytics(clientMatch.id);
                     document.getElementById('clientAdminPanel').style.display = 'block';
                 }
             } else {
                 closePanels();
                 document.getElementById('loginPanel').style.display = 'block';
             }
+        }
+
+        function renderMasterAnalytics() {
+            const sales = getSales();
+            let totalRev = 0;
+            const historyDiv = document.getElementById('masterSalesHistory');
+            historyDiv.innerHTML = '';
+
+            if (sales.length === 0) {
+                historyDiv.innerHTML = '<div style="color: #64748b; text-align:center;">មិនទាន់មានការទិញរឿងនៅឡើយទេ</div>';
+            } else {
+                sales.forEach(s => {
+                    const pNum = parseFloat(s.price.replace('$', '')) || 0;
+                    totalRev += pNum;
+                    const item = document.createElement('div');
+                    item.className = 'report-item';
+                    item.innerHTML = `<span><strong>${s.title}</strong> (${s.channelName})</span> <span style="color:#22c55e;">${s.price}</span>`;
+                    historyDiv.appendChild(item);
+                });
+            }
+
+            document.getElementById('masterTotalBuyers').innerText = `${sales.length} នាក់`;
+            document.getElementById('masterTotalRev').innerText = `$${totalRev.toFixed(2)}`;
+
+            // Client Status Counts
+            const clients = getClients();
+            const now = Date.now();
+            let activeCount = 0;
+            let expiredCount = 0;
+
+            clients.forEach(c => {
+                if (c.expireAt && now > c.expireAt) {
+                    expiredCount++;
+                } else {
+                    activeCount++;
+                }
+            });
+
+            document.getElementById('masterActiveClientsCount').innerText = `${activeCount} នាក់`;
+            document.getElementById('masterExpiredClientsCount').innerText = `${expiredCount} នាក់`;
+        }
+
+        function renderClientAnalytics(clientId) {
+            const sales = getSales().filter(s => s.channel === clientId);
+            let totalRev = 0;
+            const historyDiv = document.getElementById('clientSalesHistory');
+            historyDiv.innerHTML = '';
+
+            if (sales.length === 0) {
+                historyDiv.innerHTML = '<div style="color: #64748b; text-align:center;">មិនទាន់មានអតិថិជនទិញរឿងក្នុង Channel នេះទេ</div>';
+            } else {
+                sales.forEach(s => {
+                    const pNum = parseFloat(s.price.replace('$', '')) || 0;
+                    totalRev += pNum;
+                    const item = document.createElement('div');
+                    item.className = 'report-item';
+                    item.innerHTML = `<span><strong>${s.title}</strong></span> <span style="color:#22c55e;">${s.price}</span>`;
+                    historyDiv.appendChild(item);
+                });
+            }
+
+            document.getElementById('clientTotalBuyers').innerText = `${sales.length} នាក់`;
+            document.getElementById('clientTotalRev').innerText = `$${totalRev.toFixed(2)}`;
         }
 
         function processLogin() {
@@ -406,7 +525,7 @@
             const pkg = getPackageConfig();
             document.getElementById('pkgTitleDisplay').innerText = pkg.title;
             document.getElementById('pkgPriceDisplay').innerText = `${pkg.price} / ខែ`;
-            document.getElementById('buyChannelModal').style.display = 'block';
+            document.getElementById('buyChannelModal').style.display = 'flex';
         }
 
         function submitRegisterClient() {
@@ -452,6 +571,10 @@
         }
 
         function saveOwnerPackage() {
+            if (currentRole !== 'master') {
+                alert('អ្នកគ្មានសិទ្ធិកែប្រែកញ្ចប់តម្លៃនេះទេ!');
+                return;
+            }
             const title = document.getElementById('ownerPkgTitle').value.trim();
             const days = parseInt(document.getElementById('ownerPkgDays').value) || 30;
             const price = document.getElementById('ownerPkgPrice').value.trim();
@@ -462,6 +585,7 @@
         }
 
         function changeMasterPin() {
+            if (currentRole !== 'master') return;
             const newPin = prompt('សូមវាយបញ្ចូលលេខកូដ Master PIN ថ្មី៖');
             if (newPin && newPin.trim().length >= 4) {
                 localStorage.setItem('pree_master_pin', newPin.trim());
@@ -470,6 +594,7 @@
         }
 
         function saveOwnerQR() {
+            if (currentRole !== 'master') return;
             const qrUrl = document.getElementById('ownerQrInput').value.trim();
             localStorage.setItem('pree_master_qr', qrUrl);
             alert('បានរក្សាទុក QR Code របស់អ្នកជោគជ័យ!');
@@ -502,6 +627,7 @@
         }
 
         function renderMasterClientList() {
+            if (currentRole !== 'master') return;
             const clients = getClients();
             const listDiv = document.getElementById('masterClientList');
             listDiv.innerHTML = '';
@@ -511,14 +637,18 @@
                 return;
             }
 
-            clients.forEach(c => {
+            const now = Date.now();
+            clients.forEach((c, index) => {
+                const isExpired = c.expireAt && now > c.expireAt;
+                const statusBadge = isExpired ? '<span style="color:#ef4444; font-weight:bold;">[ផុតសុពលភាព]</span>' : '<span style="color:#22c55e; font-weight:bold;">[សកម្ម]</span>';
                 const expDateStr = c.expireAt ? new Date(c.expireAt).toLocaleDateString() : 'គ្មានកំណត់';
+                
                 const item = document.createElement('div');
                 item.className = 'client-item';
                 item.innerHTML = `
                     <div style="margin-bottom: 5px;">
-                        <strong>${c.name}</strong> | PIN: <span style="color: #38bdf8;">${c.pin}</span><br>
-                        <small style="color: #94a3b8;">ផុតកំណត់៖ ${expDateStr}</small>
+                        <strong>លេខរៀងទី ${index + 1}: ${c.name}</strong> ${statusBadge}<br>
+                        PIN: <span style="color: #38bdf8;">${c.pin}</span> | ផុតកំណត់៖ ${expDateStr}
                     </div>
                     <div style="display: flex; gap: 5px;">
                         <button class="btn-secondary" style="background:#2563eb;" onclick="renewClient('${c.id}')">បន្តអាយុកាល (Renew)</button>
@@ -530,6 +660,7 @@
         }
 
         function renewClient(clientId) {
+            if (currentRole !== 'master') return;
             const clients = getClients();
             const client = clients.find(c => c.id === clientId);
             if (client) {
@@ -537,16 +668,19 @@
                 client.expireAt = Date.now() + (pkg.days * 24 * 60 * 60 * 1000);
                 saveClients(clients);
                 renderMasterClientList();
+                renderMasterAnalytics();
                 alert(`បានបន្តអាយុកាលឱ្យ ${client.name} បន្ថែម ${pkg.days} ថ្ងៃជោគជ័យ!`);
             }
         }
 
         function deleteClient(clientId) {
+            if (currentRole !== 'master') return;
             if (confirm('តើបងពិតជាចង់លុប Client នេះមែនទេ?')) {
                 let clients = getClients();
                 clients = clients.filter(c => c.id !== clientId);
                 saveClients(clients);
                 renderMasterClientList();
+                renderMasterAnalytics();
                 renderTabs();
             }
         }
@@ -639,6 +773,7 @@
         }
 
         function addOwnerMovie() {
+            if (currentRole !== 'master') return alert('គ្មានសិទ្ធិអនុវត្ត!');
             const title = document.getElementById('ownerMovieTitle').value.trim();
             const fileInput = document.getElementById('ownerPosterFile');
             const posterLink = document.getElementById('ownerMoviePoster').value.trim();
@@ -661,11 +796,12 @@
                 document.getElementById('ownerMoviePoster').value = '';
                 fileInput.value = '';
                 renderMovies();
-                alert('បានបញ្ចូលរឿងចូល Channel របស់អ្នកដោយស្វ័យប្រវត្តិ!');
+                alert('បានបញ្ចូលរឿងចូល Master Channel ដោយជោគជ័យ!');
             });
         }
 
         function addClientMovie() {
+            if (currentRole !== 'client') return alert('គ្មានសិទ្ធិអនុវត្ត!');
             const clients = getClients();
             const client = clients.find(c => c.id === loggedInClientId);
             if (!client) return;
@@ -703,8 +839,16 @@
         }
 
         function deleteMovie(movieId) {
+            let movies = getMovies();
+            const movie = movies.find(m => m.id === movieId);
+            if (!movie) return;
+
+            if (currentRole !== 'master' && (currentRole !== 'client' || movie.channel !== loggedInClientId)) {
+                alert('អ្នកគ្មានសិទ្ធិលុបរឿងនេះទេ!');
+                return;
+            }
+
             if (confirm('តើបងពិតជាចង់លុបរឿងនេះមែនទេ?')) {
-                let movies = getMovies();
                 movies = movies.filter(m => m.id !== movieId);
                 saveMovies(movies);
                 renderMovies();
@@ -713,12 +857,17 @@
 
         function buyMovie(title, price, channelId) {
             let qrUrl = '';
+            let chName = 'Original';
+
             if (channelId === 'owner') {
                 qrUrl = getMasterQR();
             } else {
                 const clients = getClients();
                 const client = clients.find(c => c.id === channelId);
-                if (client) qrUrl = client.qr || '';
+                if (client) {
+                    qrUrl = client.qr || '';
+                    chName = client.name;
+                }
             }
 
             if (!qrUrl) {
@@ -726,10 +875,30 @@
                 return;
             }
 
+            activePurchaseMovie = { title, price, channel: channelId, channelName: chName };
+
             document.getElementById('payTitle').innerText = `ទិញរឿង៖ ${title}`;
             document.getElementById('payPrice').innerText = price;
             document.getElementById('payQrImg').src = qrUrl;
             document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function confirmPaymentSuccess() {
+            if (!activePurchaseMovie) return;
+
+            const sales = getSales();
+            sales.push({
+                id: Date.now(),
+                title: activePurchaseMovie.title,
+                price: activePurchaseMovie.price,
+                channel: activePurchaseMovie.channel,
+                channelName: activePurchaseMovie.channelName,
+                date: new Date().toLocaleDateString()
+            });
+
+            saveSales(sales);
+            alert('ការទូទាត់ត្រូវបានកត់ត្រាចូលក្នុងប្រព័ន្ធជោគជ័យ!');
+            closePaymentModal();
         }
 
         function closePaymentModal() {
