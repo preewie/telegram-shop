@@ -609,9 +609,10 @@
             const stored = localStorage.getItem('pree_pkg_vids');
             return stored ? JSON.parse(stored) : [
                 { id: 101, count: 5, price: "$3.00" },
-                { id: 102, count: 10, price: "$5.00" },
-                { id: 103, count: 20, price: "$10.00" },
-                { id: 104, count: 30, price: "$15.00" }
+                { id: 102, count: 10, price: "$4.00" },
+                { id: 103, count: 25, price: "$5.80" },
+                { id: 104, count: 30, price: "$6.00" },
+                { id: 105, count: 35, price: "$6.30" }
             ];
         }
         function savePackageVidsOptions(options) { localStorage.setItem('pree_pkg_vids', JSON.stringify(options)); }
@@ -1053,6 +1054,8 @@
 
         function switchBuyMode(mode) {
             buyMode = mode;
+            selectedDayIndex = 0;
+            selectedVidIndex = 0;
             updateBuyModeTabs();
             renderPkgOptionsForUser();
         }
@@ -1119,6 +1122,7 @@
 
                 pkgs.forEach((p, idx) => {
                     const finalPrice = calculateAutoDiscountPrice(p.price);
+
                     const btn = document.createElement('div');
                     btn.className = `pkg-option-btn ${selectedVidIndex === idx ? 'selected' : ''}`;
                     btn.innerHTML = `<strong>${p.count} វីដេអូ</strong><br><span style="color:#22c55e;">${finalPrice}</span>`;
@@ -1765,7 +1769,7 @@
             movieSales.push({
                 id: Date.now(),
                 title: activePurchaseMovie.title,
-                price: activePurchaseMovie.price,
+                    price: activePurchaseMovie.price,
                 channel: activePurchaseMovie.channel,
                 channelName: activePurchaseMovie.channelName,
                 date: new Date().toLocaleDateString()
