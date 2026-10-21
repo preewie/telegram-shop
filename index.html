@@ -105,7 +105,6 @@
         
         <div class="pkg-card">
             <div class="pkg-title" id="pkgTitleDisplay">កញ្ចប់ VIP (1 ខែ)</div>
-            <div style="font-size: 11px; color: #94a3b8;" id="pkgDescDisplay">កំណត់៖ 30 ថ្ងៃ | ដែនកំណត់ 100 វីដេអូ</div>
             <div class="pkg-price" id="pkgPriceDisplay">$10.00 / ខែ</div>
         </div>
 
@@ -143,7 +142,7 @@
         </h3>
 
         <div style="background: #0f172a; border: 1px solid #3b82f6; padding: 12px; border-radius: 10px; margin-bottom: 15px;">
-            <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">⚙️ កំណត់កញ្ចប់តម្លៃ និង Quota សម្រាប់ Client៖</h4>
+            <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">⚙️ កំណត់តម្លៃកញ្ចប់ជួល (សម្រាប់ឱ្យ Client ទិញ)៖</h4>
             <div class="form-group">
                 <label>ឈ្មោះកញ្ចប់៖</label>
                 <input type="text" id="ownerPkgTitle" class="form-control" value="កញ្ចប់ VIP (1 ខែ)">
@@ -153,11 +152,7 @@
                 <input type="number" id="ownerPkgDays" class="form-control" value="30">
             </div>
             <div class="form-group">
-                <label>ចំនួនកំណត់វីដេអូអតិបរមា (ឧ. 100 វីដេអូ)៖</label>
-                <input type="number" id="ownerPkgMaxVid" class="form-control" value="100">
-            </div>
-            <div class="form-group">
-                <label>តម្លៃ ($)៖</label>
+                <label>កំណត់តម្លៃ ($) (បងជាអ្នកកំណត់)៖</label>
                 <input type="text" id="ownerPkgPrice" class="form-control" value="$10.00">
             </div>
             <button class="btn-secondary" style="background: #2563eb; width: 100%;" onclick="saveOwnerPackage()">💾 រក្សាទុកកញ្ចប់នេះ</button>
@@ -180,20 +175,26 @@
 
         <hr style="border-color: #1e293b; margin: 15px 0;">
 
-        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">📋 បញ្ជី Client និងការគ្រប់គ្រង Quota/ថ្ងៃផុតកំណត់៖</h4>
+        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">📋 បញ្ជី Client និងថ្ងៃផុតកំណត់៖</h4>
         <div id="masterClientList"></div>
 
         <hr style="border-color: #1e293b; margin: 15px 0;">
 
         <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">🎬 បញ្ចូលរឿងថ្មីរបស់អ្នក (Original)៖</h4>
         <div class="form-group">
+            <label>១. ចំណងជើងរឿង៖</label>
             <input type="text" id="ownerMovieTitle" class="form-control" placeholder="ចំណងជើងរឿង...">
         </div>
         <div class="form-group">
-            <input type="text" id="ownerMoviePoster" class="form-control" placeholder="Link រូបភាព Poster...">
+            <label>២. ជ្រើសរើសរូបភាព Poster ពីទូរស័ព្ទ ឬកុំព្យូទ័រ៖</label>
+            <input type="file" id="ownerPosterFile" accept="image/*" class="form-control">
         </div>
         <div class="form-group">
-            <label>តម្លៃលក់រឿង ($)៖</label>
+            <label>៣. ឬបិទភ្ជាប់ Link រូបភាព Poster (Optional)៖</label>
+            <input type="text" id="ownerMoviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
+        </div>
+        <div class="form-group">
+            <label>៤. តម្លៃលក់រឿង ($)៖</label>
             <input type="text" id="ownerMoviePrice" class="form-control" value="$2.00">
         </div>
         <button class="btn-action" onclick="addOwnerMovie()">💾 ដាក់បញ្ចូលរឿង</button>
@@ -208,7 +209,6 @@
 
         <div id="clientStatusBox" style="background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 12px;">
             <div>ស្ថានភាពគណនី៖ <strong style="color: #22c55e;" id="clientStatusText">សកម្ម (Active)</strong></div>
-            <div>ចំនួនវីដេអូបាន Upload៖ <span id="clientVidCount">0</span> / <span id="clientMaxVidCount">100</span></div>
             <div>ថ្ងៃផុតកំណត់៖ <span id="clientExpireDate">--/--/----</span></div>
         </div>
 
@@ -236,11 +236,15 @@
                 <input type="text" id="clientMovieTitle" class="form-control" placeholder="បញ្ចូលចំណងជើងរឿង...">
             </div>
             <div class="form-group">
-                <label>២. Link រូបភាព Poster៖</label>
-                <input type="text" id="clientMoviePoster" class="form-control" placeholder="Link រូបភាព Poster...">
+                <label>២. ជ្រើសរើសរូបភាព Poster ពីទូរស័ព្ទ៖</label>
+                <input type="file" id="clientPosterFile" accept="image/*" class="form-control">
             </div>
             <div class="form-group">
-                <label>៣. កំណត់តម្លៃលក់រឿងរបស់អ្នក ($)៖</label>
+                <label>៣. ឬបិទភ្ជាប់ Link រូបភាព Poster (Optional)៖</label>
+                <input type="text" id="clientMoviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
+            </div>
+            <div class="form-group">
+                <label>៤. កំណត់តម្លៃលក់រឿងរបស់អ្នក ($)៖</label>
                 <input type="text" id="clientMoviePrice" class="form-control" value="$2.00">
             </div>
             <button class="btn-action" onclick="addClientMovie()">💾 ដាក់បញ្ចូលរឿងចូល Channel ខ្ញុំ</button>
@@ -285,7 +289,6 @@
             return stored ? JSON.parse(stored) : {
                 title: "កញ្ចប់ VIP (1 ខែ)",
                 days: 30,
-                maxVideos: 100,
                 price: "$10.00"
             };
         }
@@ -324,17 +327,12 @@
                     document.getElementById('clientPanelTitle').innerText = `🎬 Admin (${clientMatch.name})`;
                     document.getElementById('clientQrInput').value = clientMatch.qr || '';
                     
-                    const movies = getMovies();
-                    const clientMovies = movies.filter(m => m.channel === clientMatch.id);
-                    document.getElementById('clientVidCount').innerText = clientMovies.length;
-                    document.getElementById('clientMaxVidCount').innerText = clientMatch.maxVideos || 100;
-                    
                     const expDateStr = clientMatch.expireAt ? new Date(clientMatch.expireAt).toLocaleDateString() : 'គ្មានកំណត់';
                     document.getElementById('clientExpireDate').innerText = expDateStr;
 
                     const now = Date.now();
-                    if ((clientMatch.expireAt && now > clientMatch.expireAt) || clientMovies.length >= (clientMatch.maxVideos || 100)) {
-                        document.getElementById('clientStatusText').innerText = 'ផ្អាកសិទ្ធិ Upload (Expired/Limit)';
+                    if (clientMatch.expireAt && now > clientMatch.expireAt) {
+                        document.getElementById('clientStatusText').innerText = 'ផ្អាកសិទ្ធិ Upload (Expired)';
                         document.getElementById('clientStatusText').style.color = '#ef4444';
                         document.getElementById('uploadFormContainer').style.display = 'none';
                     } else {
@@ -407,7 +405,6 @@
             closePanels();
             const pkg = getPackageConfig();
             document.getElementById('pkgTitleDisplay').innerText = pkg.title;
-            document.getElementById('pkgDescDisplay').innerText = `កំណត់៖ ${pkg.days} ថ្ងៃ | ដែនកំណត់ ${pkg.maxVideos} វីដេអូ`;
             document.getElementById('pkgPriceDisplay').innerText = `${pkg.price} / ខែ`;
             document.getElementById('buyChannelModal').style.display = 'block';
         }
@@ -428,7 +425,6 @@
                 name: name, 
                 pin: pin, 
                 qr: '', 
-                maxVideos: pkg.maxVideos, 
                 expireAt: expireAt 
             });
             saveClients(clients);
@@ -452,19 +448,17 @@
             const pkg = getPackageConfig();
             document.getElementById('ownerPkgTitle').value = pkg.title;
             document.getElementById('ownerPkgDays').value = pkg.days;
-            document.getElementById('ownerPkgMaxVid').value = pkg.maxVideos;
             document.getElementById('ownerPkgPrice').value = pkg.price;
         }
 
         function saveOwnerPackage() {
             const title = document.getElementById('ownerPkgTitle').value.trim();
             const days = parseInt(document.getElementById('ownerPkgDays').value) || 30;
-            const maxVideos = parseInt(document.getElementById('ownerPkgMaxVid').value) || 100;
             const price = document.getElementById('ownerPkgPrice').value.trim();
 
-            const pkg = { title, days, maxVideos, price };
+            const pkg = { title, days, price };
             localStorage.setItem('pree_pkg_config', JSON.stringify(pkg));
-            alert('បានរក្សាទុកកញ្ចប់តម្លៃ និង Quota រួចរាល់!');
+            alert('បានរក្សាទុកកញ្ចប់តម្លៃ និងកាលបរិច្ឆេទជួលរួចរាល់!');
         }
 
         function changeMasterPin() {
@@ -524,7 +518,7 @@
                 item.innerHTML = `
                     <div style="margin-bottom: 5px;">
                         <strong>${c.name}</strong> | PIN: <span style="color: #38bdf8;">${c.pin}</span><br>
-                        <small style="color: #94a3b8;">ផុតកំណត់៖ ${expDateStr} | កំណត់វីដេអូ៖ ${c.maxVideos || 100}</small>
+                        <small style="color: #94a3b8;">ផុតកំណត់៖ ${expDateStr}</small>
                     </div>
                     <div style="display: flex; gap: 5px;">
                         <button class="btn-secondary" style="background:#2563eb;" onclick="renewClient('${c.id}')">បន្តអាយុកាល (Renew)</button>
@@ -629,27 +623,46 @@
             });
         }
 
+        function handleImageUpload(fileInput, textInputVal, callback) {
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    callback(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else if (textInputVal) {
+                callback(textInputVal);
+            } else {
+                callback('https://via.placeholder.com/300x450?text=Movie+Poster');
+            }
+        }
+
         function addOwnerMovie() {
             const title = document.getElementById('ownerMovieTitle').value.trim();
-            const poster = document.getElementById('ownerMoviePoster').value.trim();
+            const fileInput = document.getElementById('ownerPosterFile');
+            const posterLink = document.getElementById('ownerMoviePoster').value.trim();
             const price = document.getElementById('ownerMoviePrice').value.trim();
 
             if (!title) return alert('សូមបំពេញចំណងជើងរឿង!');
 
-            const movies = getMovies();
-            movies.push({
-                id: Date.now(),
-                channel: 'owner',
-                title: title,
-                price: price || '$2.00',
-                poster: poster || 'https://via.placeholder.com/300x450?text=Original+Movie'
-            });
+            handleImageUpload(fileInput, posterLink, function (posterUrl) {
+                const movies = getMovies();
+                movies.push({
+                    id: Date.now(),
+                    channel: 'owner',
+                    title: title,
+                    price: price || '$2.00',
+                    poster: posterUrl
+                });
 
-            saveMovies(movies);
-            document.getElementById('ownerMovieTitle').value = '';
-            document.getElementById('ownerMoviePoster').value = '';
-            renderMovies();
-            alert('បានបញ្ចូលរឿងចូល Channel របស់អ្នកដោយស្វ័យប្រវត្តិ!');
+                saveMovies(movies);
+                document.getElementById('ownerMovieTitle').value = '';
+                document.getElementById('ownerMoviePoster').value = '';
+                fileInput.value = '';
+                renderMovies();
+                alert('បានបញ្ចូលរឿងចូល Channel របស់អ្នកដោយស្វ័យប្រវត្តិ!');
+            });
         }
 
         function addClientMovie() {
@@ -663,35 +676,30 @@
                 return;
             }
 
-            const movies = getMovies();
-            const clientMovies = movies.filter(m => m.channel === loggedInClientId);
-            const maxVid = client.maxVideos || 100;
-
-            if (clientMovies.length >= maxVid) {
-                alert(`អ្នកបាន Upload ครบដែនកំណត់ចំនួន ${maxVid} វីដេអូហើយ!`);
-                return;
-            }
-
             const title = document.getElementById('clientMovieTitle').value.trim();
-            const poster = document.getElementById('clientMoviePoster').value.trim();
+            const fileInput = document.getElementById('clientPosterFile');
+            const posterLink = document.getElementById('clientMoviePoster').value.trim();
             const price = document.getElementById('clientMoviePrice').value.trim();
 
             if (!title) return alert('សូមបំពេញចំណងជើងរឿង!');
 
-            movies.push({
-                id: Date.now(),
-                channel: loggedInClientId,
-                title: title,
-                price: price || '$2.00',
-                poster: poster || 'https://via.placeholder.com/300x450?text=Client+Movie'
-            });
+            handleImageUpload(fileInput, posterLink, function (posterUrl) {
+                const movies = getMovies();
+                movies.push({
+                    id: Date.now(),
+                    channel: loggedInClientId,
+                    title: title,
+                    price: price || '$2.00',
+                    poster: posterUrl
+                });
 
-            saveMovies(movies);
-            document.getElementById('clientMovieTitle').value = '';
-            document.getElementById('clientMoviePoster').value = '';
-            
-            renderMovies();
-            alert('បាន Upload រឿងចូល Channel របស់អ្នកដោយស្វ័យប្រវត្តិ!');
+                saveMovies(movies);
+                document.getElementById('clientMovieTitle').value = '';
+                document.getElementById('clientMoviePoster').value = '';
+                fileInput.value = '';
+                renderMovies();
+                alert('បាន Upload រឿងចូល Channel របស់អ្នកដោយស្វ័យប្រវត្តិ!');
+            });
         }
 
         function deleteMovie(movieId) {
@@ -728,7 +736,6 @@
             document.getElementById('paymentModal').style.display = 'none';
         }
 
-        // ចាប់ផ្តើមដំណើរការឆែក Session ពេលបើក App
         checkAutoLogin();
     </script>
 </body>
