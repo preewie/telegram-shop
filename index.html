@@ -841,6 +841,7 @@
             renderAdminPackageVidsList();
         }
 
+        /* [កែតម្រូវត្រង់នេះ៖ ធានារក្សាទុកពិតប្រាកដ និង Refresh UI ភ្លាមៗ] */
         function saveOwnerPackagesAll() {
             dismissKeyboard();
             if (currentRole !== 'master') return alert('គ្មានសិទ្ធិអនុវត្ត!');
@@ -851,7 +852,11 @@
                 const dInput = document.getElementById(`pkg_day_val_${i}`);
                 const pInput = document.getElementById(`pkg_day_price_${i}`);
                 if (dInput && pInput) {
-                    updatedDays.push({ id: dayPkgs[i].id || Date.now() + i, days: parseInt(dInput.value) || 1, price: pInput.value.trim() });
+                    updatedDays.push({ 
+                        id: dayPkgs[i].id || Date.now() + i, 
+                        days: parseInt(dInput.value) || 1, 
+                        price: pInput.value.trim() 
+                    });
                 }
             }
             savePackageDaysOptions(updatedDays);
@@ -862,12 +867,20 @@
                 const cInput = document.getElementById(`pkg_vid_count_${i}`);
                 const pInput = document.getElementById(`pkg_vid_price_${i}`);
                 if (cInput && pInput) {
-                    updatedVids.push({ id: vidPkgs[i].id || Date.now() + i, count: parseInt(cInput.value) || 1, price: pInput.value.trim() });
+                    updatedVids.push({ 
+                        id: vidPkgs[i].id || Date.now() + i, 
+                        count: parseInt(cInput.value) || 1, 
+                        price: pInput.value.trim() 
+                    });
                 }
             }
             savePackageVidsOptions(updatedVids);
 
-            alert('បានរក្សាទុកកញ្ចប់តម្លៃថ្ងៃ និងវីដេអូទាំងអស់ជោគជ័យ!');
+            // Refresh បង្ហាញបញ្ជីថ្មីឡើងវិញដើម្បីបញ្ជាក់ថាបានរក្សាទុកពិតប្រាកដ
+            renderAdminPackageDaysList();
+            renderAdminPackageVidsList();
+
+            alert('បានរក្សាទុកកញ្ចប់តម្លៃថ្ងៃ និងវីដេអូទាំងអស់ចូលក្នុងប្រព័ន្ធជោគជ័យ!');
         }
 
         function renderMasterAnalytics() {
