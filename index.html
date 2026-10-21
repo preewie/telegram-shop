@@ -445,10 +445,21 @@
         tg.expand();
 
         function dismissKeyboard() {
-            if (document.activeElement && typeof document.activeElement.blur === 'function') {
-                document.activeElement.blur();
-            }
+            try {
+                if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                    document.activeElement.blur();
+                }
+            } catch (e) {}
         }
+
+        // Safe Keyboard Dismiss on Empty Space Tap
+        document.addEventListener('touchstart', function(event) {
+            try {
+                if (!event.target.closest('input') && !event.target.closest('select') && !event.target.closest('button') && !event.target.closest('.pkg-option-btn')) {
+                    dismissKeyboard();
+                }
+            } catch (e) {}
+        }, { passive: true });
 
         function getMasterPin() { return localStorage.getItem('pree_master_pin') || '9999'; }
         function getMasterQR() { return localStorage.getItem('pree_master_qr') || ''; }
