@@ -70,7 +70,7 @@
         .movie-card { background: #131b2e; border-radius: 14px; overflow: hidden; border: 1px solid #1e293b; display: flex; flex-direction: column; position: relative; cursor: pointer; }
         .poster-container { position: relative; width: 100%; height: 210px; background: #1e293b; }
         .movie-poster { width: 100%; height: 100%; object-fit: cover; }
-        .badge-type { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); color: #38bdf8; padding: 3px 8px; border-radius: 6px; font-size: 10px; }
+        .badge-type { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); color: #38bdf8; padding: 3px 8px; border-radius: 6px; font-size: 10px; z-index: 5; }
         .btn-delete-item { position: absolute; top: 8px; right: 8px; background: #ef4444; color: white; border: none; border-radius: 6px; padding: 4px 8px; font-size: 11px; cursor: pointer; z-index: 10; }
         
         .movie-details { padding: 10px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
@@ -410,7 +410,11 @@
                 <input type="text" id="clientMoviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
             </div>
             <div class="form-group">
-                <label>៥. កំណត់តម្លៃលក់រឿងរបស់អ្នក ($)៖</label>
+                <label>៥. បិទភ្ជាប់ Link វីដេអូ (MP4 URL / Telegram Video Link)៖</label>
+                <input type="text" id="clientMovieVideoUrl" class="form-control" placeholder="https://example.com/video.mp4">
+            </div>
+            <div class="form-group">
+                <label>៦. កំណត់តម្លៃលក់រឿងរបស់អ្នក ($)៖</label>
                 <input type="text" id="clientMoviePrice" class="form-control" value="$2.00">
             </div>
             <button class="btn-action" onclick="addClientMovie()">💾 ដាក់បញ្ចូលរឿងចូល Channel ខ្ញុំ</button>
@@ -442,7 +446,11 @@
             <input type="text" id="ownerMoviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
         </div>
         <div class="form-group">
-            <label>៥. តម្លៃលក់រឿង ($)៖</label>
+            <label>៥. បិទភ្ជាប់ Link វីដេអូ (MP4 URL / Telegram Video Link)៖</label>
+            <input type="text" id="ownerMovieVideoUrl" class="form-control" placeholder="https://example.com/video.mp4">
+        </div>
+        <div class="form-group">
+            <label>៦. តម្លៃលក់រឿង ($)៖</label>
             <input type="text" id="ownerMoviePrice" class="form-control" value="$2.00">
         </div>
         <button class="btn-action" onclick="addOwnerMovie()">💾 ដាក់បញ្ចូលរឿង</button>
@@ -451,13 +459,18 @@
     <!-- Movie Display Area -->
     <div class="movie-grid" id="movieContainer"></div>
 
-    <!-- Detail / Episode Modal Popup -->
+    <!-- Detail / Episode Modal Popup (បង្ហាញវីដេអូពិតប្រាកដ) -->
     <div id="detailModal">
-        <div class="payment-card">
+        <div class="payment-card" style="max-width: 400px;">
             <button class="btn-back" onclick="closeDetailModal()">⬅️ ថយក្រោយ</button>
             <h3 id="detailTitle" style="color: #38bdf8; font-size: 15px; margin-bottom: 10px;">ព័ត៌មានរឿង</h3>
-            <div id="detailType" style="font-size: 13px; color: #22c55e; margin-bottom: 15px; font-weight: bold;"></div>
-            <div id="detailDesc" style="font-size: 12px; color: #94a3b8; margin-bottom: 15px;">រឿងនេះត្រូវបានរៀបចំរួចរាល់សម្រាប់ទស្សនា។</div>
+            <div id="detailType" style="font-size: 13px; color: #22c55e; margin-bottom: 10px; font-weight: bold;"></div>
+            
+            <!-- Video Player Component -->
+            <div style="width: 100%; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 15px;">
+                <video id="modalVideoPlayer" controls style="width: 100%; max-height: 250px; display: block;" src=""></video>
+            </div>
+
             <button class="btn-action" onclick="closeDetailModal()">បិទ (Close)</button>
         </div>
     </div>
@@ -498,7 +511,6 @@
             } catch (e) {}
         }
 
-        // Safe Keyboard Dismiss on Empty Space Tap
         document.addEventListener('touchstart', function(event) {
             try {
                 if (!event.target.closest('input') && !event.target.closest('select') && !event.target.closest('button') && !event.target.closest('.pkg-option-btn')) {
@@ -507,7 +519,6 @@
             } catch (e) {}
         }, { passive: true });
 
-        // មុខងារ Referral & Link Invite Tracking
         let currentInviterId = null;
         function checkReferral() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -575,7 +586,6 @@
         function getClientSales() { const stored = localStorage.getItem('pree_client_sales'); return stored ? JSON.parse(stored) : []; }
         function saveClientSales(sales) { localStorage.setItem('pree_client_sales', JSON.stringify(sales)); }
 
-        // កញ្ចប់ថ្ងៃ
         function getPackageDaysOptions() {
             const stored = localStorage.getItem('pree_pkg_days');
             return stored ? JSON.parse(stored) : [
@@ -587,7 +597,6 @@
         }
         function savePackageDaysOptions(options) { localStorage.setItem('pree_pkg_days', JSON.stringify(options)); }
 
-        // កញ្ចប់វីដេអូ
         function getPackageVidsOptions() {
             const stored = localStorage.getItem('pree_pkg_vids');
             return stored ? JSON.parse(stored) : [
@@ -894,7 +903,6 @@
             document.getElementById('masterTotalClientBuyers').innerText = `${clientSales.length} នាក់`;
             document.getElementById('masterTotalClientRev').innerText = `$${totalClientRev.toFixed(2)}`;
 
-            // ស្ថិតិ Referral Invite List
             const refData = getReferrals();
             let totalRefInvites = 0;
             let totalRefRev = 0;
@@ -1057,7 +1065,6 @@
             }
         }
 
-        // Auto Discount Calculator តាម Master កំណត់
         function calculateAutoDiscountPrice(rawPrice) {
             if (!currentInviterId) return rawPrice;
             const promo = getPromoSettings();
@@ -1265,7 +1272,6 @@
             });
             saveClientSales(cSales);
 
-            // កត់ត្រាចូល Referral Stats របស់ Inviter
             if (p.inviter) {
                 let refData = getReferrals();
                 if (!refData[p.inviter]) {
@@ -1489,14 +1495,15 @@
                 const canDelete = (currentRole === 'master') || (currentRole === 'client' && loggedInClientId === currentChannel);
                 const card = document.createElement('div');
                 card.className = 'movie-card';
+                // កែសម្រួលឲ្យពេលចុចលើ Poster ឬ Title ហៅមុខងារ openMovieDetail ផ្ដល់ទាំង Title និង Video URL
                 card.innerHTML = `
-                    <div class="poster-container" onclick="openMovieDetail('${movie.title.replace(/'/g, "\\'")}', '${movie.type || 'ភាគ (Episode)'}')">
+                    <div class="poster-container" onclick="openMovieDetail('${movie.title.replace(/'/g, "\\'")}', '${movie.type || 'ភាគ (Episode)'}', '${encodeURIComponent(movie.videoUrl || '')}')">
                         <span class="badge-type">${movie.type || 'ភាគ (Episode)'}</span>
                         ${canDelete ? `<button class="btn-delete-item" onclick="event.stopPropagation(); deleteMovie(${movie.id})">🗑️ លុប</button>` : ''}
                         <img class="movie-poster" src="${movie.poster || 'https://via.placeholder.com/300x450?text=No+Poster'}" alt="Poster">
                     </div>
                     <div class="movie-details">
-                        <div class="movie-title" onclick="openMovieDetail('${movie.title.replace(/'/g, "\\'")}', '${movie.type || 'ភាគ (Episode)'}')">${movie.title}</div>
+                        <div class="movie-title" onclick="openMovieDetail('${movie.title.replace(/'/g, "\\'")}', '${movie.type || 'ភាគ (Episode)'}', '${encodeURIComponent(movie.videoUrl || '')}')">${movie.title}</div>
                         <div class="price-tag">${movie.price}</div>
                         <button class="buy-btn" onclick="buyMovie('${movie.title.replace(/'/g, "\\'")}', '${movie.price}', '${movie.channel}')">
                             <i class="fa-solid fa-cart-shopping"></i> ទិញកញ្ចប់នេះ
@@ -1507,15 +1514,30 @@
             });
         }
 
-        function openMovieDetail(title, type) {
+        function openMovieDetail(title, type, encodedVideoUrl) {
             dismissKeyboard();
+            const videoUrl = decodeURIComponent(encodedVideoUrl || '');
             document.getElementById('detailTitle').innerText = title;
             document.getElementById('detailType').innerText = `ប្រភេទ៖ ${type}`;
+            
+            const player = document.getElementById('modalVideoPlayer');
+            if (videoUrl) {
+                player.src = videoUrl;
+                player.style.display = 'block';
+                player.load();
+            } else {
+                player.src = '';
+                player.style.display = 'none';
+            }
+
             document.getElementById('detailModal').style.display = 'flex';
         }
 
         function closeDetailModal() {
             dismissKeyboard();
+            const player = document.getElementById('modalVideoPlayer');
+            player.pause();
+            player.src = '';
             document.getElementById('detailModal').style.display = 'none';
         }
 
@@ -1541,6 +1563,7 @@
             const type = document.getElementById('ownerMovieType').value;
             const fileInput = document.getElementById('ownerPosterFile');
             const posterLink = document.getElementById('ownerMoviePoster').value.trim();
+            const videoUrl = document.getElementById('ownerMovieVideoUrl').value.trim();
             const price = document.getElementById('ownerMoviePrice').value.trim();
 
             if (!title) return alert('សូមបំពេញចំណងជើងរឿង!');
@@ -1553,12 +1576,14 @@
                     title: title,
                     type: type,
                     price: price || '$2.00',
-                    poster: posterUrl
+                    poster: posterUrl,
+                    videoUrl: videoUrl
                 });
 
                 saveMovies(movies);
                 document.getElementById('ownerMovieTitle').value = '';
                 document.getElementById('ownerMoviePoster').value = '';
+                document.getElementById('ownerMovieVideoUrl').value = '';
                 fileInput.value = '';
                 renderMovies();
                 alert('បានបញ្ចូលរឿងចូល Master Channel ដោយជោគជ័យ!');
@@ -1582,6 +1607,7 @@
             const type = document.getElementById('clientMovieType').value;
             const fileInput = document.getElementById('clientPosterFile');
             const posterLink = document.getElementById('clientMoviePoster').value.trim();
+            const videoUrl = document.getElementById('clientMovieVideoUrl').value.trim();
             const price = document.getElementById('clientMoviePrice').value.trim();
 
             if (!title) return alert('សូមបំពេញចំណងជើងរឿង!');
@@ -1594,12 +1620,14 @@
                     title: title,
                     type: type,
                     price: price || '$2.00',
-                    poster: posterUrl
+                    poster: posterUrl,
+                    videoUrl: videoUrl
                 });
 
                 saveMovies(movies);
                 document.getElementById('clientMovieTitle').value = '';
                 document.getElementById('clientMoviePoster').value = '';
+                document.getElementById('clientMovieVideoUrl').value = '';
                 fileInput.value = '';
                 renderMovies();
                 alert('បាន Upload រឿងចូល Channel របស់អ្នកដោយស្វ័យប្រវត្តិ!');
