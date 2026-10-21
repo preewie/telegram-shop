@@ -425,7 +425,7 @@
         </div>
     </div>
 
-    <!-- Master Original Upload Box (ស្ថិតនៅខាងក្រៅ ក្រោមហាងលក់រឿង សម្រាប់ Master ដាក់បញ្ចូលរឿង) -->
+    <!-- Master Original Upload Box -->
     <div id="masterOwnerUploadSection" class="panel-box" style="display: none; border-color: #22c55e;">
         <h3 style="color: #22c55e;">
             <span>🎬 បញ្ចូលរឿងថ្មីរបស់អ្នក (Master Original)</span>
@@ -467,14 +467,13 @@
     <!-- Movie Display Area -->
     <div class="movie-grid" id="movieContainer"></div>
 
-    <!-- Detail / Episode Modal Popup (បង្ហាញវីដេអូពិតប្រាកដ) -->
+    <!-- Detail / Episode Modal Popup -->
     <div id="detailModal">
         <div class="payment-card" style="max-width: 400px;">
             <button class="btn-back" onclick="closeDetailModal()">⬅️ ថយក្រោយ</button>
             <h3 id="detailTitle" style="color: #38bdf8; font-size: 15px; margin-bottom: 10px;">ព័ត៌មានរឿង</h3>
             <div id="detailType" style="font-size: 13px; color: #22c55e; margin-bottom: 10px; font-weight: bold;"></div>
             
-            <!-- Video Player Component -->
             <div style="width: 100%; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 15px;">
                 <video id="modalVideoPlayer" controls style="width: 100%; max-height: 250px; display: block;" src=""></video>
             </div>
@@ -495,7 +494,7 @@
         </div>
     </div>
 
-    <!-- Bottom Nav (Balanced 2 Items) -->
+    <!-- Bottom Nav -->
     <div class="bottom-nav-bar">
         <button class="bottom-nav-item active" id="navShopBtn" onclick="switchMainTab('shop')">
             <i class="fa-solid fa-clapperboard"></i>
@@ -1769,7 +1768,7 @@
             movieSales.push({
                 id: Date.now(),
                 title: activePurchaseMovie.title,
-                    price: activePurchaseMovie.price,
+                price: activePurchaseMovie.price,
                 channel: activePurchaseMovie.channel,
                 channelName: activePurchaseMovie.channelName,
                 date: new Date().toLocaleDateString()
