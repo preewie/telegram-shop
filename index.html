@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PREE WIE Shop - Movie App</title>
+    <title>PREE WIE Shop - Multi-Seller Platform</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -14,44 +14,52 @@
         .header { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: #131b2e; border-bottom: 1px solid #1e293b; }
         .user-info { display: flex; align-items: center; gap: 10px; }
         .avatar { width: 38px; height: 38px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: white; }
-        .admin-login-btn { background: #1e293b; border: 1px solid #334155; color: #64748b; padding: 6px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; }
+        .admin-btn { background: #1e293b; border: 1px solid #3b82f6; color: #38bdf8; padding: 6px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
 
-        /* Action Buttons Section (សម្រាប់អតិថិជន) */
-        .client-action-bar { padding: 12px 15px 5px; }
-        .btn-client-upload { width: 100%; background: linear-gradient(90deg, #2563eb, #3b82f6); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+        /* Navigation Tabs */
+        .channel-tabs { display: flex; gap: 8px; padding: 10px 15px; overflow-x: auto; background: #0f172a; border-bottom: 1px solid #1e293b; }
+        .tab-item { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 12px; color: #94a3b8; cursor: pointer; white-space: nowrap; border: 1px solid #334155; }
+        .tab-item.active { background: #2563eb; color: white; border-color: #3b82f6; font-weight: bold; }
 
-        /* Modal Forms (Client Modal & Admin Modal) */
-        .modal-panel { display: none; background: #131b2e; padding: 15px; margin: 15px; border-radius: 12px; border: 1px solid #3b82f6; }
-        .modal-panel h3 { margin-bottom: 12px; color: #38bdf8; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .close-btn { color: #ef4444; font-size: 18px; cursor: pointer; }
+        /* Panels */
+        .panel-box { display: none; background: #131b2e; padding: 15px; margin: 15px; border-radius: 12px; border: 1px solid #3b82f6; }
+        .panel-box h3 { color: #38bdf8; font-size: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .close-btn { color: #ef4444; cursor: pointer; }
         
         .form-group { margin-bottom: 10px; }
         .form-group label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
         .form-control { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; font-size: 13px; }
-        .btn-submit { background: #22c55e; color: white; border: none; padding: 11px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 14px; }
+        .btn-action { background: #22c55e; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .btn-secondary { background: #334155; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; }
 
-        /* Top Nav */
-        .top-nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 12px 15px; }
-        .nav-btn { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 8px; text-align: center; color: #94a3b8; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .nav-btn.active { background: #2563eb; color: #fff; border-color: #3b82f6; }
+        /* Report Cards */
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .report-card { background: #0f172a; border: 1px solid #1e293b; padding: 12px; border-radius: 10px; text-align: center; }
+        .report-card .title { font-size: 11px; color: #94a3b8; margin-bottom: 5px; }
+        .report-card .value { font-size: 18px; font-weight: bold; color: #22c55e; }
+
+        .sales-list { max-height: 200px; overflow-y: auto; background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 8px; margin-bottom: 15px; }
+        .sales-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1e293b; font-size: 11px; }
 
         /* Movie Grid */
-        .section-title { padding: 10px 15px 5px; font-size: 15px; font-weight: bold; }
         .movie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 10px 15px; }
         .movie-card { background: #131b2e; border-radius: 14px; overflow: hidden; border: 1px solid #1e293b; display: flex; flex-direction: column; position: relative; }
         .poster-container { position: relative; width: 100%; height: 210px; background: #1e293b; }
         .movie-poster { width: 100%; height: 100%; object-fit: cover; }
         .badge-sale { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); color: #38bdf8; padding: 3px 8px; border-radius: 6px; font-size: 10px; }
-        .btn-delete-item { position: absolute; top: 8px; right: 8px; background: #ef4444; color: white; border: none; border-radius: 6px; padding: 4px 8px; font-size: 11px; cursor: pointer; display: none; z-index: 10; }
+        .btn-delete-item { position: absolute; top: 8px; right: 8px; background: #ef4444; color: white; border: none; border-radius: 6px; padding: 4px 8px; font-size: 11px; cursor: pointer; z-index: 10; }
         
         .movie-details { padding: 10px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .movie-title { font-size: 13px; font-weight: bold; line-height: 1.4; margin-bottom: 4px; color: #f1f5f9; min-height: 36px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .price-tag { color: #38bdf8; font-size: 14px; font-weight: bold; margin-bottom: 8px; }
         .buy-btn { background: #2563eb; color: white; border: none; padding: 8px; border-radius: 8px; width: 100%; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
-        /* Empty State */
+        /* Modal Payment Popup */
+        #paymentModal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        .payment-card { background: #131b2e; border: 1px solid #3b82f6; border-radius: 14px; padding: 20px; width: 100%; max-width: 320px; text-align: center; }
+        .payment-qr { width: 180px; height: 180px; object-fit: contain; background: white; padding: 8px; border-radius: 8px; margin: 15px auto; }
+
         .empty-box { grid-column: span 2; text-align: center; padding: 40px 20px; color: #64748b; font-size: 14px; }
-        .empty-box i { font-size: 40px; margin-bottom: 10px; color: #334155; }
 
         /* Bottom Nav */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0f172a; border-top: 1px solid #1e293b; display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
@@ -71,105 +79,142 @@
                 <div style="font-size: 10px; color: #94a3b8;">@Preeaiwie_bot</div>
             </div>
         </div>
-        <!-- ប៊ូតុង Admin សម្ងាត់ -->
-        <button class="admin-login-btn" onclick="loginAdmin()">🔑 Admin</button>
+        <button class="admin-btn" onclick="openLoginPrompt()">🔑 Admin Panel</button>
     </div>
 
-    <!-- ប៊ូតុងសម្រាប់អតិថិជន Upload រឿងរបស់ពួកគាត់ -->
-    <div class="client-action-bar">
-        <button class="btn-client-upload" onclick="toggleClientUploadModal()">
-            <i class="fa-solid fa-cloud-arrow-up"></i> ផ្ញើ/Upload រឿងរបស់អ្នកចូល Website
-        </button>
-    </div>
+    <!-- Navigation Tabs -->
+    <div class="channel-tabs" id="channelTabs"></div>
 
-    <!-- ផ្ទាំង Form សម្រាប់អតិថិជន Upload រឿង -->
-    <div id="clientUploadModal" class="modal-panel">
+    <!-- Master Owner Dashboard -->
+    <div id="masterAdminPanel" class="panel-box">
         <h3>
-            <span>📤 ផ្ទាំង Upload រឿងសម្រាប់អតិថិជន</span>
-            <i class="fa-solid fa-xmark close-btn" onclick="toggleClientUploadModal()"></i>
+            <span>👑 Master Owner Dashboard</span>
+            <i class="fa-solid fa-xmark close-btn" onclick="closePanels()"></i>
         </h3>
-        
-        <div class="form-group">
-            <label>១. ឈ្មោះអតិថិជន / អ្នកផ្ញើ៖</label>
-            <input type="text" id="clientName" class="form-control" placeholder="បញ្ចូលឈ្មោះរបស់អ្នក...">
+
+        <!-- Monthly Sales Summary -->
+        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">📊 របាយការណ៍ចំណូលសរុបប្រចាំខែ (ថ្ងៃទី ១ - ៣០)៖</h4>
+        <div class="report-grid">
+            <div class="report-card">
+                <div class="title">ចំនួនអ្នកទិញសរុប</div>
+                <div class="value" id="masterTotalSalesCount">0 នាក់</div>
+            </div>
+            <div class="report-card">
+                <div class="title">ចំណូលសរុប (Total)</div>
+                <div class="value" id="masterTotalRevenue">$0.00</div>
+            </div>
+        </div>
+
+        <h4 style="font-size: 12px; color: #94a3b8; margin-bottom: 6px;">📜 ប្រវត្តិទិញរឿងប្រចាំខែ៖</h4>
+        <div class="sales-list" id="masterSalesHistory"></div>
+
+        <div style="margin-bottom: 12px; background: #0f172a; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px; color: #94a3b8;">កូដសម្ងាត់ Master PIN</span>
+            <button class="btn-secondary" onclick="changeMasterPin()">🔑 ប្តូរ PIN ខ្លួនឯង</button>
         </div>
 
         <div class="form-group">
-            <label>២. ចំណងជើងរឿង៖</label>
-            <input type="text" id="clientMovieTitle" class="form-control" placeholder="បញ្ចូលចំណងជើងរឿង...">
+            <label>Link QR Code បង់ប្រាក់របស់អ្នក (ABA/KHQR):</label>
+            <input type="text" id="ownerQrInput" class="form-control" placeholder="https://example.com/my-qr.jpg">
+            <button class="btn-secondary" style="margin-top: 5px;" onclick="saveOwnerQR()">💾 រក្សាទុក QR Code</button>
         </div>
 
+        <hr style="border-color: #1e293b; margin: 15px 0;">
+
+        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">➕ បង្កើតគណនីឱ្យ Client/អតិថិជន៖</h4>
         <div class="form-group">
-            <label>៣. ជ្រើសរើសប្រភេទការជួល/គិតថ្លៃ៖</label>
-            <select id="rentalType" class="form-control">
-                <option value="ថ្ងៃ">គិតជា ថ្ងៃ (Days)</option>
-                <option value="ខែ">គិតជា ខែ (Months)</option>
-                <option value="ចំនួនវីដេអូ">គិតជា ចំនួនវីដេអូ (Number of Videos)</option>
-            </select>
+            <input type="text" id="newClientName" class="form-control" placeholder="ឈ្មោះអតិថិជន...">
         </div>
-
         <div class="form-group">
-            <label>៤. បញ្ចូលចំនួន (ថ្ងៃ / ខែ / ឬ ចំនួនវីដេអូ)៖</label>
-            <input type="number" id="rentalDuration" class="form-control" placeholder="ឧទាហរណ៍៖ 1, 30, ឬ 50...">
+            <input type="text" id="newClientPin" class="form-control" placeholder="កំណត់ PIN ដំបូង...">
         </div>
+        <button class="btn-action" style="background: #2563eb; margin-bottom: 15px;" onclick="createNewClient()">➕ បង្កើត Client</button>
 
+        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">📋 បញ្ជីអតិថិជនទាំងអស់៖</h4>
+        <div id="masterClientList"></div>
+
+        <hr style="border-color: #1e293b; margin: 15px 0;">
+
+        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">🎬 បញ្ចូលរឿងថ្មីរបស់អ្នក (Original)៖</h4>
         <div class="form-group">
-            <label>៥. ជ្រើសរើស Video ពីរឿងរបស់អ្នក៖</label>
-            <input type="file" id="clientVideoFile" accept="video/*" class="form-control">
+            <input type="text" id="ownerMovieTitle" class="form-control" placeholder="ចំណងជើងរឿង...">
         </div>
-
         <div class="form-group">
-            <label>៦. ជ្រើសរើសរូបភាព Poster (គម្របរឿង)៖</label>
-            <input type="file" id="clientPosterFile" accept="image/*" class="form-control">
+            <input type="text" id="ownerMoviePoster" class="form-control" placeholder="Link រូបភាព Poster...">
         </div>
-
-        <button class="btn-submit" onclick="submitClientUpload()">🚀 បញ្ជូនសំណើ Upload ទៅកាន់ Admin</button>
+        <div class="form-group">
+            <input type="text" id="ownerMoviePrice" class="form-control" value="$2.00" placeholder="តម្លៃ ($)...">
+        </div>
+        <button class="btn-action" onclick="addOwnerMovie()">💾 ដាក់បញ្ចូលរឿង</button>
     </div>
 
-    <!-- Admin Panel (សម្រាប់តែ Admin ប្រើប្រាស់) -->
-    <div id="adminPanel" class="modal-panel">
+    <!-- Client Admin Panel -->
+    <div id="clientAdminPanel" class="panel-box">
         <h3>
-            <span>🎬 Admin Panel: Upload ផ្ទាល់ខ្លួន</span>
-            <i class="fa-solid fa-xmark close-btn" onclick="toggleAdminPanel()"></i>
+            <span id="clientPanelTitle">🎬 Client Admin Panel</span>
+            <i class="fa-solid fa-xmark close-btn" onclick="closePanels()"></i>
         </h3>
-        
+
+        <!-- Client Sales Summary -->
+        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">📊 របាយការណ៍ចំណូលរបស់ខ្ញុំ (ប្រចាំខែ)៖</h4>
+        <div class="report-grid">
+            <div class="report-card">
+                <div class="title">ចំនួនអ្នកទិញរឿងខ្ញុំ</div>
+                <div class="value" id="clientTotalSalesCount">0 នាក់</div>
+            </div>
+            <div class="report-card">
+                <div class="title">ចំណូលសរុប (Total)</div>
+                <div class="value" id="clientTotalRevenue">$0.00</div>
+            </div>
+        </div>
+
+        <h4 style="font-size: 12px; color: #94a3b8; margin-bottom: 6px;">📜 ប្រវត្តិអ្នកទិញរឿងក្នុង Channel ខ្ញុំ៖</h4>
+        <div class="sales-list" id="clientSalesHistory"></div>
+
+        <div style="margin-bottom: 12px; background: #0f172a; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px; color: #94a3b8;">កូដសម្ងាត់ PIN របស់ខ្ញុំ</span>
+            <button class="btn-secondary" onclick="changeCurrentClientPin()">🔑 ប្តូរ PIN ខ្លួនឯង</button>
+        </div>
+
+        <div class="form-group">
+            <label>Link QR Code បង់ប្រាក់របស់អ្នក (ABA/KHQR):</label>
+            <input type="text" id="clientQrInput" class="form-control" placeholder="https://example.com/client-qr.jpg">
+            <button class="btn-secondary" style="margin-top: 5px;" onclick="saveClientQR()">💾 រក្សាទុក QR Code</button>
+        </div>
+
+        <hr style="border-color: #1e293b; margin: 15px 0;">
+
         <div class="form-group">
             <label>ចំណងជើងរឿង៖</label>
-            <input type="text" id="adminMovieTitle" class="form-control" placeholder="បញ្ចូលឈ្មោះរឿង...">
+            <input type="text" id="clientMovieTitle" class="form-control" placeholder="បញ្ចូលចំណងជើងរឿង...">
         </div>
-
         <div class="form-group">
-            <label>ជ្រើសរើស Video៖</label>
-            <input type="file" id="adminVideoFile" accept="video/*" class="form-control">
+            <label>Link រូបភាព Poster៖</label>
+            <input type="text" id="clientMoviePoster" class="form-control" placeholder="Link រូបភាព Poster...">
         </div>
-
         <div class="form-group">
-            <label>ជ្រើសរើស Poster៖</label>
-            <input type="file" id="adminPosterFile" accept="image/*" class="form-control">
+            <label>តម្លៃ ($)៖</label>
+            <input type="text" id="clientMoviePrice" class="form-control" value="$2.00" placeholder="តម្លៃ ($)...">
         </div>
 
-        <div class="form-group">
-            <label>កំណត់តម្លៃ ($)៖</label>
-            <input type="text" id="adminPrice" class="form-control" value="$2.00">
-        </div>
-
-        <button class="btn-submit" onclick="addAdminMovie()">💾 រក្សាទុក និងបង្ហាញលើ Website</button>
-    </div>
-
-    <!-- Top Menu -->
-    <div class="top-nav">
-        <div class="nav-btn active"><i class="fa-solid fa-user"></i> មេឌៀ</div>
-        <div class="nav-btn"><i class="fa-solid fa-paper-plane"></i> ឆានែល</div>
-        <div class="nav-btn"><i class="fa-brands fa-youtube"></i> មើលវីដេអូ</div>
-        <div class="nav-btn"><i class="fa-solid fa-key"></i> AI Key</div>
-    </div>
-
-    <div class="section-title">
-        <span>🎬 បញ្ជីរឿងទាំងអស់</span>
+        <button class="btn-action" onclick="addClientMovie()">💾 ដាក់បញ្ចូលរឿង</button>
     </div>
 
     <!-- Movie Display Area -->
     <div class="movie-grid" id="movieContainer"></div>
+
+    <!-- Payment Popup Modal -->
+    <div id="paymentModal">
+        <div class="payment-card">
+            <h3 id="payTitle" style="color: #38bdf8; font-size: 15px; margin-bottom: 5px;">ទូទាត់ប្រាក់</h3>
+            <div id="payPrice" style="font-size: 18px; font-weight: bold; color: #22c55e; margin-bottom: 10px;">$2.00</div>
+            <p style="font-size: 11px; color: #94a3b8;">សូម Scan QR Code ด้านក្រោមដើម្បីបង់ប្រាក់៖</p>
+            <img id="payQrImg" class="payment-qr" src="" alt="QR Code" onerror="this.src='https://via.placeholder.com/180?text=No+QR+Code'">
+            
+            <button class="btn-action" style="background: #22c55e; margin-top: 10px;" onclick="confirmPaymentSuccess()">✅ បានបង់ប្រាក់រួចរាល់</button>
+            <button class="btn-action" style="background: #ef4444; margin-top: 5px;" onclick="closePaymentModal()">បិទ (Close)</button>
+        </div>
+    </div>
 
     <!-- Bottom Menu -->
     <div class="bottom-nav">
@@ -183,66 +228,221 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const ADMIN_PIN = "1234";
-        let isAdminLoggedIn = false;
+        function getMasterPin() { return localStorage.getItem('pree_master_pin') || '9999'; }
+        function getMasterQR() { return localStorage.getItem('pree_master_qr') || ''; }
+        function getClients() { const stored = localStorage.getItem('pree_clients_list'); return stored ? JSON.parse(stored) : []; }
+        function saveClients(clients) { localStorage.setItem('pree_clients_list', JSON.stringify(clients)); }
+        function getMovies() { const stored = localStorage.getItem('pree_multi_movies'); return stored ? JSON.parse(stored) : []; }
+        function saveMovies(movies) { localStorage.setItem('pree_multi_movies', JSON.stringify(movies)); }
+        
+        // Sales / Revenue Data
+        function getSalesData() { const stored = localStorage.getItem('pree_sales_data'); return stored ? JSON.parse(stored) : []; }
+        function saveSalesData(sales) { localStorage.setItem('pree_sales_data', JSON.stringify(sales)); }
 
-        function getMovies() {
-            const stored = localStorage.getItem('pree_custom_movies');
-            return stored ? JSON.parse(stored) : [];
-        }
+        let currentRole = 'user';
+        let loggedInClientId = null;
+        let currentChannel = 'owner';
+        let activePurchaseMovie = null;
 
-        function toggleClientUploadModal() {
-            const modal = document.getElementById('clientUploadModal');
-            modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
-        }
+        function openLoginPrompt() {
+            const pin = prompt('សូមបញ្ចូលលេខកូដសម្ងាត់ PIN របស់អ្នក៖');
+            if (!pin) return;
 
-        function toggleAdminPanel() {
-            const panel = document.getElementById('adminPanel');
-            panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function loginAdmin() {
-            if (isAdminLoggedIn) {
-                isAdminLoggedIn = false;
-                document.getElementById('adminPanel').style.display = 'none';
+            if (pin === getMasterPin()) {
+                currentRole = 'master';
+                closePanels();
+                renderMasterClientList();
+                renderSalesReport();
+                document.getElementById('ownerQrInput').value = getMasterQR();
+                document.getElementById('masterAdminPanel').style.display = 'block';
+                alert('ចូលប្រើប្រាស់ Master Admin ជោគជ័យ!');
                 renderMovies();
-                alert('បានចាកចេញពី Admin Panel');
                 return;
             }
 
-            const pin = prompt('សូមបញ្ចូលលេខកូដសម្ងាត់ Admin:');
-            if (pin === ADMIN_PIN) {
-                isAdminLoggedIn = true;
-                toggleAdminPanel();
+            const clients = getClients();
+            const clientMatch = clients.find(c => c.pin === pin);
+
+            if (clientMatch) {
+                currentRole = 'client';
+                loggedInClientId = clientMatch.id;
+                currentChannel = clientMatch.id;
+
+                closePanels();
+                document.getElementById('clientPanelTitle').innerText = `🎬 Admin (${clientMatch.name})`;
+                document.getElementById('clientQrInput').value = clientMatch.qr || '';
+                renderSalesReport();
+                document.getElementById('clientAdminPanel').style.display = 'block';
+                renderTabs();
                 renderMovies();
-            } else if (pin !== null) {
-                alert('លេខកូដមិនត្រឹមត្រូវទេ!');
+                alert(`ចូលប្រាស់ Admin Panel របស់ ${clientMatch.name} ជោគជ័យ!`);
+            } else {
+                alert('លេខកូដ PIN មិនត្រឹមត្រូវទេ!');
             }
         }
 
-        // អតិថិជនផ្ញើដេតា Upload ទៅ Telegram Bot
-        function submitClientUpload() {
-            const name = document.getElementById('clientName').value.trim();
-            const title = document.getElementById('clientMovieTitle').value.trim();
-            const type = document.getElementById('rentalType').value;
-            const duration = document.getElementById('rentalDuration').value.trim();
+        function renderSalesReport() {
+            const sales = getSalesData();
 
-            if (!name || !title || !duration) {
-                alert('សូមបំពេញព័ត៌មានអតិថិជន ចំណងជើង និងចំនួនឱ្យបានគ្រប់គ្រាន់!');
-                return;
+            if (currentRole === 'master') {
+                let totalRev = 0;
+                const historyDiv = document.getElementById('masterSalesHistory');
+                historyDiv.innerHTML = '';
+
+                sales.forEach(s => {
+                    const priceNum = parseFloat(s.price.replace('$', '')) || 0;
+                    totalRev += priceNum;
+
+                    const item = document.createElement('div');
+                    item.className = 'sales-item';
+                    item.innerHTML = `
+                        <div><strong>${s.title}</strong> (${s.channelName})</div>
+                        <div style="color:#22c55e;">${s.price} - ${s.date}</div>
+                    `;
+                    historyDiv.appendChild(item);
+                });
+
+                document.getElementById('masterTotalSalesCount').innerText = `${sales.length} នាក់`;
+                document.getElementById('masterTotalRevenue').innerText = `$${totalRev.toFixed(2)}`;
+            } 
+            else if (currentRole === 'client') {
+                const clientSales = sales.filter(s => s.channel === loggedInClientId);
+                let totalRev = 0;
+                const historyDiv = document.getElementById('clientSalesHistory');
+                historyDiv.innerHTML = '';
+
+                clientSales.forEach(s => {
+                    const priceNum = parseFloat(s.price.replace('$', '')) || 0;
+                    totalRev += priceNum;
+
+                    const item = document.createElement('div');
+                    item.className = 'sales-item';
+                    item.innerHTML = `
+                        <div><strong>${s.title}</strong></div>
+                        <div style="color:#22c55e;">${s.price} - ${s.date}</div>
+                    `;
+                    historyDiv.appendChild(item);
+                });
+
+                document.getElementById('clientTotalSalesCount').innerText = `${clientSales.length} នាក់`;
+                document.getElementById('clientTotalRevenue').innerText = `$${totalRev.toFixed(2)}`;
             }
+        }
 
-            const uploadData = {
-                action: "client_upload_request",
-                client_name: name,
-                movie_title: title,
-                rental_type: type,
-                rental_duration: duration
-            };
+        function changeMasterPin() {
+            const newPin = prompt('សូមវាយបញ្ចូលលេខកូដ Master PIN ថ្មីតាមចិត្តបង៖');
+            if (newPin && newPin.trim().length >= 4) {
+                localStorage.setItem('pree_master_pin', newPin.trim());
+                alert('បានប្តូរ Master PIN ថ្មីជោគជ័យ!');
+            }
+        }
 
-            tg.sendData(JSON.stringify(uploadData));
-            alert(`បានបញ្ជូនសំណើ Upload រឿង "${title}" (${duration} ${type}) ទៅកាន់ Admin រួចរាល់!`);
-            toggleClientUploadModal();
+        function saveOwnerQR() {
+            const qrUrl = document.getElementById('ownerQrInput').value.trim();
+            localStorage.setItem('pree_master_qr', qrUrl);
+            alert('បានរក្សាទុក QR Code របស់អ្នកជោគជ័យ!');
+        }
+
+        function changeCurrentClientPin() {
+            if (!loggedInClientId) return;
+            const newPin = prompt('សូមវាយបញ្ចូលលេខកូដ PIN ថ្មីតាមចិត្តអតិថិជន៖');
+            if (newPin && newPin.trim().length >= 4) {
+                const clients = getClients();
+                const client = clients.find(c => c.id === loggedInClientId);
+                if (client) {
+                    client.pin = newPin.trim();
+                    saveClients(clients);
+                    alert('បានប្តូរកូដសម្ងាត់ PIN ថ្មីជោគជ័យ!');
+                }
+            }
+        }
+
+        function saveClientQR() {
+            if (!loggedInClientId) return;
+            const qrUrl = document.getElementById('clientQrInput').value.trim();
+            const clients = getClients();
+            const client = clients.find(c => c.id === loggedInClientId);
+            if (client) {
+                client.qr = qrUrl;
+                saveClients(clients);
+                alert('បានរក្សាទុក QR Code របស់អ្នកជោគជ័យ!');
+            }
+        }
+
+        function createNewClient() {
+            const name = document.getElementById('newClientName').value.trim();
+            const pin = document.getElementById('newClientPin').value.trim();
+
+            if (!name || !pin) return alert('សូមបំពេញឈ្មោះ និង PIN ឱ្យបានគ្រប់!');
+
+            const clients = getClients();
+            const clientId = 'client_' + Date.now();
+            clients.push({ id: clientId, name: name, pin: pin, qr: '' });
+            saveClients(clients);
+
+            document.getElementById('newClientName').value = '';
+            document.getElementById('newClientPin').value = '';
+
+            renderMasterClientList();
+            renderTabs();
+            alert(`បានបង្កើតអតិថិជន ${name} ជោគជ័យ!`);
+        }
+
+        function renderMasterClientList() {
+            const clients = getClients();
+            const listDiv = document.getElementById('masterClientList');
+            listDiv.innerHTML = '';
+
+            clients.forEach(c => {
+                const item = document.createElement('div');
+                item.className = 'client-item';
+                item.innerHTML = `
+                    <div><strong>${c.name}</strong> <span style="color: #38bdf8;">(PIN: ${c.pin})</span></div>
+                    <button class="btn-secondary" style="background:#ef4444;" onclick="deleteClient('${c.id}')">លុប</button>
+                `;
+                listDiv.appendChild(item);
+            });
+        }
+
+        function deleteClient(clientId) {
+            if (confirm('តើបងពិតជាចង់លុបអតិថិជននេះមែនទេ?')) {
+                let clients = getClients();
+                clients = clients.filter(c => c.id !== clientId);
+                saveClients(clients);
+                renderMasterClientList();
+                renderTabs();
+            }
+        }
+
+        function closePanels() {
+            document.getElementById('masterAdminPanel').style.display = 'none';
+            document.getElementById('clientAdminPanel').style.display = 'none';
+        }
+
+        function renderTabs() {
+            const clients = getClients();
+            const tabsDiv = document.getElementById('channelTabs');
+            tabsDiv.innerHTML = '';
+
+            const ownerTab = document.createElement('div');
+            ownerTab.className = `tab-item ${currentChannel === 'owner' ? 'active' : ''}`;
+            ownerTab.innerText = '👑 រឿងដើម (Original)';
+            ownerTab.onclick = () => switchChannel('owner');
+            tabsDiv.appendChild(ownerTab);
+
+            clients.forEach(c => {
+                const tab = document.createElement('div');
+                tab.className = `tab-item ${currentChannel === c.id ? 'active' : ''}`;
+                tab.innerText = `🎬 ${c.name}`;
+                tab.onclick = () => switchChannel(c.id);
+                tabsDiv.appendChild(tab);
+            });
+        }
+
+        function switchChannel(channelId) {
+            currentChannel = channelId;
+            renderTabs();
+            renderMovies();
         }
 
         function renderMovies() {
@@ -250,29 +450,32 @@
             const container = document.getElementById('movieContainer');
             container.innerHTML = '';
 
-            if (movies.length === 0) {
+            const filteredMovies = movies.filter(m => m.channel === currentChannel);
+
+            if (filteredMovies.length === 0) {
                 container.innerHTML = `
                     <div class="empty-box">
-                        <i class="fa-solid fa-film"></i>
-                        <div>មិនទាន់មានរឿងនៅក្នុងបញ្ជីនៅឡើយទេ</div>
+                        <i class="fa-solid fa-film" style="font-size: 30px; margin-bottom: 8px;"></i>
+                        <div>មិនទាន់មានរឿងក្នុង Channel នេះទេ (ទំនេរស្អាត)</div>
                     </div>
                 `;
                 return;
             }
 
-            movies.forEach((movie, index) => {
+            filteredMovies.forEach((movie) => {
+                const canDelete = (currentRole === 'master') || (currentRole === 'client' && loggedInClientId === currentChannel);
                 const card = document.createElement('div');
                 card.className = 'movie-card';
                 card.innerHTML = `
                     <div class="poster-container">
                         <span class="badge-sale">💎 លក់</span>
-                        <button class="btn-delete-item" style="display: ${isAdminLoggedIn ? 'block' : 'none'}" onclick="deleteMovie(${index})">🗑️ លុប</button>
+                        ${canDelete ? `<button class="btn-delete-item" onclick="deleteMovie(${movie.id})">🗑️ លុប</button>` : ''}
                         <img class="movie-poster" src="${movie.poster || 'https://via.placeholder.com/300x450?text=No+Poster'}" alt="Poster">
                     </div>
                     <div class="movie-details">
                         <div class="movie-title">${movie.title}</div>
                         <div class="price-tag">${movie.price}</div>
-                        <button class="buy-btn" onclick="buyMovie('${movie.title}', '${movie.price}')">
+                        <button class="buy-btn" onclick="buyMovie('${movie.title}', '${movie.price}', '${movie.channel}')">
                             <i class="fa-solid fa-cart-shopping"></i> ទិញកញ្ចប់នេះ
                         </button>
                     </div>
@@ -281,44 +484,118 @@
             });
         }
 
-        function addAdminMovie() {
-            const title = document.getElementById('adminMovieTitle').value.trim();
-            const price = document.getElementById('adminPrice').value.trim();
+        function addOwnerMovie() {
+            const title = document.getElementById('ownerMovieTitle').value.trim();
+            const poster = document.getElementById('ownerMoviePoster').value.trim();
+            const price = document.getElementById('ownerMoviePrice').value.trim();
 
-            if (!title) {
-                alert('សូមបញ្ចូលចំណងជើងរឿង!');
-                return;
-            }
+            if (!title) return alert('សូមបំពេញចំណងជើងរឿង!');
 
             const movies = getMovies();
             movies.push({
                 id: Date.now(),
+                channel: 'owner',
                 title: title,
                 price: price || '$2.00',
-                poster: 'https://via.placeholder.com/300x450?text=Movie+Poster'
+                poster: poster || 'https://via.placeholder.com/300x450?text=Original+Movie'
             });
 
-            localStorage.setItem('pree_custom_movies', JSON.stringify(movies));
-            document.getElementById('adminMovieTitle').value = '';
-            toggleAdminPanel();
+            saveMovies(movies);
+            document.getElementById('ownerMovieTitle').value = '';
+            document.getElementById('ownerMoviePoster').value = '';
             renderMovies();
-            alert('បាន Upload និងរក្សាទុកជោគជ័យ!');
+            alert('បានបញ្ចូលរឿងចូល Channel របស់អ្នកដោយស្វ័យប្រវត្តិ!');
         }
 
-        function deleteMovie(index) {
-            if (confirm('តើបងពិតជាចង់លុបរឿងនេះចោលមែនទេ?')) {
-                const movies = getMovies();
-                movies.splice(index, 1);
-                localStorage.setItem('pree_custom_movies', JSON.stringify(movies));
+        function addClientMovie() {
+            const title = document.getElementById('clientMovieTitle').value.trim();
+            const poster = document.getElementById('clientMoviePoster').value.trim();
+            const price = document.getElementById('clientMoviePrice').value.trim();
+
+            if (!title) return alert('សូមបំពេញចំណងជើងរឿង!');
+
+            const movies = getMovies();
+            movies.push({
+                id: Date.now(),
+                channel: loggedInClientId,
+                title: title,
+                price: price || '$2.00',
+                poster: poster || 'https://via.placeholder.com/300x450?text=Client+Movie'
+            });
+
+            saveMovies(movies);
+            document.getElementById('clientMovieTitle').value = '';
+            document.getElementById('clientMoviePoster').value = '';
+            renderMovies();
+            alert('បានបញ្ចូលរឿងចូល Channel របស់អ្នកដោយស្វ័យប្រវត្តិ!');
+        }
+
+        function deleteMovie(movieId) {
+            if (confirm('តើបងពិតជាចង់លុបរឿងនេះមែនទេ?')) {
+                let movies = getMovies();
+                movies = movies.filter(m => m.id !== movieId);
+                saveMovies(movies);
                 renderMovies();
             }
         }
 
-        function buyMovie(title, price) {
-            tg.sendData(JSON.stringify({ movie: title, price: price }));
-            alert(`អ្នកបានជ្រើសរើសទិញ៖ ${title} (${price})`);
+        function buyMovie(title, price, channelId) {
+            let qrUrl = '';
+            let chName = 'Original';
+
+            if (channelId === 'owner') {
+                qrUrl = getMasterQR();
+            } else {
+                const clients = getClients();
+                const client = clients.find(c => c.id === channelId);
+                if (client) {
+                    qrUrl = client.qr || '';
+                    chName = client.name;
+                }
+            }
+
+            if (!qrUrl) {
+                alert('ម្ចាស់ឆានែលនេះមិនទាន់បានដាក់ QR Code សម្រាប់ទូទាត់ប្រាក់នៅឡើយទេ!');
+                return;
+            }
+
+            activePurchaseMovie = { title, price, channel: channelId, channelName: chName };
+
+            document.getElementById('payTitle').innerText = `ទិញរឿង៖ ${title}`;
+            document.getElementById('payPrice').innerText = price;
+            document.getElementById('payQrImg').src = qrUrl;
+            document.getElementById('paymentModal').style.display = 'flex';
         }
 
+        function confirmPaymentSuccess() {
+            if (!activePurchaseMovie) return;
+
+            const sales = getSalesData();
+            const now = new Date();
+            const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+
+            sales.push({
+                id: Date.now(),
+                title: activePurchaseMovie.title,
+                price: activePurchaseMovie.price,
+                channel: activePurchaseMovie.channel,
+                channelName: activePurchaseMovie.channelName,
+                date: dateStr
+            });
+
+            saveSalesData(sales);
+            tg.sendData(JSON.stringify(activePurchaseMovie));
+
+            alert('សូមអរគុណ! ការទូទាត់ត្រូវបានកត់ត្រាចូលក្នុងប្រព័ន្ធជោគជ័យ។');
+            closePaymentModal();
+            renderSalesReport();
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        renderTabs();
         renderMovies();
     </script>
 </body>
