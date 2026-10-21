@@ -593,6 +593,40 @@
         function getClientSales() { const stored = localStorage.getItem('pree_client_sales'); return stored ? JSON.parse(stored) : []; }
         function saveClientSales(sales) { localStorage.setItem('pree_client_sales', JSON.stringify(sales)); }
 
+const PACKAGE_API_URL = 'https://pree-wie-backend.onrender.com/api/channel-packages';
+
+async function syncPackagesFromServer() {
+    try {
+        const response = await fetch(PACKAGE_API_URL, {
+            method: 'GET',
+            cache: 'no-store'
+        });
+
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (Array.isArray(data.days) && Array.isArray(data.videos)) {
+            localStorage.setItem('pree_pkg_days', JSON.stringify(data.days));
+            localStorage.setItem('pree_pkg_vids', JSON.stringify(data.videos));
+
+            if (typeof renderPkgOptionsForUser === 'function') {
+                renderPkgOptionsForUser();
+            }
+            if (typeof renderAdminPackageDaysList === 'function') {
+                renderAdminPackageDaysList();
+            }
+            if (typeof renderAdminPackageVidsList === 'function') {
+                renderAdminPackageVidsList();
+            }
+        }
+    } catch (error) {
+        console.error('មិនអាចទាញយកតម្លៃពី Backend:', error);
+    }
+}
+
         function getPackageDaysOptions() {
             const stored = localStorage.getItem('pree_pkg_days');
             return stored ? JSON.parse(stored) : [
