@@ -101,6 +101,61 @@ def get_channel_packages():
         return jsonify({"error": "Could not load package settings"}), 500
 
 
+def make_admin_token():
+    timestamp = str(int(time.time()))
+    signature = hmac.new(
+        MASTER_API_PASSWORD.encode("utf-8"),
+        timestamp.encode("utf-8"),
+        "sha256"
+    ).hexdigest()
+    return f"{timestamp}.{signature}"
+
+
+def verify_admin_token(token):
+    if not MASTER_API_PASSWORD or not token or "." not in token:
+        return False
+
+    try:
+        timestamp, signature = token.split(".", 1)
+        issued_at = int(timestamp)
+        now = int(time.time())
+
+        if issued_at > now or now - issued_at > 1800:
+            return False
+
+        expected = hmac.new(
+            MASTER_API_PASSWORD.encode("utf-8"),
+            timestamp.encode("utf-8"),
+            "sha256"
+        ).hexdigest()
+
+        return hmac.compare_digest(signature, expected)
+    except (ValueError, TypeError):
+        return False
+
+
+@app.post("/api/admin/login")
+def admin_login():
+    if not MASTER_API_PASSWORD:
+        return jsonify({"error": "Server admin password is not configured"}), 503
+
+    data = request.get_json(silent=True) or {}
+    password = data.get("password", "")
+
+    if not isinstance(password, str):
+        return jsonify({"error": "Invalid password"}), 401
+
+    if not hmac.compare_digest(password, MASTER_API_PASSWORD):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    return jsonify({
+        "ok": True,
+        "token": make_admin_token(),
+        "expires_in": 1800
+    })
+
+
+
 @app.put("/api/channel-packages")
 def save_channel_packages():
     if not MASTER_API_PASSWORD:
