@@ -21,7 +21,7 @@
         .btn-buy-channel { background: #22c55e; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
         /* Navigation Tabs */
-        .channel-tabs { display: flex; gap: 8px; padding: 10px 15px; overflow-x: auto; background: #0f172a; border-bottom: 1px solid #1e293b; }
+        .channel-tabs { display: flex; gap: 8px; padding: 10px 15px; overflow-x: auto; background: #0f172a; border-bottom: 1px solid #1e293b; min-height: 50px; align-items: center; }
         .tab-item { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 12px; color: #94a3b8; cursor: pointer; white-space: nowrap; border: 1px solid #334155; }
         .tab-item.active { background: #2563eb; color: white; border-color: #3b82f6; font-weight: bold; }
 
@@ -105,18 +105,19 @@
     <div class="client-banner" id="publicClientBanner">
         <div>
             <div style="font-size: 12px; font-weight: bold; color: #f1f5f9;">ចង់បង្កើត Channel Upload រឿង?</div>
-            <div style="font-size: 10px; color: #94a3b8;">ទិញសេវាកម្មเพื่อបាន Channel & PIN ផ្ទាល់ខ្លួន</div>
+            <div style="font-size: 10px; color: #94a3b8;">ទិញសេវាកម្មដើម្បីបាន Channel & PIN ផ្ទាល់ខ្លួន</div>
         </div>
         <button class="btn-buy-channel" onclick="openBuyChannelModal()">
             <i class="fa-solid fa-plus-circle"></i> ទិញ Channel
         </button>
     </div>
 
-    <!-- Navigation Tabs -->
+    <!-- Navigation Tabs (កន្លែង Tab ជ្រើសរើស Channel) -->
     <div class="channel-tabs" id="channelTabs"></div>
 
     <!-- Modal 1: ទិញ Channel សម្រាប់ Client ថ្មី -->
     <div id="buyChannelModal" class="panel-box">
+        <button class="btn-back" onclick="closePanels()">⬅️ ថយក្រោយ</button>
         <h3>
             <span>🛍️ ជ្រើសរើសកញ្ចប់សេវាកម្ម Channel</span>
             <i class="fa-solid fa-xmark close-btn" onclick="closePanels()"></i>
@@ -151,6 +152,7 @@
     <!-- Modal 2: ផ្ញើ Slip បង់ប្រាក់សម្រាប់ Client -->
     <div id="receiptModal">
         <div class="payment-card">
+            <button class="btn-back" onclick="backToBuyModal()">⬅️ ថយក្រោយ</button>
             <h3>💳 ទូទាត់ប្រាក់ទិញសេវាកម្ម Channel</h3>
             <div id="receiptPkgInfo" style="font-size: 13px; color: #38bdf8; margin: 8px 0; font-weight: bold;"></div>
             <div style="font-size: 18px; font-weight: bold; color: #22c55e; margin-bottom: 8px;" id="receiptPriceInfo">$0.00</div>
@@ -167,15 +169,14 @@
             </div>
 
             <button class="btn-action" style="background: #22c55e;" onclick="submitClientOrderWithReceipt()">✅ បញ្ជូន Slip រង់ចាំ Master អនុម័ត</button>
-            <button class="btn-back" style="width: 100%; margin-top: 5px; justify-content: center;" onclick="backToBuyModal()">⬅️ ថយក្រោយ</button>
         </div>
     </div>
 
-    <!-- Login Panel -->
+    <!-- Login Panel (បង្ហាញពាក្យ កន្លែងប្រព័ន្ធ Login សម្រាប់ Client ឬ Master) -->
     <div id="loginPanel" class="panel-box">
         <button class="btn-back" onclick="closePanels()">⬅️ ថយក្រោយ</button>
         <h3>
-            <span>🔑 ចូលប្រើប្រាស់ Admin / Client Panel</span>
+            <span>🔑 កន្លែងប្រព័ន្ធ Login</span>
             <i class="fa-solid fa-xmark close-btn" onclick="closePanels()"></i>
         </h3>
         <div class="form-group">
@@ -185,11 +186,11 @@
         <button class="btn-action" style="background: #2563eb;" onclick="processLogin()">ចូលប្រព័ន្ធ (Login)</button>
     </div>
 
-    <!-- Master Owner Dashboard -->
+    <!-- Master Owner Dashboard (បង្ហាញពាក្យ Master Admin សម្រាប់តែបងជា Master តែម្នាក់ឯង) -->
     <div id="masterAdminPanel" class="panel-box">
         <button class="btn-back" onclick="closePanels()">⬅️ ថយក្រោយ</button>
         <h3>
-            <span>👑 Master Owner Dashboard (Analytics)</span>
+            <span>👑 Master Admin Dashboard</span>
             <i class="fa-solid fa-xmark close-btn" onclick="closePanels()"></i>
         </h3>
 
@@ -312,7 +313,7 @@
         <button class="btn-action" onclick="addOwnerMovie()">💾 ដាក់បញ្ចូលរឿង</button>
     </div>
 
-    <!-- Client Admin Panel -->
+    <!-- Client Admin Panel (សម្រាប់ Client ពេល Login ចូលឃើញពាក្យ Client Admin) -->
     <div id="clientAdminPanel" class="panel-box">
         <button class="btn-back" onclick="closePanels()">⬅️ ថយក្រោយ</button>
         <h3>
@@ -482,6 +483,8 @@
                     currentChannel = clientMatch.id;
                     document.getElementById('adminHeaderBtn').innerText = `🎬 ${clientMatch.name}`;
                 }
+            } else {
+                document.getElementById('adminHeaderBtn').innerText = '🔑 កន្លែងប្រព័ន្ធ Login';
             }
             renderTabs();
             renderMovies();
@@ -646,7 +649,6 @@
         }
 
         function renderMasterAnalytics() {
-            // Movie Sales
             const movieSales = getMovieSales();
             let totalMovieRev = 0;
             const mSalesDiv = document.getElementById('masterMovieSalesHistory');
@@ -667,7 +669,6 @@
             document.getElementById('masterTotalMovieBuyers').innerText = `${movieSales.length} នាក់`;
             document.getElementById('masterTotalMovieRev').innerText = `$${totalMovieRev.toFixed(2)}`;
 
-            // Client Sales
             const clientSales = getClientSales();
             let totalClientRev = 0;
             const cSalesDiv = document.getElementById('masterClientSalesHistory');
@@ -688,7 +689,6 @@
             document.getElementById('masterTotalClientBuyers').innerText = `${clientSales.length} នាក់`;
             document.getElementById('masterTotalClientRev').innerText = `$${totalClientRev.toFixed(2)}`;
 
-            // Active / Expired
             const clients = getClients();
             const now = Date.now();
             let activeCount = 0;
@@ -774,7 +774,7 @@
             localStorage.removeItem('pree_session_role');
             localStorage.removeItem('pree_session_client_id');
             
-            document.getElementById('adminHeaderBtn').innerText = '🔑 ចូលប្រព័ន្ធ Login';
+            document.getElementById('adminHeaderBtn').innerText = '🔑 កន្លែងប្រព័ន្ធ Login';
             closePanels();
             renderTabs();
             renderMovies();
@@ -883,7 +883,7 @@
             } else {
                 const pkgs = getPackageVidsOptions();
                 const selected = pkgs[selectedVidIndex] || pkgs[0];
-                durationDays = 30; // Default 30 days access
+                durationDays = 30;
                 pTitle = `${selected.count} វីដេអូ`;
                 pPrice = selected.price;
             }
@@ -970,11 +970,9 @@
             const p = pending.find(x => x.id === pendingId);
             if (!p) return;
 
-            // Remove from pending
             pending = pending.filter(x => x.id !== pendingId);
             savePendingClients(pending);
 
-            // Add to active clients
             const clients = getClients();
             const clientId = 'client_' + Date.now();
             const expireAt = Date.now() + (p.durationDays * 24 * 60 * 60 * 1000);
@@ -988,7 +986,6 @@
             });
             saveClients(clients);
 
-            // Record Client Sale
             const cSales = getClientSales();
             cSales.push({
                 id: Date.now(),
@@ -1003,7 +1000,7 @@
             renderMasterClientList();
             renderMasterAnalytics();
             renderTabs();
-            alert(`បានអនុម័តបង្កើត Channel "${p.name}" ជោគជ័យ!');
+            alert(`បានអនុម័តបង្កើត Channel "${p.name}" ជោគជ័យ!`);
         }
 
         function rejectClient(pendingId) {
@@ -1128,6 +1125,7 @@
         function renderTabs() {
             const clients = getClients();
             const tabsDiv = document.getElementById('channelTabs');
+            if (!tabsDiv) return;
             tabsDiv.innerHTML = '';
 
             const ownerTab = document.createElement('div');
@@ -1154,6 +1152,7 @@
         function renderMovies() {
             const movies = getMovies();
             const container = document.getElementById('movieContainer');
+            if (!container) return;
             container.innerHTML = '';
 
             const filteredMovies = movies.filter(m => m.channel === currentChannel);
@@ -1173,15 +1172,15 @@
                 const card = document.createElement('div');
                 card.className = 'movie-card';
                 card.innerHTML = `
-                    <div class="poster-container" onclick="openMovieDetail('${movie.title}', '${movie.type || 'ភាគ (Episode)'}')">
+                    <div class="poster-container" onclick="openMovieDetail('${movie.title.replace(/'/g, "\\'")}', '${movie.type || 'ភាគ (Episode)'}')">
                         <span class="badge-type">${movie.type || 'ភាគ (Episode)'}</span>
                         ${canDelete ? `<button class="btn-delete-item" onclick="event.stopPropagation(); deleteMovie(${movie.id})">🗑️ លុប</button>` : ''}
                         <img class="movie-poster" src="${movie.poster || 'https://via.placeholder.com/300x450?text=No+Poster'}" alt="Poster">
                     </div>
                     <div class="movie-details">
-                        <div class="movie-title" onclick="openMovieDetail('${movie.title}', '${movie.type || 'ភាគ (Episode)'}')">${movie.title}</div>
+                        <div class="movie-title" onclick="openMovieDetail('${movie.title.replace(/'/g, "\\'")}', '${movie.type || 'ភាគ (Episode)'}')">${movie.title}</div>
                         <div class="price-tag">${movie.price}</div>
-                        <button class="buy-btn" onclick="buyMovie('${movie.title}', '${movie.price}', '${movie.channel}')">
+                        <button class="buy-btn" onclick="buyMovie('${movie.title.replace(/'/g, "\\'")}', '${movie.price}', '${movie.channel}')">
                             <i class="fa-solid fa-cart-shopping"></i> ទិញកញ្ចប់នេះ
                         </button>
                     </div>
