@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PREE WIE Shop - Secure Master Platform</title>
+    <title>PREE WIE Shop - Professional Master & Client Platform</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -17,7 +17,7 @@
         .admin-btn { background: #1e293b; border: 1px solid #3b82f6; color: #38bdf8; padding: 6px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
 
         /* Client Banner Action Bar */
-        .client-banner { background: linear-gradient(90deg, #1e293b, #0f172a); border: 1px solid #334155; padding: 10px 15px; margin: 10px 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .client-banner { background: linear-gradient(90deg, #1e293b, #0f172a); border: 1px solid #334155; padding: 12px 15px; margin: 10px 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
         .btn-buy-channel { background: #22c55e; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
         /* Navigation Tabs */
@@ -35,6 +35,7 @@
         .form-control { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; font-size: 13px; }
         .btn-action { background: #22c55e; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 5px; }
         .btn-secondary { background: #334155; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; }
+        .btn-back { background: #475569; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 5px; }
 
         /* Stats Cards */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
@@ -51,7 +52,7 @@
         .pkg-title { font-weight: bold; color: #38bdf8; font-size: 14px; margin-bottom: 4px; }
         .pkg-price { font-size: 18px; color: #22c55e; font-weight: bold; }
 
-        /* Package Selection Buttons for Client */
+        /* Type & Package Selection Buttons */
         .type-selector { display: flex; gap: 10px; margin-bottom: 10px; }
         .type-tab { flex: 1; padding: 8px; background: #0f172a; border: 1px solid #334155; text-align: center; border-radius: 8px; font-size: 12px; cursor: pointer; color: #94a3b8; }
         .type-tab.active { background: #2563eb; color: white; border-color: #3b82f6; font-weight: bold; }
@@ -73,10 +74,10 @@
         .price-tag { color: #38bdf8; font-size: 14px; font-weight: bold; margin-bottom: 8px; }
         .buy-btn { background: #2563eb; color: white; border: none; padding: 8px; border-radius: 8px; width: 100%; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
-        /* Modal Payment & Episode Popup */
-        #paymentModal, #detailModal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
-        .payment-card { background: #131b2e; border: 1px solid #3b82f6; border-radius: 14px; padding: 20px; width: 100%; max-width: 320px; text-align: center; }
-        .payment-qr { width: 180px; height: 180px; object-fit: contain; background: white; padding: 8px; border-radius: 8px; margin: 15px auto; }
+        /* Modal Payment & Popups */
+        #paymentModal, #detailModal, #receiptModal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px; overflow-y: auto; }
+        .payment-card { background: #131b2e; border: 1px solid #3b82f6; border-radius: 14px; padding: 20px; width: 100%; max-width: 340px; text-align: center; }
+        .payment-qr { width: 170px; height: 170px; object-fit: contain; background: white; padding: 8px; border-radius: 8px; margin: 10px auto; }
 
         .empty-box { grid-column: span 2; text-align: center; padding: 40px 20px; color: #64748b; font-size: 14px; }
 
@@ -104,7 +105,7 @@
     <div class="client-banner" id="publicClientBanner">
         <div>
             <div style="font-size: 12px; font-weight: bold; color: #f1f5f9;">ចង់បង្កើត Channel Upload រឿង?</div>
-            <div style="font-size: 10px; color: #94a3b8;">ទិញសេវាកម្មដើម្បីបាន Channel & PIN ផ្ទាល់ខ្លួន</div>
+            <div style="font-size: 10px; color: #94a3b8;">ទិញសេវាកម្មเพื่อបាន Channel & PIN ផ្ទាល់ខ្លួន</div>
         </div>
         <button class="btn-buy-channel" onclick="openBuyChannelModal()">
             <i class="fa-solid fa-plus-circle"></i> ទិញ Channel
@@ -114,14 +115,13 @@
     <!-- Navigation Tabs -->
     <div class="channel-tabs" id="channelTabs"></div>
 
-    <!-- Modal ទិញ Channel សម្រាប់ Client ថ្មី -->
+    <!-- Modal 1: ទិញ Channel សម្រាប់ Client ថ្មី -->
     <div id="buyChannelModal" class="panel-box">
         <h3>
             <span>🛍️ ជ្រើសរើសកញ្ចប់សេវាកម្ម Channel</span>
             <i class="fa-solid fa-xmark close-btn" onclick="closePanels()"></i>
         </h3>
         
-        <!-- Tab ប្តូររវាង កញ្ចប់ថ្ងៃ និង កញ្ចប់វីដេអូ -->
         <div class="type-selector">
             <div class="type-tab active" id="tabTypeDays" onclick="switchBuyMode('days')">📅 កញ្ចប់តាមថ្ងៃ</div>
             <div class="type-tab" id="tabTypeVids" onclick="switchBuyMode('videos')">🎬 កញ្ចប់តាមវីដេអូ</div>
@@ -141,15 +141,39 @@
         </div>
 
         <div class="form-group">
-            <label>២. កំណត់លេខកូដសម្ងាត់ (PIN) ផ្ទាល់ខ្លួនរបស់អ្នក៖</label>
+            <label>២. កំណត់លេខកូដសម្ងាត់ (PIN) ផ្ទាល់ខ្លួន៖</label>
             <input type="password" id="regClientPin" class="form-control" placeholder="បញ្ចូល PIN ៤ ខ្ទង់..." maxlength="6">
         </div>
 
-        <button class="btn-action" onclick="submitRegisterClient()">💳 ទូទាត់ប្រាក់ និងបង្កើត Channel</button>
+        <button class="btn-action" onclick="proceedToPayment()">💳 បន្តទៅកាន់ការទូទាត់ប្រាក់</button>
+    </div>
+
+    <!-- Modal 2: ផ្ញើ Slip បង់ប្រាក់សម្រាប់ Client -->
+    <div id="receiptModal">
+        <div class="payment-card">
+            <h3>💳 ទូទាត់ប្រាក់ទិញសេវាកម្ម Channel</h3>
+            <div id="receiptPkgInfo" style="font-size: 13px; color: #38bdf8; margin: 8px 0; font-weight: bold;"></div>
+            <div style="font-size: 18px; font-weight: bold; color: #22c55e; margin-bottom: 8px;" id="receiptPriceInfo">$0.00</div>
+            <p style="font-size: 11px; color: #94a3b8;">សូម Scan QR Code ខាងក្រោមដើម្បីបង់ប្រាក់៖</p>
+            <img id="regQrImg" class="payment-qr" src="" alt="QR Code">
+            
+            <div class="form-group" style="text-align: left; margin-top: 10px;">
+                <label>ជ្រើសរើសរូបភាព Slip បង់ប្រាក់៖</label>
+                <input type="file" id="regSlipFile" accept="image/*" class="form-control">
+            </div>
+            <div class="form-group" style="text-align: left;">
+                <label>ឬបិទភ្ជាប់ Link រូបភាព Slip (Optional)៖</label>
+                <input type="text" id="regSlipLink" class="form-control" placeholder="https://example.com/slip.jpg">
+            </div>
+
+            <button class="btn-action" style="background: #22c55e;" onclick="submitClientOrderWithReceipt()">✅ បញ្ជូន Slip រង់ចាំ Master អនុម័ត</button>
+            <button class="btn-back" style="width: 100%; margin-top: 5px; justify-content: center;" onclick="backToBuyModal()">⬅️ ថយក្រោយ</button>
+        </div>
     </div>
 
     <!-- Login Panel -->
     <div id="loginPanel" class="panel-box">
+        <button class="btn-back" onclick="closePanels()">⬅️ ថយក្រោយ</button>
         <h3>
             <span>🔑 ចូលប្រើប្រាស់ Admin / Client Panel</span>
             <i class="fa-solid fa-xmark close-btn" onclick="closePanels()"></i>
@@ -163,25 +187,49 @@
 
     <!-- Master Owner Dashboard -->
     <div id="masterAdminPanel" class="panel-box">
+        <button class="btn-back" onclick="closePanels()">⬅️ ថយក្រោយ</button>
         <h3>
             <span>👑 Master Owner Dashboard (Analytics)</span>
             <i class="fa-solid fa-xmark close-btn" onclick="closePanels()"></i>
         </h3>
 
-        <h4 style="font-size: 12px; color: #38bdf8; margin-bottom: 6px;">📊 ស្ថិតិការទិញវីដេអូសរុប (អតិថិជនទូទៅ)៖</h4>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="title">អ្នកទិញសរុប</div>
-                <div class="value" id="masterTotalBuyers">0 នាក់</div>
-            </div>
-            <div class="stat-card">
-                <div class="title">ទឹកលុយសរុប</div>
-                <div class="value" id="masterTotalRev">$0.00</div>
-            </div>
+        <!-- បែងចែករបាយការណ៍ដាច់ពីគ្នា -->
+        <div class="type-selector" style="margin-bottom: 15px;">
+            <div class="type-tab active" id="tabReportSales" onclick="switchReportTab('sales')">📊 រាយការណ៍ទិញរឿង</div>
+            <div class="type-tab" id="tabReportClients" onclick="switchReportTab('clients')">🛍️ រាយការណ៍ទិញ Channel</div>
         </div>
-        <div class="report-list" id="masterSalesHistory"></div>
 
-        <h4 style="font-size: 12px; color: #38bdf8; margin-bottom: 6px;">👥 ស្ថានភាព Client & សុពលភាពកញ្ចប់៖</h4>
+        <div id="reportSalesSection">
+            <h4 style="font-size: 12px; color: #38bdf8; margin-bottom: 6px;">📊 ស្ថិតិអតិថិជនទិញរឿងសរុប៖</h4>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="title">អ្នកទិញរឿងសរុប</div>
+                    <div class="value" id="masterTotalMovieBuyers">0 នាក់</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">ទឹកលុយសរុបរឿង</div>
+                    <div class="value" id="masterTotalMovieRev">$0.00</div>
+                </div>
+            </div>
+            <div class="report-list" id="masterMovieSalesHistory"></div>
+        </div>
+
+        <div id="reportClientsSection" style="display: none;">
+            <h4 style="font-size: 12px; color: #38bdf8; margin-bottom: 6px;">🛍️ ស្ថិតិអតិថិជនទិញ Channel សរុប៖</h4>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="title">Channel ទិញសរុប</div>
+                    <div class="value" id="masterTotalClientBuyers">0 នាក់</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">ទឹកលុយសរុប Channel</div>
+                    <div class="value" id="masterTotalClientRev">$0.00</div>
+                </div>
+            </div>
+            <div class="report-list" id="masterClientSalesHistory"></div>
+        </div>
+
+        <h4 style="font-size: 12px; color: #38bdf8; margin-top: 10px; margin-bottom: 6px;">👥 ស្ថានភាព Client & សុពលភាពកញ្ចប់៖</h4>
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="title">Client នៅសកម្ម (Active)</div>
@@ -193,14 +241,20 @@
             </div>
         </div>
 
-        <!-- ផ្នែក Master Control កញ្ចប់ថ្ងៃ -->
+        <!-- ផ្នែកពិនិត្យ និងអនុម័ត Client ដែលរង់ចាំ (Pending Approval) -->
+        <div style="background: #0f172a; border: 1px solid #eab308; padding: 12px; border-radius: 10px; margin-bottom: 12px;">
+            <h4 style="font-size: 13px; color: #facc15; margin-bottom: 8px;">⏳ បញ្ជី Client រង់ចាំ Master អនុម័ត (Pending Approval)៖</h4>
+            <div id="masterPendingClientList"></div>
+        </div>
+
+        <!-- កំណត់កញ្ចប់តម្លៃតាមចំនួនថ្ងៃ -->
         <div style="background: #0f172a; border: 1px solid #3b82f6; padding: 12px; border-radius: 10px; margin-bottom: 12px;">
-            <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">📅 កំណត់កញ្ចប់តម្លៃតាម "ចំនួនថ្ងៃ" (៣០ថ្ងៃ គឺ VIP ស្វ័យប្រវត្តិ)៖</h4>
+            <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">📅 កំណត់កញ្ចប់តម្លៃតាម "ចំនួនថ្ងៃ" (៣០ថ្ងៃ គឺ VIP)៖</h4>
             <div id="adminPkgDaysContainer"></div>
             <button class="btn-secondary" style="background: #2563eb; width: 100%; margin-top: 5px;" onclick="addPkgDayOption()">➕ បន្ថរួមកញ្ចប់ថ្ងៃ</button>
         </div>
 
-        <!-- ផ្នែក Master Control កញ្ចប់វីដេអូ -->
+        <!-- កំណត់កញ្ចប់តម្លៃតាមចំនួនវីដេអូ -->
         <div style="background: #0f172a; border: 1px solid #3b82f6; padding: 12px; border-radius: 10px; margin-bottom: 12px;">
             <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">🎬 កំណត់កញ្ចប់តម្លៃតាម "ចំនួនវីដេអូ"៖</h4>
             <div id="adminPkgVidsContainer"></div>
@@ -226,7 +280,7 @@
 
         <hr style="border-color: #1e293b; margin: 15px 0;">
 
-        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">📋 បញ្ជី Client លេខរៀង និងសុពលភាព៖</h4>
+        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">📋 បញ្ជី Client សកម្មទាំងអស់៖</h4>
         <div id="masterClientList"></div>
 
         <hr style="border-color: #1e293b; margin: 15px 0;">
@@ -260,6 +314,7 @@
 
     <!-- Client Admin Panel -->
     <div id="clientAdminPanel" class="panel-box">
+        <button class="btn-back" onclick="closePanels()">⬅️ ថយក្រោយ</button>
         <h3>
             <span id="clientPanelTitle">🎬 Client Admin Panel</span>
             <i class="fa-solid fa-xmark close-btn" onclick="closePanels()"></i>
@@ -335,6 +390,7 @@
     <!-- Detail / Episode Modal Popup -->
     <div id="detailModal">
         <div class="payment-card">
+            <button class="btn-back" onclick="closeDetailModal()">⬅️ ថយក្រោយ</button>
             <h3 id="detailTitle" style="color: #38bdf8; font-size: 15px; margin-bottom: 10px;">ព័ត៌មានរឿង</h3>
             <div id="detailType" style="font-size: 13px; color: #22c55e; margin-bottom: 15px; font-weight: bold;"></div>
             <div id="detailDesc" style="font-size: 12px; color: #94a3b8; margin-bottom: 15px;">រឿងនេះត្រូវបានរៀបចំរួចរាល់សម្រាប់ទស្សនា។</div>
@@ -342,15 +398,15 @@
         </div>
     </div>
 
-    <!-- Payment Popup Modal -->
+    <!-- Payment Popup Modal (សម្រាប់អតិថិជនទិញរឿង) -->
     <div id="paymentModal">
         <div class="payment-card">
-            <h3 id="payTitle" style="color: #38bdf8; font-size: 15px; margin-bottom: 5px;">ទូទាត់ប្រាក់</h3>
-            <div id="payPrice" style="font-size: 18px; font-weight: bold; color: #22c55e; margin-bottom: 10px;">$5.00</div>
+            <button class="btn-back" onclick="closePaymentModal()">⬅️ ថយក្រោយ</button>
+            <h3 id="payTitle" style="color: #38bdf8; font-size: 15px; margin-bottom: 5px;">ទូទាត់ប្រាក់ទិញរឿង</h3>
+            <div id="payPrice" style="font-size: 18px; font-weight: bold; color: #22c55e; margin-bottom: 10px;">$2.00</div>
             <p style="font-size: 11px; color: #94a3b8;">សូម Scan QR Code ខាងក្រោមដើម្បីបង់ប្រាក់៖</p>
-            <img id="payQrImg" class="payment-qr" src="" alt="QR Code" onerror="this.src='https://via.placeholder.com/180?text=No+QR+Code'">
-            <button class="btn-action" style="background: #22c55e; margin-top: 10px;" onclick="confirmPaymentSuccess()">✅ បានបង់ប្រាក់រួចរាល់</button>
-            <button class="btn-action" style="background: #ef4444; margin-top: 5px;" onclick="closePaymentModal()">បិទ (Close)</button>
+            <img id="payQrImg" class="payment-qr" src="" alt="QR Code" onerror="this.src='https://via.placeholder.com/170?text=No+QR+Code'">
+            <button class="btn-action" style="background: #22c55e; margin-top: 10px;" onclick="confirmMoviePaymentSuccess()">✅ បានបង់ប្រាក់រួចរាល់</button>
         </div>
     </div>
 
@@ -370,12 +426,16 @@
         function getMasterQR() { return localStorage.getItem('pree_master_qr') || ''; }
         function getClients() { const stored = localStorage.getItem('pree_clients_list'); return stored ? JSON.parse(stored) : []; }
         function saveClients(clients) { localStorage.setItem('pree_clients_list', JSON.stringify(clients)); }
+        function getPendingClients() { const stored = localStorage.getItem('pree_pending_clients'); return stored ? JSON.parse(stored) : []; }
+        function savePendingClients(pending) { localStorage.setItem('pree_pending_clients', JSON.stringify(pending)); }
         function getMovies() { const stored = localStorage.getItem('pree_multi_movies'); return stored ? JSON.parse(stored) : []; }
         function saveMovies(movies) { localStorage.setItem('pree_multi_movies', JSON.stringify(movies)); }
-        function getSales() { const stored = localStorage.getItem('pree_sales_records'); return stored ? JSON.parse(stored) : []; }
-        function saveSales(sales) { localStorage.setItem('pree_sales_records', JSON.stringify(sales)); }
+        function getMovieSales() { const stored = localStorage.getItem('pree_movie_sales'); return stored ? JSON.parse(stored) : []; }
+        function saveMovieSales(sales) { localStorage.setItem('pree_movie_sales', JSON.stringify(sales)); }
+        function getClientSales() { const stored = localStorage.getItem('pree_client_sales'); return stored ? JSON.parse(stored) : []; }
+        function saveClientSales(sales) { localStorage.setItem('pree_client_sales', JSON.stringify(sales)); }
 
-        // កញ្ចប់ថ្ងៃ (៣០ថ្ងៃ គឺ VIP តែម្តង)
+        // កញ្ចប់ថ្ងៃ
         function getPackageDaysOptions() {
             const stored = localStorage.getItem('pree_pkg_days');
             return stored ? JSON.parse(stored) : [
@@ -387,7 +447,7 @@
         }
         function savePackageDaysOptions(options) { localStorage.setItem('pree_pkg_days', JSON.stringify(options)); }
 
-        // កញ្ចប់ចំនួនវីដេអូ
+        // កញ្ចប់វីដេអូ
         function getPackageVidsOptions() {
             const stored = localStorage.getItem('pree_pkg_vids');
             return stored ? JSON.parse(stored) : [
@@ -407,9 +467,10 @@
         let currentChannel = 'owner';
         let activePurchaseMovie = null;
         
-        let buyMode = 'days'; // 'days' or 'videos'
+        let buyMode = 'days';
         let selectedDayIndex = 0;
         let selectedVidIndex = 0;
+        let pendingRegistrationData = null;
 
         function checkAutoLogin() {
             if (currentRole === 'master') {
@@ -431,6 +492,7 @@
                 closePanels();
                 renderMasterAnalytics();
                 renderMasterClientList();
+                renderMasterPendingClients();
                 renderAdminPackageDaysList();
                 renderAdminPackageVidsList();
                 document.getElementById('ownerQrInput').value = getMasterQR();
@@ -463,6 +525,25 @@
             } else {
                 closePanels();
                 document.getElementById('loginPanel').style.display = 'block';
+            }
+        }
+
+        function switchReportTab(tabName) {
+            const btnSales = document.getElementById('tabReportSales');
+            const btnClients = document.getElementById('tabReportClients');
+            const secSales = document.getElementById('reportSalesSection');
+            const secClients = document.getElementById('reportClientsSection');
+
+            if (tabName === 'sales') {
+                btnSales.className = 'type-tab active';
+                btnClients.className = 'type-tab';
+                secSales.style.display = 'block';
+                secClients.style.display = 'none';
+            } else {
+                btnSales.className = 'type-tab';
+                btnClients.className = 'type-tab active';
+                secSales.style.display = 'none';
+                secClients.style.display = 'block';
             }
         }
 
@@ -539,7 +620,6 @@
         function saveOwnerPackagesAll() {
             if (currentRole !== 'master') return alert('គ្មានសិទ្ធិអនុវត្ត!');
             
-            // Save Days
             const dayPkgs = getPackageDaysOptions();
             const updatedDays = [];
             for (let i = 0; i < dayPkgs.length; i++) {
@@ -551,7 +631,6 @@
             }
             savePackageDaysOptions(updatedDays);
 
-            // Save Vids
             const vidPkgs = getPackageVidsOptions();
             const updatedVids = [];
             for (let i = 0; i < vidPkgs.length; i++) {
@@ -567,27 +646,49 @@
         }
 
         function renderMasterAnalytics() {
-            const sales = getSales();
-            let totalRev = 0;
-            const historyDiv = document.getElementById('masterSalesHistory');
-            historyDiv.innerHTML = '';
+            // Movie Sales
+            const movieSales = getMovieSales();
+            let totalMovieRev = 0;
+            const mSalesDiv = document.getElementById('masterMovieSalesHistory');
+            mSalesDiv.innerHTML = '';
 
-            if (sales.length === 0) {
-                historyDiv.innerHTML = '<div style="color: #64748b; text-align:center;">មិនទាន់មានការទិញរឿងនៅឡើយទេ</div>';
+            if (movieSales.length === 0) {
+                mSalesDiv.innerHTML = '<div style="color: #64748b; text-align:center;">មិនទាន់មានការទិញរឿងនៅឡើយទេ</div>';
             } else {
-                sales.forEach(s => {
+                movieSales.forEach(s => {
                     const pNum = parseFloat(s.price.replace('$', '')) || 0;
-                    totalRev += pNum;
+                    totalMovieRev += pNum;
                     const item = document.createElement('div');
                     item.className = 'report-item';
                     item.innerHTML = `<span><strong>${s.title}</strong> (${s.channelName})</span> <span style="color:#22c55e;">${s.price}</span>`;
-                    historyDiv.appendChild(item);
+                    mSalesDiv.appendChild(item);
                 });
             }
+            document.getElementById('masterTotalMovieBuyers').innerText = `${movieSales.length} នាក់`;
+            document.getElementById('masterTotalMovieRev').innerText = `$${totalMovieRev.toFixed(2)}`;
 
-            document.getElementById('masterTotalBuyers').innerText = `${sales.length} នាក់`;
-            document.getElementById('masterTotalRev').innerText = `$${totalRev.toFixed(2)}`;
+            // Client Sales
+            const clientSales = getClientSales();
+            let totalClientRev = 0;
+            const cSalesDiv = document.getElementById('masterClientSalesHistory');
+            cSalesDiv.innerHTML = '';
 
+            if (clientSales.length === 0) {
+                cSalesDiv.innerHTML = '<div style="color: #64748b; text-align:center;">មិនទាន់មានការទិញ Channel នៅឡើយទេ</div>';
+            } else {
+                clientSales.forEach(s => {
+                    const pNum = parseFloat(s.price.replace('$', '')) || 0;
+                    totalClientRev += pNum;
+                    const item = document.createElement('div');
+                    item.className = 'report-item';
+                    item.innerHTML = `<span><strong>${s.clientName}</strong> (${s.pkgTitle})</span> <span style="color:#22c55e;">${s.price}</span>`;
+                    cSalesDiv.appendChild(item);
+                });
+            }
+            document.getElementById('masterTotalClientBuyers').innerText = `${clientSales.length} នាក់`;
+            document.getElementById('masterTotalClientRev').innerText = `$${totalClientRev.toFixed(2)}`;
+
+            // Active / Expired
             const clients = getClients();
             const now = Date.now();
             let activeCount = 0;
@@ -606,7 +707,7 @@
         }
 
         function renderClientAnalytics(clientId) {
-            const sales = getSales().filter(s => s.channel === clientId);
+            const sales = getMovieSales().filter(s => s.channel === clientId);
             let totalRev = 0;
             const historyDiv = document.getElementById('clientSalesHistory');
             historyDiv.innerHTML = '';
@@ -687,7 +788,7 @@
             selectedVidIndex = 0;
             updateBuyModeTabs();
             renderPkgOptionsForUser();
-            document.getElementById('buyChannelModal').style.display = 'flex';
+            document.getElementById('buyChannelModal').style.display = 'block';
         }
 
         function switchBuyMode(mode) {
@@ -762,55 +863,156 @@
             }
         }
 
-        function submitRegisterClient() {
+        function proceedToPayment() {
             const name = document.getElementById('regClientName').value.trim();
             const pin = document.getElementById('regClientPin').value.trim();
 
             if (!name || !pin) return alert('សូមបំពេញឈ្មោះ និងកំណត់ PIN របស់អ្នក!');
 
-            const clients = getClients();
-            const clientId = 'client_' + Date.now();
-            let expireAt = 0;
             let pTitle = '';
             let pPrice = '';
+            let durationDays = 5;
 
             if (buyMode === 'days') {
                 const pkgs = getPackageDaysOptions();
                 const selected = pkgs[selectedDayIndex] || pkgs[0];
-                expireAt = Date.now() + (selected.days * 24 * 60 * 60 * 1000);
+                durationDays = selected.days;
                 const isVipSel = (selected.days === 30);
-                pTitle = isVipSel ? 'VIP' : `${selected.days} ថ្ងៃ`;
+                pTitle = isVipSel ? 'VIP (៣០ថ្ងៃ)' : `${selected.days} ថ្ងៃ`;
                 pPrice = selected.price;
             } else {
                 const pkgs = getPackageVidsOptions();
                 const selected = pkgs[selectedVidIndex] || pkgs[0];
-                expireAt = Date.now() + (30 * 24 * 60 * 60 * 1000); // Default 30 days for video package
+                durationDays = 30; // Default 30 days access
                 pTitle = `${selected.count} វីដេអូ`;
                 pPrice = selected.price;
             }
 
-            clients.push({ 
-                id: clientId, 
-                name: name, 
-                pin: pin, 
-                qr: '', 
-                expireAt: expireAt 
+            pendingRegistrationData = { name, pin, durationDays, pTitle, pPrice };
+
+            document.getElementById('receiptPkgInfo').innerText = `កញ្ចប់៖ ${pTitle} (${name})`;
+            document.getElementById('receiptPriceInfo').innerText = pPrice;
+            document.getElementById('regQrImg').src = getMasterQR() || 'https://via.placeholder.com/170?text=No+Master+QR';
+
+            closePanels();
+            document.getElementById('receiptModal').style.display = 'flex';
+        }
+
+        function backToBuyModal() {
+            document.getElementById('receiptModal').style.display = 'none';
+            document.getElementById('buyChannelModal').style.display = 'block';
+        }
+
+        function submitClientOrderWithReceipt() {
+            const fileInput = document.getElementById('regSlipFile');
+            const slipLink = document.getElementById('regSlipLink').value.trim();
+
+            handleImageUpload(fileInput, slipLink, function(slipUrl) {
+                if (!pendingRegistrationData) return;
+
+                const pending = getPendingClients();
+                const pendingId = 'pending_' + Date.now();
+
+                pending.push({
+                    id: pendingId,
+                    name: pendingRegistrationData.name,
+                    pin: pendingRegistrationData.pin,
+                    durationDays: pendingRegistrationData.durationDays,
+                    pkgTitle: pendingRegistrationData.pTitle,
+                    price: pendingRegistrationData.pPrice,
+                    slip: slipUrl,
+                    date: new Date().toLocaleString()
+                });
+
+                savePendingClients(pending);
+
+                document.getElementById('receiptModal').style.display = 'none';
+                document.getElementById('regClientName').value = '';
+                document.getElementById('regClientPin').value = '';
+                document.getElementById('regSlipLink').value = '';
+                fileInput.value = '';
+
+                alert('បានបញ្ជូន Slip និងសំណើបង្កើត Channel រួចរាល់! សូមរង់ចាំ Master ពិនិត្យ និងអនុម័ត។');
+            });
+        }
+
+        function renderMasterPendingClients() {
+            if (currentRole !== 'master') return;
+            const pending = getPendingClients();
+            const listDiv = document.getElementById('masterPendingClientList');
+            listDiv.innerHTML = '';
+
+            if (pending.length === 0) {
+                listDiv.innerHTML = '<div style="color: #64748b; font-size: 11px;">គ្មាន Client រង់ចាំអនុម័តទេ</div>';
+                return;
+            }
+
+            pending.forEach((p) => {
+                const item = document.createElement('div');
+                item.className = 'client-item';
+                item.innerHTML = `
+                    <div style="margin-bottom: 6px;">
+                        <strong>${p.name}</strong> (${p.pkgTitle}) - <span style="color:#22c55e;">${p.price}</span><br>
+                        PIN: <span style="color: #38bdf8;">${p.pin}</span> | កាលបរិច្ឆេទ៖ ${p.date}<br>
+                        <a href="${p.slip}" target="_blank" style="color: #38bdf8; font-size: 11px; text-decoration: underline;">🔍 មើលរូបភាព Slip បង់ប្រាក់</a>
+                    </div>
+                    <div style="display: flex; gap: 5px;">
+                        <button class="btn-secondary" style="background:#22c55e; flex:1;" onclick="approveClient('${p.id}')">✅ អនុម័ត (Approve)</button>
+                        <button class="btn-secondary" style="background:#ef4444;" onclick="rejectClient('${p.id}')">❌ បដិសេធ</button>
+                    </div>
+                `;
+                listDiv.appendChild(item);
+            });
+        }
+
+        function approveClient(pendingId) {
+            let pending = getPendingClients();
+            const p = pending.find(x => x.id === pendingId);
+            if (!p) return;
+
+            // Remove from pending
+            pending = pending.filter(x => x.id !== pendingId);
+            savePendingClients(pending);
+
+            // Add to active clients
+            const clients = getClients();
+            const clientId = 'client_' + Date.now();
+            const expireAt = Date.now() + (p.durationDays * 24 * 60 * 60 * 1000);
+
+            clients.push({
+                id: clientId,
+                name: p.name,
+                pin: p.pin,
+                qr: '',
+                expireAt: expireAt
             });
             saveClients(clients);
 
-            const masterQr = getMasterQR();
-            if (masterQr) {
-                document.getElementById('payTitle').innerText = `ទូទាត់ទិញ Channel (${pTitle})`;
-                document.getElementById('payPrice').innerText = pPrice;
-                document.getElementById('payQrImg').src = masterQr;
-                document.getElementById('paymentModal').style.display = 'flex';
-            }
+            // Record Client Sale
+            const cSales = getClientSales();
+            cSales.push({
+                id: Date.now(),
+                clientName: p.name,
+                pkgTitle: p.pkgTitle,
+                price: p.price,
+                date: new Date().toLocaleDateString()
+            });
+            saveClientSales(cSales);
 
-            document.getElementById('regClientName').value = '';
-            document.getElementById('regClientPin').value = '';
-            closePanels();
+            renderMasterPendingClients();
+            renderMasterClientList();
+            renderMasterAnalytics();
             renderTabs();
-            alert(`បានបង្កើត Channel "${name}" ជោគជ័យ! សូម Scan QR បង់ប្រាក់ រួចប្រើ PIN (${pin}) ដើម្បី Login។`);
+            alert(`បានអនុម័តបង្កើត Channel "${p.name}" ជោគជ័យ!');
+        }
+
+        function rejectClient(pendingId) {
+            if (confirm('តើបងពិតជាចង់បដិសេធសំណើនេះមែនទេ?')) {
+                let pending = getPendingClients();
+                pending = pending.filter(x => x.id !== pendingId);
+                savePendingClients(pending);
+                renderMasterPendingClients();
+            }
         }
 
         function changeMasterPin() {
@@ -862,7 +1064,7 @@
             listDiv.innerHTML = '';
 
             if (clients.length === 0) {
-                listDiv.innerHTML = '<div style="color: #64748b; font-size: 11px;">មិនទាន់មាន Client មកទិញនៅឡើយទេ</div>';
+                listDiv.innerHTML = '<div style="color: #64748b; font-size: 11px;">មិនទាន់មាន Client សកម្មនៅឡើយទេ</div>';
                 return;
             }
 
@@ -918,6 +1120,7 @@
         function closePanels() {
             document.getElementById('loginPanel').style.display = 'none';
             document.getElementById('buyChannelModal').style.display = 'none';
+            document.getElementById('receiptModal').style.display = 'none';
             document.getElementById('masterAdminPanel').style.display = 'none';
             document.getElementById('clientAdminPanel').style.display = 'none';
         }
@@ -1008,7 +1211,7 @@
             } else if (textInputVal) {
                 callback(textInputVal);
             } else {
-                callback('https://via.placeholder.com/300x450?text=Movie+Poster');
+                callback('https://via.placeholder.com/300x450?text=Poster');
             }
         }
 
@@ -1127,11 +1330,11 @@
             document.getElementById('paymentModal').style.display = 'flex';
         }
 
-        function confirmPaymentSuccess() {
+        function confirmMoviePaymentSuccess() {
             if (!activePurchaseMovie) return;
 
-            const sales = getSales();
-            sales.push({
+            const movieSales = getMovieSales();
+            movieSales.push({
                 id: Date.now(),
                 title: activePurchaseMovie.title,
                 price: activePurchaseMovie.price,
@@ -1140,8 +1343,8 @@
                 date: new Date().toLocaleDateString()
             });
 
-            saveSales(sales);
-            alert('ការទូទាត់ត្រូវបានកត់ត្រាចូលក្នុងប្រព័ន្ធជោគជ័យ!');
+            saveMovieSales(movieSales);
+            alert('ការទូទាត់ប្រាក់ទិញរឿងត្រូវបានកត់ត្រាចូលក្នុងប្រព័ន្ធជោគជ័យ!');
             closePaymentModal();
         }
 
