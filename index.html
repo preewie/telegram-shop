@@ -113,8 +113,8 @@
             <div style="font-size: 10px; color: #94a3b8;">ទិញសេវាកម្មដើម្បីបាន Channel & PIN ផ្ទាល់ខ្លួន</div>
         </div>
         <div style="display: flex; gap: 6px;">
-            <button class="btn-invite" onclick="inviteFriends()">
-                <i class="fa-solid fa-user-plus"></i> Invite
+            <button class="btn-invite" id="inviteBtnMain" onclick="copyInviteLink()" style="display:none;">
+                <i class="fa-solid fa-user-plus"></i> Invite Link
             </button>
             <button class="btn-buy-channel" onclick="openBuyChannelModal()">
                 <i class="fa-solid fa-plus-circle"></i> ទិញ Channel
@@ -140,6 +140,10 @@
 
         <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;" id="buyModeLabel">សូមចុចជ្រើសរើសកញ្ចប់រយៈពេលថ្ងៃខាងក្រោម៖</div>
         <div class="pkg-option-grid" id="pkgOptionContainer"></div>
+
+        <div id="promoNotice" style="display:none; background:rgba(34,197,94,0.15); border:1px solid #22c55e; padding:8px; border-radius:8px; font-size:11px; color:#22c55e; margin-bottom:10px; text-align:center;">
+            🎉 បានបញ្ចុះតម្លៃស្វ័យប្រវត្តិ និងថែមថ្ងៃពិសេសពី Link Invite!
+        </div>
 
         <div class="pkg-card" style="margin-top: 10px;">
             <div class="pkg-title" id="pkgTitleDisplay">5 ថ្ងៃ</div>
@@ -208,6 +212,7 @@
         <div class="type-selector" style="margin-bottom: 15px;">
             <div class="type-tab active" id="tabReportSales" onclick="switchReportTab('sales')">📊 រាយការណ៍ទិញរឿង</div>
             <div class="type-tab" id="tabReportClients" onclick="switchReportTab('clients')">🛍️ រាយការណ៍ទិញ Channel</div>
+            <div class="type-tab" id="tabReportInvite" onclick="switchReportTab('invite')">🔗 ស្ថិតិ Referrals</div>
         </div>
 
         <div id="reportSalesSection">
@@ -238,6 +243,35 @@
                 </div>
             </div>
             <div class="report-list" id="masterClientSalesHistory"></div>
+        </div>
+
+        <!-- ផ្នែកស្ថិតិ Referral / Invite -->
+        <div id="reportInviteSection" style="display: none;">
+            <h4 style="font-size: 12px; color: #38bdf8; margin-bottom: 6px;">🔗 ស្ថិតិ Client Invite & Auto Discount៖</h4>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="title">ចំនួន Client Invite សរុប</div>
+                    <div class="value" id="refTotalInvites" style="color:#38bdf8;">0 នាក់</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">ចំណូលសរុបពី Referral</div>
+                    <div class="value" id="refTotalRev" style="color:#22c55e;">$0.00</div>
+                </div>
+            </div>
+            <div class="report-list" id="masterReferralReportList"></div>
+            
+            <div style="background: #0f172a; border: 1px solid #0284c7; padding: 12px; border-radius: 10px; margin-top: 10px;">
+                <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">⚙️ កំណត់ប្រូម៉ូសិន Auto Discount & Bonus Days៖</h4>
+                <div class="form-group">
+                    <label>១. ភាគរយបញ្ចុះតម្លៃ (%) សម្រាប់ Link Invite៖</label>
+                    <input type="number" id="masterDiscountPercent" class="form-control" value="10" placeholder="ឧ. 10">
+                </div>
+                <div class="form-group">
+                    <label>២. ចំនួនថ្ងៃបន្ថែម (Extra Days) ពេលចូលតាម Link Invite៖</label>
+                    <input type="number" id="masterBonusDays" class="form-control" value="2" placeholder="ឧ. 2">
+                </div>
+                <button class="btn-action" style="background:#0284c7;" onclick="savePromoSettings()">💾 រក្សាទុកការកំណត់ប្រូម៉ូសិន</button>
+            </div>
         </div>
 
         <h4 style="font-size: 12px; color: #38bdf8; margin-top: 10px; margin-bottom: 6px;">👥 ស្ថានភាព Client & សុពលភាពកញ្ចប់៖</h4>
@@ -311,6 +345,12 @@
         <div id="clientStatusBox" style="background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 12px;">
             <div>ស្ថានភាពគណនី៖ <strong style="color: #22c55e;" id="clientStatusText">សកម្ម (Active)</strong></div>
             <div>ថ្ងៃផុតកំណត់៖ <span id="clientExpireDate">--/--/----</span></div>
+        </div>
+
+        <div style="background: #0f172a; border: 1px solid #0284c7; padding: 12px; border-radius: 8px; margin-bottom: 12px; font-size: 12px;">
+            <div style="color: #38bdf8; font-weight: bold; margin-bottom: 4px;">🔗 Link Invite ផ្ទាល់ខ្លួនរបស់អ្នក៖</div>
+            <input type="text" id="clientMyInviteLink" class="form-control" readonly style="margin-bottom: 6px; font-size: 11px;">
+            <button class="btn-secondary" style="background: #0284c7; width: 100%;" onclick="copyClientInviteLink()">📋 Copy Link Invite របស់ខ្ញុំ</button>
         </div>
 
         <h4 style="font-size: 12px; color: #38bdf8; margin-bottom: 6px;">📊 ប្រវត្តិអតិថិជនទិញរឿងក្នុង Channel ខ្ញុំ៖</h4>
@@ -467,16 +507,59 @@
             } catch (e) {}
         }, { passive: true });
 
-        // មុខងារ Invite អតិថិជន Telegram
-        function inviteFriends() {
-            dismissKeyboard();
-            const botUsername = 'Preeaiwie_bot'; 
-            const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}&text=${encodeURIComponent('សូមអញ្ជើញមកទស្សនានិងទិញសេវាកម្ម Mini App របស់ PREE WIE Shop ទាំងអស់គ្នា!')}`;
-            if (tg && tg.openTelegramLink) {
-                tg.openTelegramLink(inviteUrl);
+        // មុខងារ Referral & Link Invite Tracking
+        let currentInviterId = null;
+        function checkReferral() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref') || (tg.initDataUnsafe && tg.initDataUnsafe.start_param);
+            if (refCode) {
+                currentInviterId = refCode.replace('ref_', '');
+                let refData = getReferrals();
+                if (!refData[currentInviterId]) {
+                    refData[currentInviterId] = { clicks: 0, paidCount: 0, totalRev: 0, clients: [] };
+                }
+                refData[currentInviterId].clicks += 1;
+                saveReferrals(refData);
+                document.getElementById('inviteBtnMain').style.display = 'flex';
             } else {
-                window.open(inviteUrl, '_blank');
+                document.getElementById('inviteBtnMain').style.display = 'flex';
             }
+        }
+        checkReferral();
+
+        function getReferrals() {
+            const stored = localStorage.getItem('pree_referrals_data');
+            return stored ? JSON.parse(stored) : {};
+        }
+        function saveReferrals(data) {
+            localStorage.setItem('pree_referrals_data', JSON.stringify(data));
+        }
+
+        function copyInviteLink() {
+            dismissKeyboard();
+            const myId = loggedInClientId || 'master_owner';
+            const botUsername = 'Preeaiwie_bot';
+            const link = `https://t.me/${botUsername}?start=ref_${myId}`;
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(link);
+                alert('បាន Copy Link Invite រួចរាល់! ផ្ញើជូនមិត្តភក្តិដើម្បីรับ Auto Discount:\n' + link);
+            } else {
+                prompt('សូម Copy Link ខាងក្រោម៖', link);
+            }
+        }
+
+        function getPromoSettings() {
+            const stored = localStorage.getItem('pree_promo_settings');
+            return stored ? JSON.parse(stored) : { discountPercent: 10, bonusDays: 2 };
+        }
+
+        function savePromoSettings() {
+            dismissKeyboard();
+            const dPercent = parseFloat(document.getElementById('masterDiscountPercent').value) || 0;
+            const bDays = parseInt(document.getElementById('masterBonusDays').value) || 0;
+            localStorage.setItem('pree_promo_settings', JSON.stringify({ discountPercent: dPercent, bonusDays: bDays }));
+            alert('បានរក្សាទុកការកំណត់ប្រូម៉ូសិន Auto Discount ជោគជ័យ!');
         }
 
         function getMasterPin() { return localStorage.getItem('pree_master_pin') || '9999'; }
@@ -492,26 +575,26 @@
         function getClientSales() { const stored = localStorage.getItem('pree_client_sales'); return stored ? JSON.parse(stored) : []; }
         function saveClientSales(sales) { localStorage.setItem('pree_client_sales', JSON.stringify(sales)); }
 
-        // កញ្ចប់ថ្ងៃ - Dynamic Realtime Sync
+        // កញ្ចប់ថ្ងៃ
         function getPackageDaysOptions() {
             const stored = localStorage.getItem('pree_pkg_days');
             return stored ? JSON.parse(stored) : [
-                { id: 1, days: 5, price: "$1.50" },
-                { id: 2, days: 10, price: "$2.10" },
-                { id: 3, days: 20, price: "$2.60" },
-                { id: 4, days: 30, price: "$3.50" }
+                { id: 1, days: 5, price: "$3.00" },
+                { id: 2, days: 10, price: "$5.00" },
+                { id: 3, days: 20, price: "$10.00" },
+                { id: 4, days: 30, price: "$15.00" }
             ];
         }
         function savePackageDaysOptions(options) { localStorage.setItem('pree_pkg_days', JSON.stringify(options)); }
 
-        // កញ្ចប់វីដេអូ - Dynamic Realtime Sync
+        // កញ្ចប់វីដេអូ
         function getPackageVidsOptions() {
             const stored = localStorage.getItem('pree_pkg_vids');
             return stored ? JSON.parse(stored) : [
-                { id: 101, count: 5, price: "$1.50" },
-                { id: 102, count: 10, price: "$2.10" },
-                { id: 103, count: 20, price: "$2.60" },
-                { id: 104, count: 30, price: "$3.50" }
+                { id: 101, count: 5, price: "$3.00" },
+                { id: 102, count: 10, price: "$5.00" },
+                { id: 103, count: 20, price: "$10.00" },
+                { id: 104, count: 30, price: "$15.00" }
             ];
         }
         function savePackageVidsOptions(options) { localStorage.setItem('pree_pkg_vids', JSON.stringify(options)); }
@@ -590,6 +673,11 @@
                 renderMasterPendingClients();
                 renderAdminPackageDaysList();
                 renderAdminPackageVidsList();
+                
+                const promo = getPromoSettings();
+                document.getElementById('masterDiscountPercent').value = promo.discountPercent;
+                document.getElementById('masterBonusDays').value = promo.bonusDays;
+
                 document.getElementById('ownerQrInput').value = getMasterQR();
                 document.getElementById('masterAdminPanel').style.display = 'block';
             } else if (currentRole === 'client' && loggedInClientId) {
@@ -600,6 +688,9 @@
                     document.getElementById('clientPanelTitle').innerText = `🎬 Admin (${clientMatch.name})`;
                     document.getElementById('clientQrInput').value = clientMatch.qr || '';
                     
+                    const botUsername = 'Preeaiwie_bot';
+                    document.getElementById('clientMyInviteLink').value = `https://t.me/${botUsername}?start=ref_${clientMatch.id}`;
+
                     const expDateStr = clientMatch.expireAt ? new Date(clientMatch.expireAt).toLocaleDateString() : 'គ្មានកំណត់';
                     document.getElementById('clientExpireDate').innerText = expDateStr;
 
@@ -623,22 +714,43 @@
             }
         }
 
+        function copyClientInviteLink() {
+            dismissKeyboard();
+            const linkInput = document.getElementById('clientMyInviteLink');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(linkInput.value);
+                alert('បាន Copy Link Invite ផ្ទាល់ខ្លួនរួចរាល់!');
+            } else {
+                linkInput.select();
+                document.execCommand('copy');
+                alert('បាន Copy Link Invite ផ្ទាល់ខ្លួនរួចរាល់!');
+            }
+        }
+
         function switchReportTab(tabName) {
             const btnSales = document.getElementById('tabReportSales');
             const btnClients = document.getElementById('tabReportClients');
+            const btnInvite = document.getElementById('tabReportInvite');
             const secSales = document.getElementById('reportSalesSection');
             const secClients = document.getElementById('reportClientsSection');
+            const secInvite = document.getElementById('reportInviteSection');
+
+            btnSales.className = 'type-tab';
+            btnClients.className = 'type-tab';
+            btnInvite.className = 'type-tab';
+            secSales.style.display = 'none';
+            secClients.style.display = 'none';
+            secInvite.style.display = 'none';
 
             if (tabName === 'sales') {
                 btnSales.className = 'type-tab active';
-                btnClients.className = 'type-tab';
                 secSales.style.display = 'block';
-                secClients.style.display = 'none';
-            } else {
-                btnSales.className = 'type-tab';
+            } else if (tabName === 'clients') {
                 btnClients.className = 'type-tab active';
-                secSales.style.display = 'none';
                 secClients.style.display = 'block';
+            } else {
+                btnInvite.className = 'type-tab active';
+                secInvite.style.display = 'block';
             }
         }
 
@@ -666,7 +778,7 @@
 
         function addPkgDayOption() {
             const pkgs = getPackageDaysOptions();
-            pkgs.push({ id: Date.now(), days: 7, price: "$1.00" });
+            pkgs.push({ id: Date.now(), days: 7, price: "$3.00" });
             savePackageDaysOptions(pkgs);
             renderAdminPackageDaysList();
         }
@@ -700,7 +812,7 @@
 
         function addPkgVidOption() {
             const pkgs = getPackageVidsOptions();
-            pkgs.push({ id: Date.now(), count: 15, price: "$2.00" });
+            pkgs.push({ id: Date.now(), count: 15, price: "$5.00" });
             savePackageVidsOptions(pkgs);
             renderAdminPackageVidsList();
         }
@@ -775,14 +887,40 @@
                     totalClientRev += pNum;
                     const item = document.createElement('div');
                     item.className = 'report-item';
-                    item.innerHTML = `<span><strong>${s.clientName}</strong> (${s.pkgTitle})</span> <span style="color:#22c55e;">${s.price}</span>`;
+                    item.innerHTML = `<span><strong>${s.clientName}</strong> (${s.pkgTitle}) ${s.inviter ? '<span style="color:#eab308;">[Ref: '+s.inviter+']</span>':''}</span> <span style="color:#22c55e;">${s.price}</span>`;
                     cSalesDiv.appendChild(item);
                 });
             }
             document.getElementById('masterTotalClientBuyers').innerText = `${clientSales.length} នាក់`;
             document.getElementById('masterTotalClientRev').innerText = `$${totalClientRev.toFixed(2)}`;
 
+            // ស្ថិតិ Referral Invite List
+            const refData = getReferrals();
+            let totalRefInvites = 0;
+            let totalRefRev = 0;
+            const refListDiv = document.getElementById('masterReferralReportList');
+            refListDiv.innerHTML = '';
+
             const clients = getClients();
+            let keys = Object.keys(refData);
+            if (keys.length === 0) {
+                refListDiv.innerHTML = '<div style="color: #64748b; text-align:center; font-size:11px;">មិនទាន់មាន Client ណាបាន Invite មនុស្សទេ</div>';
+            } else {
+                keys.forEach(invId => {
+                    let info = refData[invId];
+                    let invName = invId === 'master_owner' ? 'Master (Admin)' : (clients.find(c => c.id === invId)?.name || invId);
+                    totalRefInvites += info.paidCount || 0;
+                    totalRefRev += info.totalRev || 0;
+
+                    let div = document.createElement('div');
+                    div.className = 'report-item';
+                    div.innerHTML = `<span><strong>${invName}</strong> (Invite បាន: ${info.paidCount || 0} នាក់)</span> <span style="color:#22c55e;">$${(info.totalRev || 0).toFixed(2)}</span>`;
+                    refListDiv.appendChild(div);
+                });
+            }
+            document.getElementById('refTotalInvites').innerText = `${totalRefInvites} នាក់`;
+            document.getElementById('refTotalRev').innerText = `$${totalRefRev.toFixed(2)}`;
+
             const now = Date.now();
             let activeCount = 0;
             let expiredCount = 0;
@@ -885,6 +1023,13 @@
             buyMode = 'days';
             selectedDayIndex = 0;
             selectedVidIndex = 0;
+            
+            if (currentInviterId) {
+                document.getElementById('promoNotice').style.display = 'block';
+            } else {
+                document.getElementById('promoNotice').style.display = 'none';
+            }
+
             updateBuyModeTabs();
             renderPkgOptionsForUser();
             document.getElementById('buyChannelModal').style.display = 'block';
@@ -912,6 +1057,17 @@
             }
         }
 
+        // Auto Discount Calculator តាម Master កំណត់
+        function calculateAutoDiscountPrice(rawPrice) {
+            if (!currentInviterId) return rawPrice;
+            const promo = getPromoSettings();
+            if (!promo.discountPercent || promo.discountPercent <= 0) return rawPrice;
+
+            let num = parseFloat(rawPrice.replace('$', '')) || 0;
+            let discounted = num - (num * (promo.discountPercent / 100));
+            return `$${discounted.toFixed(2)}`;
+        }
+
         function renderPkgOptionsForUser() {
             const container = document.getElementById('pkgOptionContainer');
             container.innerHTML = '';
@@ -924,10 +1080,11 @@
                 pkgs.forEach((p, idx) => {
                     const isVip = (p.days === 30);
                     const titleStr = isVip ? 'VIP' : `${p.days} ថ្ងៃ`;
+                    const finalPrice = calculateAutoDiscountPrice(p.price);
 
                     const btn = document.createElement('div');
                     btn.className = `pkg-option-btn ${selectedDayIndex === idx ? 'selected' : ''}`;
-                    btn.innerHTML = `<strong>${titleStr}</strong><br><span style="color:#22c55e;">${p.price}</span>`;
+                    btn.innerHTML = `<strong>${titleStr}</strong><br><span style="color:#22c55e;">${finalPrice}</span>`;
                     btn.onclick = () => {
                         selectedDayIndex = idx;
                         renderPkgOptionsForUser();
@@ -938,7 +1095,7 @@
                 const selected = pkgs[selectedDayIndex];
                 const isVipSel = (selected.days === 30);
                 document.getElementById('pkgTitleDisplay').innerText = isVipSel ? 'VIP' : `${selected.days} ថ្ងៃ`;
-                document.getElementById('pkgPriceDisplay').innerText = selected.price;
+                document.getElementById('pkgPriceDisplay').innerText = calculateAutoDiscountPrice(selected.price);
 
             } else {
                 const pkgs = getPackageVidsOptions();
@@ -946,9 +1103,10 @@
                 if (selectedVidIndex >= pkgs.length) selectedVidIndex = 0;
 
                 pkgs.forEach((p, idx) => {
+                    const finalPrice = calculateAutoDiscountPrice(p.price);
                     const btn = document.createElement('div');
                     btn.className = `pkg-option-btn ${selectedVidIndex === idx ? 'selected' : ''}`;
-                    btn.innerHTML = `<strong>${p.count} វីដេអូ</strong><br><span style="color:#22c55e;">${p.price}</span>`;
+                    btn.innerHTML = `<strong>${p.count} វីដេអូ</strong><br><span style="color:#22c55e;">${finalPrice}</span>`;
                     btn.onclick = () => {
                         selectedVidIndex = idx;
                         renderPkgOptionsForUser();
@@ -958,7 +1116,7 @@
 
                 const selected = pkgs[selectedVidIndex];
                 document.getElementById('pkgTitleDisplay').innerText = `${selected.count} វីដេអូ`;
-                document.getElementById('pkgPriceDisplay').innerText = selected.price;
+                document.getElementById('pkgPriceDisplay').innerText = calculateAutoDiscountPrice(selected.price);
             }
         }
 
@@ -972,23 +1130,30 @@
             let pTitle = '';
             let pPrice = '';
             let durationDays = 5;
+            const promo = getPromoSettings();
 
             if (buyMode === 'days') {
                 const pkgs = getPackageDaysOptions();
                 const selected = pkgs[selectedDayIndex] || pkgs[0];
                 durationDays = selected.days;
+                if (currentInviterId) durationDays += (promo.bonusDays || 0);
+
                 const isVipSel = (selected.days === 30);
                 pTitle = isVipSel ? 'VIP (៣០ថ្ងៃ)' : `${selected.days} ថ្ងៃ`;
-                pPrice = selected.price;
+                if (currentInviterId && promo.bonusDays) pTitle += ` (+${promo.bonusDays}ថ្ងៃថែម)`;
+                pPrice = calculateAutoDiscountPrice(selected.price);
             } else {
                 const pkgs = getPackageVidsOptions();
                 const selected = pkgs[selectedVidIndex] || pkgs[0];
                 durationDays = 30;
+                if (currentInviterId) durationDays += (promo.bonusDays || 0);
+
                 pTitle = `${selected.count} វីដេអូ`;
-                pPrice = selected.price;
+                if (currentInviterId && promo.bonusDays) pTitle += ` (+${promo.bonusDays}ថ្ងៃថែម)`;
+                pPrice = calculateAutoDiscountPrice(selected.price);
             }
 
-            pendingRegistrationData = { name, pin, durationDays, pTitle, pPrice };
+            pendingRegistrationData = { name, pin, durationDays, pTitle, pPrice, inviter: currentInviterId };
 
             document.getElementById('receiptPkgInfo').innerText = `កញ្ចប់៖ ${pTitle} (${name})`;
             document.getElementById('receiptPriceInfo').innerText = pPrice;
@@ -1022,6 +1187,7 @@
                     durationDays: pendingRegistrationData.durationDays,
                     pkgTitle: pendingRegistrationData.pTitle,
                     price: pendingRegistrationData.pPrice,
+                    inviter: pendingRegistrationData.inviter,
                     slip: slipUrl,
                     date: new Date().toLocaleString()
                 });
@@ -1034,7 +1200,7 @@
                 document.getElementById('regSlipLink').value = '';
                 fileInput.value = '';
 
-                alert('បានបញ្ជូន Slip និងសំណើបង្កើត Channel រួចរាល់! សូមរង់ចាំ Master ពិនិត្យ និងអនុម័ត។');
+                alert('បានបញ្ជូន Slip និងសំណើបង្កើត Channel រួចរាល់! សូមរង់ចាំ Master អនុម័ត។');
             });
         }
 
@@ -1054,7 +1220,7 @@
                 item.className = 'client-item';
                 item.innerHTML = `
                     <div style="margin-bottom: 6px;">
-                        <strong>${p.name}</strong> (${p.pkgTitle}) - <span style="color:#22c55e;">${p.price}</span><br>
+                        <strong>${p.name}</strong> (${p.pkgTitle}) ${p.inviter ? '<span style="color:#eab308;">[Ref: '+p.inviter+']</span>':''} - <span style="color:#22c55e;">${p.price}</span><br>
                         PIN: <span style="color: #38bdf8;">${p.pin}</span> | កាលបរិច្ឆេទ៖ ${p.date}<br>
                         <a href="${p.slip}" target="_blank" style="color: #38bdf8; font-size: 11px; text-decoration: underline;">🔍 មើលរូបភាព Slip បង់ប្រាក់</a>
                     </div>
@@ -1094,9 +1260,22 @@
                 clientName: p.name,
                 pkgTitle: p.pkgTitle,
                 price: p.price,
+                inviter: p.inviter || null,
                 date: new Date().toLocaleDateString()
             });
             saveClientSales(cSales);
+
+            // កត់ត្រាចូល Referral Stats របស់ Inviter
+            if (p.inviter) {
+                let refData = getReferrals();
+                if (!refData[p.inviter]) {
+                    refData[p.inviter] = { clicks: 1, paidCount: 0, totalRev: 0 };
+                }
+                refData[p.inviter].paidCount = (refData[p.inviter].paidCount || 0) + 1;
+                let pNum = parseFloat(p.price.replace('$', '')) || 0;
+                refData[p.inviter].totalRev = (refData[p.inviter].totalRev || 0) + pNum;
+                saveReferrals(refData);
+            }
 
             renderMasterPendingClients();
             renderMasterClientList();
