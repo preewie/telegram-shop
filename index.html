@@ -62,7 +62,7 @@
 
         .empty-box { grid-column: span 2; text-align: center; padding: 40px 20px; color: #64748b; font-size: 14px; }
 
-        /* Bottom Nav */
+        /* Bottom Nav - តែមួយគត់ចំកណ្តាល */
         .bottom-nav-single { position: fixed; bottom: 0; left: 0; right: 0; background: #0f172a; border-top: 1px solid #1e293b; display: flex; justify-content: center; padding: 12px 0; z-index: 100; }
         .bottom-item-center { color: #2563eb; font-size: 13px; font-weight: bold; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .bottom-item-center i { font-size: 22px; }
@@ -290,7 +290,7 @@
             };
         }
 
-        let currentRole = localStorage.getItem('pree_session_role') || 'user'; // 'user', 'master', 'client'
+        let currentRole = localStorage.getItem('pree_session_role') || 'user';
         let loggedInClientId = localStorage.getItem('pree_session_client_id') || null;
         let currentChannel = 'owner';
 
