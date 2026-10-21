@@ -53,10 +53,10 @@
 
         /* Movie Grid */
         .movie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 10px 15px; }
-        .movie-card { background: #131b2e; border-radius: 14px; overflow: hidden; border: 1px solid #1e293b; display: flex; flex-direction: column; position: relative; }
+        .movie-card { background: #131b2e; border-radius: 14px; overflow: hidden; border: 1px solid #1e293b; display: flex; flex-direction: column; position: relative; cursor: pointer; }
         .poster-container { position: relative; width: 100%; height: 210px; background: #1e293b; }
         .movie-poster { width: 100%; height: 100%; object-fit: cover; }
-        .badge-sale { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); color: #38bdf8; padding: 3px 8px; border-radius: 6px; font-size: 10px; }
+        .badge-type { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); color: #38bdf8; padding: 3px 8px; border-radius: 6px; font-size: 10px; }
         .btn-delete-item { position: absolute; top: 8px; right: 8px; background: #ef4444; color: white; border: none; border-radius: 6px; padding: 4px 8px; font-size: 11px; cursor: pointer; z-index: 10; }
         
         .movie-details { padding: 10px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
@@ -64,8 +64,8 @@
         .price-tag { color: #38bdf8; font-size: 14px; font-weight: bold; margin-bottom: 8px; }
         .buy-btn { background: #2563eb; color: white; border: none; padding: 8px; border-radius: 8px; width: 100%; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
-        /* Modal Payment Popup */
-        #paymentModal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        /* Modal Payment & Episode Popup */
+        #paymentModal, #detailModal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
         .payment-card { background: #131b2e; border: 1px solid #3b82f6; border-radius: 14px; padding: 20px; width: 100%; max-width: 320px; text-align: center; }
         .payment-qr { width: 180px; height: 180px; object-fit: contain; background: white; padding: 8px; border-radius: 8px; margin: 15px auto; }
 
@@ -150,8 +150,7 @@
             <i class="fa-solid fa-xmark close-btn" onclick="closePanels()"></i>
         </h3>
 
-        <!-- Master Analytics Summary -->
-        <h4 style="font-size: 12px; color: #38bdf8; margin-bottom: 6px;">📊 ស្ថិតិการទិញវីដេអូសរុប (អតិថិជនទូទៅ)៖</h4>
+        <h4 style="font-size: 12px; color: #38bdf8; margin-bottom: 6px;">📊 ស្ថិតិការទិញវីដេអូសរុប (អតិថិជនទូទៅ)៖</h4>
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="title">អ្នកទិញសរុប</div>
@@ -164,7 +163,6 @@
         </div>
         <div class="report-list" id="masterSalesHistory"></div>
 
-        <!-- Master Client Package & Status Analytics -->
         <h4 style="font-size: 12px; color: #38bdf8; margin-bottom: 6px;">👥 ស្ថានភាព Client & សុពលភាពកញ្ចប់៖</h4>
         <div class="stats-grid">
             <div class="stat-card">
@@ -222,15 +220,22 @@
             <input type="text" id="ownerMovieTitle" class="form-control" placeholder="ចំណងជើងរឿង...">
         </div>
         <div class="form-group">
-            <label>២. ជ្រើសរើសរូបភាព Poster ពីទូរស័ព្ទ៖</label>
+            <label>២. ប្រភេទវីដេអូ៖</label>
+            <select id="ownerMovieType" class="form-control">
+                <option value="ភាគ (Episode)">ភាគ (Episode)</option>
+                <option value="វីដេអូពេញ (Full Video)">វីដេអូពេញ (Full Video)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>៣. ជ្រើសរើសរូបភាព Poster ពីទូរស័ព្ទ៖</label>
             <input type="file" id="ownerPosterFile" accept="image/*" class="form-control">
         </div>
         <div class="form-group">
-            <label>៣. ឬបិទភ្ជាប់ Link រូបភាព Poster (Optional)៖</label>
+            <label>៤. ឬបិទភ្ជាប់ Link រូបភាព Poster (Optional)៖</label>
             <input type="text" id="ownerMoviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
         </div>
         <div class="form-group">
-            <label>៤. តម្លៃលក់រឿង ($)៖</label>
+            <label>៥. តម្លៃលក់រឿង ($)៖</label>
             <input type="text" id="ownerMoviePrice" class="form-control" value="$2.00">
         </div>
         <button class="btn-action" onclick="addOwnerMovie()">💾 ដាក់បញ្ចូលរឿង</button>
@@ -285,15 +290,22 @@
                 <input type="text" id="clientMovieTitle" class="form-control" placeholder="បញ្ចូលចំណងជើងរឿង...">
             </div>
             <div class="form-group">
-                <label>២. ជ្រើសរើសរូបភាព Poster ពីទូរស័ព្ទ៖</label>
+                <label>២. ប្រភេទវីដេអូ៖</label>
+                <select id="clientMovieType" class="form-control">
+                    <option value="ភាគ (Episode)">ភាគ (Episode)</option>
+                    <option value="វីដេអូពេញ (Full Video)">វីដេអូពេញ (Full Video)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>៣. ជ្រើសរើសរូបភាព Poster ពីទូរស័ព្ទ៖</label>
                 <input type="file" id="clientPosterFile" accept="image/*" class="form-control">
             </div>
             <div class="form-group">
-                <label>៣. ឬបិទភ្ជាប់ Link រូបភាព Poster (Optional)៖</label>
+                <label>៤. ឬបិទភ្ជាប់ Link រូបភាព Poster (Optional)៖</label>
                 <input type="text" id="clientMoviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
             </div>
             <div class="form-group">
-                <label>៤. កំណត់តម្លៃលក់រឿងរបស់អ្នក ($)៖</label>
+                <label>៥. កំណត់តម្លៃលក់រឿងរបស់អ្នក ($)៖</label>
                 <input type="text" id="clientMoviePrice" class="form-control" value="$2.00">
             </div>
             <button class="btn-action" onclick="addClientMovie()">💾 ដាក់បញ្ចូលរឿងចូល Channel ខ្ញុំ</button>
@@ -302,6 +314,16 @@
 
     <!-- Movie Display Area -->
     <div class="movie-grid" id="movieContainer"></div>
+
+    <!-- Detail / Episode Modal Popup -->
+    <div id="detailModal">
+        <div class="payment-card">
+            <h3 id="detailTitle" style="color: #38bdf8; font-size: 15px; margin-bottom: 10px;">ព័ត៌មានរឿង</h3>
+            <div id="detailType" style="font-size: 13px; color: #22c55e; margin-bottom: 15px; font-weight: bold;"></div>
+            <div id="detailDesc" style="font-size: 12px; color: #94a3b8; margin-bottom: 15px;">រឿងនេះត្រូវបានរៀបចំរួចរាល់សម្រាប់ទស្សនា។</div>
+            <button class="btn-action" onclick="closeDetailModal()">បិទ (Close)</button>
+        </div>
+    </div>
 
     <!-- Payment Popup Modal -->
     <div id="paymentModal">
@@ -521,7 +543,6 @@
         function openBuyChannelModal() {
             closePanels();
             const pkg = getPackageConfig();
-            // បង្ហាញជាទម្រង់៖ [ចំនួនថ្ងៃ] ថ្ងៃ [ឈ្មោះកញ្ចប់] (ឧ. 5 ថ្ងៃ VIP)
             document.getElementById('pkgTitleDisplay').innerText = `${pkg.days} ថ្ងៃ ${pkg.title}`;
             document.getElementById('pkgPriceDisplay').innerText = pkg.price;
             document.getElementById('buyChannelModal').style.display = 'flex';
@@ -739,13 +760,13 @@
                 const card = document.createElement('div');
                 card.className = 'movie-card';
                 card.innerHTML = `
-                    <div class="poster-container">
-                        <span class="badge-sale">💎 លក់</span>
-                        ${canDelete ? `<button class="btn-delete-item" onclick="deleteMovie(${movie.id})">🗑️ លុប</button>` : ''}
+                    <div class="poster-container" onclick="openMovieDetail('${movie.title}', '${movie.type || 'ភាគ (Episode)'}')">
+                        <span class="badge-type">${movie.type || 'ភាគ (Episode)'}</span>
+                        ${canDelete ? `<button class="btn-delete-item" onclick="event.stopPropagation(); deleteMovie(${movie.id})">🗑️ លុប</button>` : ''}
                         <img class="movie-poster" src="${movie.poster || 'https://via.placeholder.com/300x450?text=No+Poster'}" alt="Poster">
                     </div>
                     <div class="movie-details">
-                        <div class="movie-title">${movie.title}</div>
+                        <div class="movie-title" onclick="openMovieDetail('${movie.title}', '${movie.type || 'ភាគ (Episode)'}')">${movie.title}</div>
                         <div class="price-tag">${movie.price}</div>
                         <button class="buy-btn" onclick="buyMovie('${movie.title}', '${movie.price}', '${movie.channel}')">
                             <i class="fa-solid fa-cart-shopping"></i> ទិញកញ្ចប់នេះ
@@ -754,6 +775,16 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        function openMovieDetail(title, type) {
+            document.getElementById('detailTitle').innerText = title;
+            document.getElementById('detailType').innerText = `ប្រភេទ៖ ${type}`;
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').style.display = 'none';
         }
 
         function handleImageUpload(fileInput, textInputVal, callback) {
@@ -774,6 +805,7 @@
         function addOwnerMovie() {
             if (currentRole !== 'master') return alert('គ្មានសិទ្ធិអនុវត្ត!');
             const title = document.getElementById('ownerMovieTitle').value.trim();
+            const type = document.getElementById('ownerMovieType').value;
             const fileInput = document.getElementById('ownerPosterFile');
             const posterLink = document.getElementById('ownerMoviePoster').value.trim();
             const price = document.getElementById('ownerMoviePrice').value.trim();
@@ -786,6 +818,7 @@
                     id: Date.now(),
                     channel: 'owner',
                     title: title,
+                    type: type,
                     price: price || '$2.00',
                     poster: posterUrl
                 });
@@ -812,6 +845,7 @@
             }
 
             const title = document.getElementById('clientMovieTitle').value.trim();
+            const type = document.getElementById('clientMovieType').value;
             const fileInput = document.getElementById('clientPosterFile');
             const posterLink = document.getElementById('clientMoviePoster').value.trim();
             const price = document.getElementById('clientMoviePrice').value.trim();
@@ -824,6 +858,7 @@
                     id: Date.now(),
                     channel: loggedInClientId,
                     title: title,
+                    type: type,
                     price: price || '$2.00',
                     poster: posterUrl
                 });
