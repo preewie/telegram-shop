@@ -37,6 +37,9 @@
         .btn-secondary { background: #334155; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; }
         .btn-back { background: #475569; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 5px; }
 
+        /* QR Layout Side-by-Side */
+        .qr-input-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; margin-bottom: 6px; }
+
         /* Stats Cards */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
         .stat-card { background: #0f172a; border: 1px solid #1e293b; padding: 10px; border-radius: 8px; text-align: center; }
@@ -112,7 +115,7 @@
         </button>
     </div>
 
-    <!-- Navigation Tabs (កន្លែង Tab ជ្រើសរើស Channel) -->
+    <!-- Navigation Tabs -->
     <div class="channel-tabs" id="channelTabs"></div>
 
     <!-- Modal 1: ទិញ Channel សម្រាប់ Client ថ្មី -->
@@ -172,7 +175,7 @@
         </div>
     </div>
 
-    <!-- Login Panel (បង្ហាញពាក្យ កន្លែងប្រព័ន្ធ Login សម្រាប់ Client ឬ Master) -->
+    <!-- Login Panel -->
     <div id="loginPanel" class="panel-box">
         <button class="btn-back" onclick="closePanels()">⬅️ ថយក្រោយ</button>
         <h3>
@@ -186,7 +189,7 @@
         <button class="btn-action" style="background: #2563eb;" onclick="processLogin()">ចូលប្រព័ន្ធ (Login)</button>
     </div>
 
-    <!-- Master Owner Dashboard (បង្ហាញពាក្យ Master Admin សម្រាប់តែបងជា Master តែម្នាក់ឯង) -->
+    <!-- Master Owner Dashboard -->
     <div id="masterAdminPanel" class="panel-box">
         <button class="btn-back" onclick="closePanels()">⬅️ ថយក្រោយ</button>
         <h3>
@@ -269,10 +272,15 @@
             <button class="btn-secondary" onclick="changeMasterPin()">🔑 ប្តូរ PIN ខ្លួនឯង</button>
         </div>
 
+        <!-- QR Code Master Layout (Side-by-Side: Link Input & File Upload) -->
         <div class="form-group">
-            <label>Link QR Code បង់ប្រាក់របស់អ្នក (ABA/KHQR):</label>
-            <input type="text" id="ownerQrInput" class="form-control" placeholder="https://example.com/my-qr.jpg">
-            <button class="btn-secondary" style="margin-top: 5px;" onclick="saveOwnerQR()">💾 រក្សាទុក QR Code</button>
+            <label>Link ឬ Upload QR Code បង់ប្រាក់របស់អ្នក (ABA/KHQR)៖</label>
+            <div class="qr-input-row">
+                <input type="text" id="ownerQrInput" class="form-control" placeholder="https://example.com/my-qr.jpg">
+                <input type="file" id="ownerQrFile" accept="image/*" style="display:none;" onchange="handleMasterQrFile(this)">
+                <button class="btn-secondary" style="background:#2563eb; white-space:nowrap;" onclick="document.getElementById('ownerQrFile').click()">📁 ជ្រើសរើសរូប</button>
+            </div>
+            <button class="btn-secondary" style="margin-top: 5px; width: 100%;" onclick="saveOwnerQR()">💾 រក្សាទុក QR Code</button>
         </div>
 
         <div style="margin-top: 10px; text-align: right;">
@@ -313,7 +321,7 @@
         <button class="btn-action" onclick="addOwnerMovie()">💾 ដាក់បញ្ចូលរឿង</button>
     </div>
 
-    <!-- Client Admin Panel (សម្រាប់ Client ពេល Login ចូលឃើញពាក្យ Client Admin) -->
+    <!-- Client Admin Panel -->
     <div id="clientAdminPanel" class="panel-box">
         <button class="btn-back" onclick="closePanels()">⬅️ ថយក្រោយ</button>
         <h3>
@@ -344,10 +352,15 @@
             <button class="btn-secondary" onclick="changeCurrentClientPin()">🔑 ប្តូរ PIN ខ្លួនឯង</button>
         </div>
 
+        <!-- QR Code Client Layout (Side-by-Side: Link Input & File Upload) -->
         <div class="form-group">
-            <label>Link QR Code បង់ប្រាក់របស់អ្នក (ABA/KHQR):</label>
-            <input type="text" id="clientQrInput" class="form-control" placeholder="https://example.com/client-qr.jpg">
-            <button class="btn-secondary" style="margin-top: 5px;" onclick="saveClientQR()">💾 រក្សាទុក QR Code</button>
+            <label>Link ឬ Upload QR Code បង់ប្រាក់របស់អ្នក (ABA/KHQR)៖</label>
+            <div class="qr-input-row">
+                <input type="text" id="clientQrInput" class="form-control" placeholder="https://example.com/client-qr.jpg">
+                <input type="file" id="clientQrFile" accept="image/*" style="display:none;" onchange="handleClientQrFile(this)">
+                <button class="btn-secondary" style="background:#2563eb; white-space:nowrap;" onclick="document.getElementById('clientQrFile').click()">📁 ជ្រើសរើសរូប</button>
+            </div>
+            <button class="btn-secondary" style="margin-top: 5px; width: 100%;" onclick="saveClientQR()">💾 រក្សាទុក QR Code</button>
         </div>
 
         <div style="margin-top: 10px; text-align: right;">
@@ -399,7 +412,7 @@
         </div>
     </div>
 
-    <!-- Payment Popup Modal (សម្រាប់អតិថិជនទិញរឿង) -->
+    <!-- Payment Popup Modal -->
     <div id="paymentModal">
         <div class="payment-card">
             <button class="btn-back" onclick="closePaymentModal()">⬅️ ថយក្រោយ</button>
@@ -422,6 +435,12 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+
+        function dismissKeyboard() {
+            if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                document.activeElement.blur();
+            }
+        }
 
         function getMasterPin() { return localStorage.getItem('pree_master_pin') || '9999'; }
         function getMasterQR() { return localStorage.getItem('pree_master_qr') || ''; }
@@ -491,6 +510,7 @@
         }
 
         function openAdminPanelOrLogin() {
+            dismissKeyboard();
             if (currentRole === 'master') {
                 closePanels();
                 renderMasterAnalytics();
@@ -621,6 +641,7 @@
         }
 
         function saveOwnerPackagesAll() {
+            dismissKeyboard();
             if (currentRole !== 'master') return alert('គ្មានសិទ្ធិអនុវត្ត!');
             
             const dayPkgs = getPackageDaysOptions();
@@ -730,6 +751,7 @@
         }
 
         function processLogin() {
+            dismissKeyboard();
             const pin = document.getElementById('loginPinInput').value.trim();
             if (!pin) return alert('សូមបញ្ចូល PIN!');
 
@@ -768,6 +790,7 @@
         }
 
         function logoutSession() {
+            dismissKeyboard();
             currentRole = 'user';
             loggedInClientId = null;
             currentChannel = 'owner';
@@ -782,6 +805,7 @@
         }
 
         function openBuyChannelModal() {
+            dismissKeyboard();
             closePanels();
             buyMode = 'days';
             selectedDayIndex = 0;
@@ -864,6 +888,7 @@
         }
 
         function proceedToPayment() {
+            dismissKeyboard();
             const name = document.getElementById('regClientName').value.trim();
             const pin = document.getElementById('regClientPin').value.trim();
 
@@ -899,11 +924,13 @@
         }
 
         function backToBuyModal() {
+            dismissKeyboard();
             document.getElementById('receiptModal').style.display = 'none';
             document.getElementById('buyChannelModal').style.display = 'block';
         }
 
         function submitClientOrderWithReceipt() {
+            dismissKeyboard();
             const fileInput = document.getElementById('regSlipFile');
             const slipLink = document.getElementById('regSlipLink').value.trim();
 
@@ -1013,6 +1040,7 @@
         }
 
         function changeMasterPin() {
+            dismissKeyboard();
             if (currentRole !== 'master') return;
             const newPin = prompt('សូមវាយបញ្ចូលលេខកូដ Master PIN ថ្មី៖');
             if (newPin && newPin.trim().length >= 4) {
@@ -1022,13 +1050,28 @@
         }
 
         function saveOwnerQR() {
+            dismissKeyboard();
             if (currentRole !== 'master') return;
             const qrUrl = document.getElementById('ownerQrInput').value.trim();
             localStorage.setItem('pree_master_qr', qrUrl);
             alert('បានរក្សាទុក QR Code របស់អ្នកជោគជ័យ!');
         }
 
+        function handleMasterQrFile(fileInput) {
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    localStorage.setItem('pree_master_qr', e.target.result);
+                    document.getElementById('ownerQrInput').value = e.target.result;
+                    alert('បាន Upload និងរក្សាទុក Master QR Code ជោគជ័យ!');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         function changeCurrentClientPin() {
+            dismissKeyboard();
             if (!loggedInClientId) return;
             const newPin = prompt('សូមវាយបញ្ចូលលេខកូដ PIN ថ្មីរបស់អ្នក៖');
             if (newPin && newPin.trim().length >= 4) {
@@ -1043,6 +1086,7 @@
         }
 
         function saveClientQR() {
+            dismissKeyboard();
             if (!loggedInClientId) return;
             const qrUrl = document.getElementById('clientQrInput').value.trim();
             const clients = getClients();
@@ -1051,6 +1095,24 @@
                 client.qr = qrUrl;
                 saveClients(clients);
                 alert('បានរក្សាទុក QR Code របស់អ្នកជោគជ័យ!');
+            }
+        }
+
+        function handleClientQrFile(fileInput) {
+            const file = fileInput.files[0];
+            if (file && loggedInClientId) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const clients = getClients();
+                    const client = clients.find(c => c.id === loggedInClientId);
+                    if (client) {
+                        client.qr = e.target.result;
+                        saveClients(clients);
+                        document.getElementById('clientQrInput').value = e.target.result;
+                        alert('បាន Upload និងរក្សាទុក QR Code របស់អ្នកជោគជ័យ!');
+                    }
+                };
+                reader.readAsDataURL(file);
             }
         }
 
@@ -1115,6 +1177,7 @@
         }
 
         function closePanels() {
+            dismissKeyboard();
             document.getElementById('loginPanel').style.display = 'none';
             document.getElementById('buyChannelModal').style.display = 'none';
             document.getElementById('receiptModal').style.display = 'none';
@@ -1131,14 +1194,14 @@
             const ownerTab = document.createElement('div');
             ownerTab.className = `tab-item ${currentChannel === 'owner' ? 'active' : ''}`;
             ownerTab.innerText = '👑 រឿងដើម (Original)';
-            ownerTab.onclick = () => switchChannel('owner');
+            ownerTab.onclick = () => { dismissKeyboard(); switchChannel('owner'); };
             tabsDiv.appendChild(ownerTab);
 
             clients.forEach(c => {
                 const tab = document.createElement('div');
                 tab.className = `tab-item ${currentChannel === c.id ? 'active' : ''}`;
                 tab.innerText = `🎬 ${c.name}`;
-                tab.onclick = () => switchChannel(c.id);
+                tab.onclick = () => { dismissKeyboard(); switchChannel(c.id); };
                 tabsDiv.appendChild(tab);
             });
         }
@@ -1190,12 +1253,14 @@
         }
 
         function openMovieDetail(title, type) {
+            dismissKeyboard();
             document.getElementById('detailTitle').innerText = title;
             document.getElementById('detailType').innerText = `ប្រភេទ៖ ${type}`;
             document.getElementById('detailModal').style.display = 'flex';
         }
 
         function closeDetailModal() {
+            dismissKeyboard();
             document.getElementById('detailModal').style.display = 'none';
         }
 
@@ -1215,6 +1280,7 @@
         }
 
         function addOwnerMovie() {
+            dismissKeyboard();
             if (currentRole !== 'master') return alert('គ្មានសិទ្ធិអនុវត្ត!');
             const title = document.getElementById('ownerMovieTitle').value.trim();
             const type = document.getElementById('ownerMovieType').value;
@@ -1245,6 +1311,7 @@
         }
 
         function addClientMovie() {
+            dismissKeyboard();
             if (currentRole !== 'client') return alert('គ្មានសិទ្ធិអនុវត្ត!');
             const clients = getClients();
             const client = clients.find(c => c.id === loggedInClientId);
@@ -1285,6 +1352,7 @@
         }
 
         function deleteMovie(movieId) {
+            dismissKeyboard();
             let movies = getMovies();
             const movie = movies.find(m => m.id === movieId);
             if (!movie) return;
@@ -1302,6 +1370,7 @@
         }
 
         function buyMovie(title, price, channelId) {
+            dismissKeyboard();
             let qrUrl = '';
             let chName = 'Original';
 
@@ -1330,6 +1399,7 @@
         }
 
         function confirmMoviePaymentSuccess() {
+            dismissKeyboard();
             if (!activePurchaseMovie) return;
 
             const movieSales = getMovieSales();
@@ -1348,6 +1418,7 @@
         }
 
         function closePaymentModal() {
+            dismissKeyboard();
             document.getElementById('paymentModal').style.display = 'none';
         }
 
