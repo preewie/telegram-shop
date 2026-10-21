@@ -51,6 +51,11 @@
         .pkg-title { font-weight: bold; color: #38bdf8; font-size: 14px; margin-bottom: 4px; }
         .pkg-price { font-size: 18px; color: #22c55e; font-weight: bold; }
 
+        /* Package Selection Buttons for Client */
+        .pkg-option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+        .pkg-option-btn { background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 8px; text-align: center; color: white; cursor: pointer; font-size: 12px; }
+        .pkg-option-btn.selected { background: #2563eb; border-color: #3b82f6; font-weight: bold; }
+
         /* Movie Grid */
         .movie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 10px 15px; }
         .movie-card { background: #131b2e; border-radius: 14px; overflow: hidden; border: 1px solid #1e293b; display: flex; flex-direction: column; position: relative; cursor: pointer; }
@@ -108,12 +113,15 @@
     <!-- Modal ទិញ Channel សម្រាប់ Client ថ្មី -->
     <div id="buyChannelModal" class="panel-box">
         <h3>
-            <span>🛍️ ទិញសេវាកម្ម Upload រឿងផ្ទាល់ខ្លួន</span>
+            <span>🛍️ ជ្រើសរើសកញ្ចប់សេវាកម្ម Channel</span>
             <i class="fa-solid fa-xmark close-btn" onclick="closePanels()"></i>
         </h3>
         
-        <div class="pkg-card">
-            <div class="pkg-title" id="pkgTitleDisplay">5 ថ្ងៃ VIP</div>
+        <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">សូមជ្រើសរើសកញ្ចប់រយៈពេលថ្ងៃ៖</div>
+        <div class="pkg-option-grid" id="pkgOptionContainer"></div>
+
+        <div class="pkg-card" style="margin-top: 10px;">
+            <div class="pkg-title" id="pkgTitleDisplay">5 ថ្ងៃ</div>
             <div class="pkg-price" id="pkgPriceDisplay">$5.00</div>
         </div>
 
@@ -176,20 +184,9 @@
         </div>
 
         <div style="background: #0f172a; border: 1px solid #3b82f6; padding: 12px; border-radius: 10px; margin-bottom: 15px;">
-            <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">⚙️ កំណត់កញ្ចប់តាម "ចំនួនថ្ងៃ" និង "តម្លៃ" (Master Control)៖</h4>
-            <div class="form-group">
-                <label>ឈ្មោះកញ្ចប់ (ឧ. VIP)៖</label>
-                <input type="text" id="ownerPkgTitle" class="form-control" value="VIP">
-            </div>
-            <div class="form-group">
-                <label>ចំនួនថ្ងៃកំណត់ (ឧ. 5 ឬ 30 ថ្ងៃ)៖</label>
-                <input type="number" id="ownerPkgDays" class="form-control" value="5">
-            </div>
-            <div class="form-group">
-                <label>កំណត់តម្លៃ ($)៖</label>
-                <input type="text" id="ownerPkgPrice" class="form-control" value="$5.00">
-            </div>
-            <button class="btn-secondary" style="background: #2563eb; width: 100%;" onclick="saveOwnerPackage()">💾 រក្សាទុកកញ្ចប់នេះ</button>
+            <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">⚙️ កំណត់កញ្ចប់តម្លៃតាមចំនួនថ្ងៃ (៣០ថ្ងៃ ដាក់ VIP តែម្តង)៖</h4>
+            <div id="adminPkgListContainer"></div>
+            <button class="btn-secondary" style="background: #2563eb; width: 100%; margin-top: 5px;" onclick="addNewPkgOption()">➕ បន្ថរួមកញ្ចប់ថ្មី</button>
         </div>
 
         <div style="margin-bottom: 12px; background: #0f172a; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
@@ -358,19 +355,23 @@
         function getSales() { const stored = localStorage.getItem('pree_sales_records'); return stored ? JSON.parse(stored) : []; }
         function saveSales(sales) { localStorage.setItem('pree_sales_records', JSON.stringify(sales)); }
 
-        function getPackageConfig() {
-            const stored = localStorage.getItem('pree_pkg_config');
-            return stored ? JSON.parse(stored) : {
-                title: "VIP",
-                days: 5,
-                price: "$5.00"
-            };
+        // កញ្ចប់ថ្ងៃ (៣០ថ្ងៃ គឺ VIP តែម្តង)
+        function getPackageOptions() {
+            const stored = localStorage.getItem('pree_pkg_options');
+            return stored ? JSON.parse(stored) : [
+                { id: 1, days: 5, price: "$5.00" },
+                { id: 2, days: 10, price: "$8.00" },
+                { id: 3, days: 20, price: "$15.00" },
+                { id: 4, days: 30, price: "$20.00" } // 30 ថ្ងៃ ក្លាយជា VIP ស្វ័យប្រវត្តិ
+            ];
         }
+        function savePackageOptions(options) { localStorage.setItem('pree_pkg_options', JSON.stringify(options)); }
 
         let currentRole = localStorage.getItem('pree_session_role') || 'user';
         let loggedInClientId = localStorage.getItem('pree_session_client_id') || null;
         let currentChannel = 'owner';
         let activePurchaseMovie = null;
+        let selectedPkgIndex = 0;
 
         function checkAutoLogin() {
             if (currentRole === 'master') {
@@ -392,7 +393,7 @@
                 closePanels();
                 renderMasterAnalytics();
                 renderMasterClientList();
-                loadOwnerPackageInputs();
+                renderAdminPackageList();
                 document.getElementById('ownerQrInput').value = getMasterQR();
                 document.getElementById('masterAdminPanel').style.display = 'block';
             } else if (currentRole === 'client' && loggedInClientId) {
@@ -424,6 +425,57 @@
                 closePanels();
                 document.getElementById('loginPanel').style.display = 'block';
             }
+        }
+
+        function renderAdminPackageList() {
+            const pkgs = getPackageOptions();
+            const container = document.getElementById('adminPkgListContainer');
+            container.innerHTML = '';
+
+            pkgs.forEach((p, idx) => {
+                const isVip = (p.days === 30);
+                const labelName = isVip ? 'VIP (30 ថ្ងៃ)' : `${p.days} ថ្ងៃ`;
+                const div = document.createElement('div');
+                div.style.cssText = "background: #0f172a; padding: 8px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #334155;";
+                div.innerHTML = `
+                    <div style="font-size: 11px; color: #38bdf8; margin-bottom: 4px;">កញ្ចប់៖ ${labelName}</div>
+                    <div style="display: flex; gap: 6px; margin-bottom: 4px;">
+                        <input type="number" id="pkg_days_${idx}" class="form-control" value="${p.days}" placeholder="ចំនួនថ្ងៃ">
+                        <input type="text" id="pkg_price_${idx}" class="form-control" value="${p.price}" placeholder="តម្លៃ ($)">
+                    </div>
+                    <button class="btn-secondary" style="background: #ef4444; width: 100%; font-size: 10px;" onclick="removePkgOption(${idx})">🗑️ លុបកញ្ចប់នេះ</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addNewPkgOption() {
+            const pkgs = getPackageOptions();
+            pkgs.push({ id: Date.now(), days: 7, price: "$7.00" });
+            savePackageOptions(pkgs);
+            renderAdminPackageList();
+        }
+
+        function removePkgOption(idx) {
+            let pkgs = getPackageOptions();
+            pkgs.splice(idx, 1);
+            savePackageOptions(pkgs);
+            renderAdminPackageList();
+        }
+
+        function saveOwnerPackage() {
+            if (currentRole !== 'master') return alert('គ្មានសិទ្ធិអនុវត្ត!');
+            const pkgs = getPackageOptions();
+            const updated = [];
+
+            for (let i = 0; i < pkgs.length; i++) {
+                const days = parseInt(document.getElementById(`pkg_days_${i}`).value) || 1;
+                const price = document.getElementById(`pkg_price_${i}`).value.trim();
+                updated.push({ id: pkgs[i].id || Date.now() + i, days, price });
+            }
+
+            savePackageOptions(updated);
+            alert('បានរក្សាទុកកញ្ចប់តម្លៃ និងចំនួនថ្ងៃជោគជ័យ!');
         }
 
         function renderMasterAnalytics() {
@@ -542,10 +594,36 @@
 
         function openBuyChannelModal() {
             closePanels();
-            const pkg = getPackageConfig();
-            document.getElementById('pkgTitleDisplay').innerText = `${pkg.days} ថ្ងៃ ${pkg.title}`;
-            document.getElementById('pkgPriceDisplay').innerText = pkg.price;
+            renderPkgOptionsForUser();
             document.getElementById('buyChannelModal').style.display = 'flex';
+        }
+
+        function renderPkgOptionsForUser() {
+            const pkgs = getPackageOptions();
+            const container = document.getElementById('pkgOptionContainer');
+            container.innerHTML = '';
+
+            if (pkgs.length === 0) return;
+            if (selectedPkgIndex >= pkgs.length) selectedPkgIndex = 0;
+
+            pkgs.forEach((p, idx) => {
+                const isVip = (p.days === 30);
+                const titleStr = isVip ? 'VIP' : `${p.days} ថ្ងៃ`;
+
+                const btn = document.createElement('div');
+                btn.className = `pkg-option-btn ${selectedPkgIndex === idx ? 'selected' : ''}`;
+                btn.innerHTML = `<strong>${titleStr}</strong><br><span style="color:#22c55e;">${p.price}</span>`;
+                btn.onclick = () => {
+                    selectedPkgIndex = idx;
+                    renderPkgOptionsForUser();
+                };
+                container.appendChild(btn);
+            });
+
+            const selected = pkgs[selectedPkgIndex];
+            const isVipSel = (selected.days === 30);
+            document.getElementById('pkgTitleDisplay').innerText = isVipSel ? 'VIP' : `${selected.days} ថ្ងៃ`;
+            document.getElementById('pkgPriceDisplay').innerText = selected.price;
         }
 
         function submitRegisterClient() {
@@ -554,10 +632,12 @@
 
             if (!name || !pin) return alert('សូមបំពេញឈ្មោះ និងកំណត់ PIN របស់អ្នក!');
 
-            const pkg = getPackageConfig();
+            const pkgs = getPackageOptions();
+            const selected = pkgs[selectedPkgIndex] || pkgs[0];
+
             const clients = getClients();
             const clientId = 'client_' + Date.now();
-            const expireAt = Date.now() + (pkg.days * 24 * 60 * 60 * 1000);
+            const expireAt = Date.now() + (selected.days * 24 * 60 * 60 * 1000);
 
             clients.push({ 
                 id: clientId, 
@@ -570,8 +650,10 @@
 
             const masterQr = getMasterQR();
             if (masterQr) {
-                document.getElementById('payTitle').innerText = `ទូទាត់ទិញ Channel (${name})`;
-                document.getElementById('payPrice').innerText = pkg.price;
+                const isVipSel = (selected.days === 30);
+                const pTitle = isVipSel ? 'VIP' : `${selected.days} ថ្ងៃ`;
+                document.getElementById('payTitle').innerText = `ទូទាត់ទិញ Channel (${pTitle})`;
+                document.getElementById('payPrice').innerText = selected.price;
                 document.getElementById('payQrImg').src = masterQr;
                 document.getElementById('paymentModal').style.display = 'flex';
             }
@@ -581,27 +663,6 @@
             closePanels();
             renderTabs();
             alert(`បានបង្កើត Channel "${name}" ជោគជ័យ! សូម Scan QR បង់ប្រាក់ រួចប្រើ PIN (${pin}) ដើម្បី Login។`);
-        }
-
-        function loadOwnerPackageInputs() {
-            const pkg = getPackageConfig();
-            document.getElementById('ownerPkgTitle').value = pkg.title;
-            document.getElementById('ownerPkgDays').value = pkg.days;
-            document.getElementById('ownerPkgPrice').value = pkg.price;
-        }
-
-        function saveOwnerPackage() {
-            if (currentRole !== 'master') {
-                alert('អ្នកគ្មានសិទ្ធិកែប្រែកញ្ចប់តម្លៃនេះទេ!');
-                return;
-            }
-            const title = document.getElementById('ownerPkgTitle').value.trim();
-            const days = parseInt(document.getElementById('ownerPkgDays').value) || 5;
-            const price = document.getElementById('ownerPkgPrice').value.trim();
-
-            const pkg = { title, days, price };
-            localStorage.setItem('pree_pkg_config', JSON.stringify(pkg));
-            alert('បានរក្សាទុកកញ្ចប់តម្លៃ និងចំនួនថ្ងៃរួចរាល់!');
         }
 
         function changeMasterPin() {
@@ -684,12 +745,13 @@
             const clients = getClients();
             const client = clients.find(c => c.id === clientId);
             if (client) {
-                const pkg = getPackageConfig();
-                client.expireAt = Date.now() + (pkg.days * 24 * 60 * 60 * 1000);
+                const pkgs = getPackageOptions();
+                const defDays = pkgs[0] ? pkgs[0].days : 5;
+                client.expireAt = Date.now() + (defDays * 24 * 60 * 60 * 1000);
                 saveClients(clients);
                 renderMasterClientList();
                 renderMasterAnalytics();
-                alert(`បានបន្តអាយុកាលឱ្យ ${client.name} បន្ថែម ${pkg.days} ថ្ងៃជោគជ័យ!`);
+                alert(`បានបន្តអាយុកាលឱ្យ ${client.name} ជោគជ័យ!`);
             }
         }
 
