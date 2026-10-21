@@ -84,10 +84,11 @@
 
         .empty-box { grid-column: span 2; text-align: center; padding: 40px 20px; color: #64748b; font-size: 14px; }
 
-        /* Bottom Nav */
-        .bottom-nav-single { position: fixed; bottom: 0; left: 0; right: 0; background: #0f172a; border-top: 1px solid #1e293b; display: flex; justify-content: center; padding: 12px 0; z-index: 100; }
-        .bottom-item-center { color: #2563eb; font-size: 13px; font-weight: bold; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .bottom-item-center i { font-size: 22px; }
+        /* Bottom Nav - Balanced 2 items layout */
+        .bottom-nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #0f172a; border-top: 1px solid #1e293b; display: grid; grid-template-columns: 1fr 1fr; z-index: 100; }
+        .bottom-nav-item { color: #94a3b8; font-size: 11px; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0; cursor: pointer; gap: 4px; border: none; background: transparent; }
+        .bottom-nav-item.active { color: #2563eb; font-weight: bold; }
+        .bottom-nav-item i { font-size: 20px; }
     </style>
 </head>
 <body>
@@ -291,34 +292,6 @@
 
         <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">📋 បញ្ជី Client សកម្មទាំងអស់៖</h4>
         <div id="masterClientList"></div>
-
-        <hr style="border-color: #1e293b; margin: 15px 0;">
-
-        <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">🎬 បញ្ចូលរឿងថ្មីរបស់អ្នក (Original)៖</h4>
-        <div class="form-group">
-            <label>១. ចំណងជើងរឿង៖</label>
-            <input type="text" id="ownerMovieTitle" class="form-control" placeholder="ចំណងជើងរឿង...">
-        </div>
-        <div class="form-group">
-            <label>២. ប្រភេទវីដេអូ៖</label>
-            <select id="ownerMovieType" class="form-control">
-                <option value="ភាគ (Episode)">ភាគ (Episode)</option>
-                <option value="វីដេអូពេញ (Full Video)">វីដេអូពេញ (Full Video)</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>៣. ជ្រើសរើសរូបភាព Poster ពីទូរស័ព្ទ៖</label>
-            <input type="file" id="ownerPosterFile" accept="image/*" class="form-control">
-        </div>
-        <div class="form-group">
-            <label>៤. ឬបិទភ្ជាប់ Link រូបភាព Poster (Optional)៖</label>
-            <input type="text" id="ownerMoviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
-        </div>
-        <div class="form-group">
-            <label>៥. តម្លៃលក់រឿង ($)៖</label>
-            <input type="text" id="ownerMoviePrice" class="form-control" value="$2.00">
-        </div>
-        <button class="btn-action" onclick="addOwnerMovie()">💾 ដាក់បញ្ចូលរឿង</button>
     </div>
 
     <!-- Client Admin Panel -->
@@ -354,7 +327,7 @@
 
         <!-- QR Code Client Layout (Side-by-Side: Link Input & File Upload) -->
         <div class="form-group">
-            <label>Link ឬ Upload QR Code បង់ប្រាក់របស់អ្នក (ABA/KHQR)៖</label>
+            <label>Link ឬ Upload QR Code ទទួលប្រាក់របស់អ្នកផ្ទាល់ (ABA/KHQR)៖</label>
             <div class="qr-input-row">
                 <input type="text" id="clientQrInput" class="form-control" placeholder="https://example.com/client-qr.jpg">
                 <input type="file" id="clientQrFile" accept="image/*" style="display:none;" onchange="handleClientQrFile(this)">
@@ -398,6 +371,37 @@
         </div>
     </div>
 
+    <!-- Master Original Upload Box (ស្ថិតនៅខាងក្រៅ ក្រោមហាងលក់រឿង សម្រាប់ Master ដាក់បញ្ចូលរឿង) -->
+    <div id="masterOwnerUploadSection" class="panel-box" style="display: none; border-color: #22c55e;">
+        <h3 style="color: #22c55e;">
+            <span>🎬 បញ្ចូលរឿងថ្មីរបស់អ្នក (Master Original)</span>
+        </h3>
+        <div class="form-group">
+            <label>១. ចំណងជើងរឿង៖</label>
+            <input type="text" id="ownerMovieTitle" class="form-control" placeholder="ចំណងជើងរឿង...">
+        </div>
+        <div class="form-group">
+            <label>២. ប្រភេទវីដេអូ៖</label>
+            <select id="ownerMovieType" class="form-control">
+                <option value="ភាគ (Episode)">ភាគ (Episode)</option>
+                <option value="វីដេអូពេញ (Full Video)">វីដេអូពេញ (Full Video)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>៣. ជ្រើសរើសរូបភាព Poster ពីទូរស័ព្ទ៖</label>
+            <input type="file" id="ownerPosterFile" accept="image/*" class="form-control">
+        </div>
+        <div class="form-group">
+            <label>៤. ឬបិទភ្ជាប់ Link រូបភាព Poster (Optional)៖</label>
+            <input type="text" id="ownerMoviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
+        </div>
+        <div class="form-group">
+            <label>៥. តម្លៃលក់រឿង ($)៖</label>
+            <input type="text" id="ownerMoviePrice" class="form-control" value="$2.00">
+        </div>
+        <button class="btn-action" onclick="addOwnerMovie()">💾 ដាក់បញ្ចូលរឿង</button>
+    </div>
+
     <!-- Movie Display Area -->
     <div class="movie-grid" id="movieContainer"></div>
 
@@ -424,12 +428,16 @@
         </div>
     </div>
 
-    <!-- Bottom Nav -->
-    <div class="bottom-nav-single">
-        <a href="#" class="bottom-item-center">
+    <!-- Bottom Nav (Balanced 2 Items) -->
+    <div class="bottom-nav-bar">
+        <button class="bottom-nav-item active" id="navShopBtn" onclick="switchMainTab('shop')">
             <i class="fa-solid fa-clapperboard"></i>
             <span>ហាងលក់រឿង</span>
-        </a>
+        </button>
+        <button class="bottom-nav-item" id="navUploadBtn" onclick="switchMainTab('upload')">
+            <i class="fa-solid fa-circle-plus"></i>
+            <span id="navUploadLabel">ផ្ទុកឡើងរឿង</span>
+        </button>
     </div>
 
     <script>
@@ -491,6 +499,7 @@
         let selectedDayIndex = 0;
         let selectedVidIndex = 0;
         let pendingRegistrationData = null;
+        let currentMainTab = 'shop';
 
         function checkAutoLogin() {
             if (currentRole === 'master') {
@@ -505,8 +514,46 @@
             } else {
                 document.getElementById('adminHeaderBtn').innerText = '🔑 កន្លែងប្រព័ន្ធ Login';
             }
+            updateBottomNavUI();
             renderTabs();
             renderMovies();
+        }
+
+        function updateBottomNavUI() {
+            const uploadLabel = document.getElementById('navUploadLabel');
+            if (currentRole === 'master') {
+                uploadLabel.innerText = 'បញ្ចូលរឿងថ្មី';
+            } else if (currentRole === 'client') {
+                uploadLabel.innerText = 'Admin របស់ខ្ញុំ';
+            } else {
+                uploadLabel.innerText = 'ចូល Admin';
+            }
+        }
+
+        function switchMainTab(tab) {
+            dismissKeyboard();
+            currentMainTab = tab;
+            const shopBtn = document.getElementById('navShopBtn');
+            const uploadBtn = document.getElementById('navUploadBtn');
+
+            shopBtn.classList.remove('active');
+            uploadBtn.classList.remove('active');
+
+            closePanels();
+
+            if (tab === 'shop') {
+                shopBtn.classList.add('active');
+                renderMovies();
+            } else {
+                uploadBtn.classList.add('active');
+                if (currentRole === 'master') {
+                    // បើ Master ចុចប៊ូតុងទី២ ឱ្យលេចចេញផ្ទាំងដាក់បញ្ចូលរឿងនៅខាងក្រៅ
+                    const uploadSec = document.getElementById('masterOwnerUploadSection');
+                    uploadSec.style.display = uploadSec.style.display === 'block' ? 'none' : 'block';
+                } else {
+                    openAdminPanelOrLogin();
+                }
+            }
         }
 
         function openAdminPanelOrLogin() {
@@ -762,6 +809,7 @@
                 localStorage.removeItem('pree_session_client_id');
                 
                 document.getElementById('adminHeaderBtn').innerText = '👑 Master Admin';
+                updateBottomNavUI();
                 closePanels();
                 openAdminPanelOrLogin();
                 alert('ចូលប្រើប្រាស់ Master Admin ជោគជ័យ!');
@@ -780,6 +828,7 @@
                 localStorage.setItem('pree_session_client_id', clientMatch.id);
 
                 document.getElementById('adminHeaderBtn').innerText = `🎬 ${clientMatch.name}`;
+                updateBottomNavUI();
                 closePanels();
                 renderTabs();
                 openAdminPanelOrLogin();
@@ -798,6 +847,7 @@
             localStorage.removeItem('pree_session_client_id');
             
             document.getElementById('adminHeaderBtn').innerText = '🔑 កន្លែងប្រព័ន្ធ Login';
+            updateBottomNavUI();
             closePanels();
             renderTabs();
             renderMovies();
@@ -1183,6 +1233,7 @@
             document.getElementById('receiptModal').style.display = 'none';
             document.getElementById('masterAdminPanel').style.display = 'none';
             document.getElementById('clientAdminPanel').style.display = 'none';
+            document.getElementById('masterOwnerUploadSection').style.display = 'none';
         }
 
         function renderTabs() {
