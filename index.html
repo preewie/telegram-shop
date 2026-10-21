@@ -14,15 +14,21 @@
         .header { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: #131b2e; border-bottom: 1px solid #1e293b; }
         .user-info { display: flex; align-items: center; gap: 10px; }
         .avatar { width: 38px; height: 38px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: white; }
-        .admin-toggle-btn { background: #1e293b; border: 1px solid #3b82f6; color: #38bdf8; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .admin-login-btn { background: #1e293b; border: 1px solid #334155; color: #64748b; padding: 6px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; }
 
-        /* Admin Panel Modal / Section */
-        #adminPanel { display: none; background: #131b2e; padding: 15px; margin: 15px; border-radius: 12px; border: 1px solid #3b82f6; }
-        #adminPanel h3 { margin-bottom: 12px; color: #38bdf8; font-size: 16px; }
+        /* Action Buttons Section (សម្រាប់អតិថិជន) */
+        .client-action-bar { padding: 12px 15px 5px; }
+        .btn-client-upload { width: 100%; background: linear-gradient(90deg, #2563eb, #3b82f6); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+
+        /* Modal Forms (Client Modal & Admin Modal) */
+        .modal-panel { display: none; background: #131b2e; padding: 15px; margin: 15px; border-radius: 12px; border: 1px solid #3b82f6; }
+        .modal-panel h3 { margin-bottom: 12px; color: #38bdf8; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .close-btn { color: #ef4444; font-size: 18px; cursor: pointer; }
+        
         .form-group { margin-bottom: 10px; }
         .form-group label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
-        .form-control { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; font-size: 14px; }
-        .btn-submit { background: #22c55e; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .form-control { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; font-size: 13px; }
+        .btn-submit { background: #22c55e; color: white; border: none; padding: 11px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 14px; }
 
         /* Top Nav */
         .top-nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 12px 15px; }
@@ -30,18 +36,22 @@
         .nav-btn.active { background: #2563eb; color: #fff; border-color: #3b82f6; }
 
         /* Movie Grid */
-        .section-title { padding: 10px 15px 5px; font-size: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .section-title { padding: 10px 15px 5px; font-size: 15px; font-weight: bold; }
         .movie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 10px 15px; }
         .movie-card { background: #131b2e; border-radius: 14px; overflow: hidden; border: 1px solid #1e293b; display: flex; flex-direction: column; position: relative; }
         .poster-container { position: relative; width: 100%; height: 210px; background: #1e293b; }
         .movie-poster { width: 100%; height: 100%; object-fit: cover; }
         .badge-sale { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); color: #38bdf8; padding: 3px 8px; border-radius: 6px; font-size: 10px; }
-        .btn-delete-item { position: absolute; top: 8px; right: 8px; background: #ef4444; color: white; border: none; border-radius: 6px; padding: 4px 8px; font-size: 11px; cursor: pointer; display: none; }
+        .btn-delete-item { position: absolute; top: 8px; right: 8px; background: #ef4444; color: white; border: none; border-radius: 6px; padding: 4px 8px; font-size: 11px; cursor: pointer; display: none; z-index: 10; }
         
         .movie-details { padding: 10px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .movie-title { font-size: 13px; font-weight: bold; line-height: 1.4; margin-bottom: 6px; color: #f1f5f9; min-height: 36px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .movie-title { font-size: 13px; font-weight: bold; line-height: 1.4; margin-bottom: 4px; color: #f1f5f9; min-height: 36px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .price-tag { color: #38bdf8; font-size: 14px; font-weight: bold; margin-bottom: 8px; }
         .buy-btn { background: #2563eb; color: white; border: none; padding: 8px; border-radius: 8px; width: 100%; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+        /* Empty State */
+        .empty-box { grid-column: span 2; text-align: center; padding: 40px 20px; color: #64748b; font-size: 14px; }
+        .empty-box i { font-size: 40px; margin-bottom: 10px; color: #334155; }
 
         /* Bottom Nav */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0f172a; border-top: 1px solid #1e293b; display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
@@ -61,27 +71,89 @@
                 <div style="font-size: 10px; color: #94a3b8;">@Preeaiwie_bot</div>
             </div>
         </div>
-        <button class="admin-toggle-btn" onclick="toggleAdminPanel()">
-            <i class="fa-solid fa-user-gear"></i> Admin Panel
+        <!-- ប៊ូតុង Admin សម្ងាត់ -->
+        <button class="admin-login-btn" onclick="loginAdmin()">🔑 Admin</button>
+    </div>
+
+    <!-- ប៊ូតុងសម្រាប់អតិថិជន Upload រឿងរបស់ពួកគាត់ -->
+    <div class="client-action-bar">
+        <button class="btn-client-upload" onclick="toggleClientUploadModal()">
+            <i class="fa-solid fa-cloud-arrow-up"></i> ផ្ញើ/Upload រឿងរបស់អ្នកចូល Website
         </button>
     </div>
 
-    <!-- Admin Panel (កន្លែង Upload / បញ្ចូលរឿង) -->
-    <div id="adminPanel">
-        <h3>➕ ផ្ទាំង Admin: បញ្ចូលរឿងថ្មី</h3>
+    <!-- ផ្ទាំង Form សម្រាប់អតិថិជន Upload រឿង -->
+    <div id="clientUploadModal" class="modal-panel">
+        <h3>
+            <span>📤 ផ្ទាំង Upload រឿងសម្រាប់អតិថិជន</span>
+            <i class="fa-solid fa-xmark close-btn" onclick="toggleClientUploadModal()"></i>
+        </h3>
+        
         <div class="form-group">
-            <label>ចំណងជើងរឿង (ឧទាហរណ៍៖ រឿង A ឬ រឿង B):</label>
-            <input type="text" id="movieTitle" class="form-control" placeholder="បញ្ចូលឈ្មោះរឿង...">
+            <label>១. ឈ្មោះអតិថិជន / អ្នកផ្ញើ៖</label>
+            <input type="text" id="clientName" class="form-control" placeholder="បញ្ចូលឈ្មោះរបស់អ្នក...">
         </div>
+
         <div class="form-group">
-            <label>Link រូបភាព Poster (URL):</label>
-            <input type="text" id="moviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
+            <label>២. ចំណងជើងរឿង៖</label>
+            <input type="text" id="clientMovieTitle" class="form-control" placeholder="បញ្ចូលចំណងជើងរឿង...">
         </div>
+
         <div class="form-group">
-            <label>តម្លៃ ($):</label>
-            <input type="text" id="moviePrice" class="form-control" value="$2.00">
+            <label>៣. ជ្រើសរើសប្រភេទការជួល/គិតថ្លៃ៖</label>
+            <select id="rentalType" class="form-control">
+                <option value="ថ្ងៃ">គិតជា ថ្ងៃ (Days)</option>
+                <option value="ខែ">គិតជា ខែ (Months)</option>
+                <option value="ចំនួនវីដេអូ">គិតជា ចំនួនវីដេអូ (Number of Videos)</option>
+            </select>
         </div>
-        <button class="btn-submit" onclick="addNewMovie()">💾 បញ្ចូលរឿងនេះទៅក្នុង Website</button>
+
+        <div class="form-group">
+            <label>៤. បញ្ចូលចំនួន (ថ្ងៃ / ខែ / ឬ ចំនួនវីដេអូ)៖</label>
+            <input type="number" id="rentalDuration" class="form-control" placeholder="ឧទាហរណ៍៖ 1, 30, ឬ 50...">
+        </div>
+
+        <div class="form-group">
+            <label>៥. ជ្រើសរើស Video ពីរឿងរបស់អ្នក៖</label>
+            <input type="file" id="clientVideoFile" accept="video/*" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label>៦. ជ្រើសរើសរូបភាព Poster (គម្របរឿង)៖</label>
+            <input type="file" id="clientPosterFile" accept="image/*" class="form-control">
+        </div>
+
+        <button class="btn-submit" onclick="submitClientUpload()">🚀 បញ្ជូនសំណើ Upload ទៅកាន់ Admin</button>
+    </div>
+
+    <!-- Admin Panel (សម្រាប់តែ Admin ប្រើប្រាស់) -->
+    <div id="adminPanel" class="modal-panel">
+        <h3>
+            <span>🎬 Admin Panel: Upload ផ្ទាល់ខ្លួន</span>
+            <i class="fa-solid fa-xmark close-btn" onclick="toggleAdminPanel()"></i>
+        </h3>
+        
+        <div class="form-group">
+            <label>ចំណងជើងរឿង៖</label>
+            <input type="text" id="adminMovieTitle" class="form-control" placeholder="បញ្ចូលឈ្មោះរឿង...">
+        </div>
+
+        <div class="form-group">
+            <label>ជ្រើសរើស Video៖</label>
+            <input type="file" id="adminVideoFile" accept="video/*" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label>ជ្រើសរើស Poster៖</label>
+            <input type="file" id="adminPosterFile" accept="image/*" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label>កំណត់តម្លៃ ($)៖</label>
+            <input type="text" id="adminPrice" class="form-control" value="$2.00">
+        </div>
+
+        <button class="btn-submit" onclick="addAdminMovie()">💾 រក្សាទុក និងបង្ហាញលើ Website</button>
     </div>
 
     <!-- Top Menu -->
@@ -96,10 +168,8 @@
         <span>🎬 បញ្ជីរឿងទាំងអស់</span>
     </div>
 
-    <!-- Movie Display Area (បញ្ជីរឿងបង្ហាញ) -->
-    <div class="movie-grid" id="movieContainer">
-        <!-- រឿងនឹងត្រូវបង្ហាញនៅត្រង់នេះតាមរយៈ JavaScript -->
-    </div>
+    <!-- Movie Display Area -->
+    <div class="movie-grid" id="movieContainer"></div>
 
     <!-- Bottom Menu -->
     <div class="bottom-nav">
@@ -113,25 +183,82 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // ទិន្នន័យរឿងគំរូដើម
-        const defaultMovies = [
-            { id: 1, title: "រឿងភាគពិសេស A (ដាច់ចប់)", price: "$2.00", poster: "https://picsum.photos/300/450?random=1" },
-            { id: 2, title: "រឿងភាគពិសេស B (ដាច់ចប់)", price: "$1.00", poster: "https://picsum.photos/300/450?random=2" }
-        ];
+        const ADMIN_PIN = "1234";
+        let isAdminLoggedIn = false;
 
-        let isAdminVisible = false;
-
-        // ទាញទិន្នន័យពី Storage
         function getMovies() {
-            const stored = localStorage.getItem('pree_movies');
-            return stored ? JSON.parse(stored) : defaultMovies;
+            const stored = localStorage.getItem('pree_custom_movies');
+            return stored ? JSON.parse(stored) : [];
         }
 
-        // បង្ហាញបញ្ជីរឿងនៅលើអេក្រង់
+        function toggleClientUploadModal() {
+            const modal = document.getElementById('clientUploadModal');
+            modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function loginAdmin() {
+            if (isAdminLoggedIn) {
+                isAdminLoggedIn = false;
+                document.getElementById('adminPanel').style.display = 'none';
+                renderMovies();
+                alert('បានចាកចេញពី Admin Panel');
+                return;
+            }
+
+            const pin = prompt('សូមបញ្ចូលលេខកូដសម្ងាត់ Admin:');
+            if (pin === ADMIN_PIN) {
+                isAdminLoggedIn = true;
+                toggleAdminPanel();
+                renderMovies();
+            } else if (pin !== null) {
+                alert('លេខកូដមិនត្រឹមត្រូវទេ!');
+            }
+        }
+
+        // អតិថិជនផ្ញើដេតា Upload ទៅ Telegram Bot
+        function submitClientUpload() {
+            const name = document.getElementById('clientName').value.trim();
+            const title = document.getElementById('clientMovieTitle').value.trim();
+            const type = document.getElementById('rentalType').value;
+            const duration = document.getElementById('rentalDuration').value.trim();
+
+            if (!name || !title || !duration) {
+                alert('សូមបំពេញព័ត៌មានអតិថិជន ចំណងជើង និងចំនួនឱ្យបានគ្រប់គ្រាន់!');
+                return;
+            }
+
+            const uploadData = {
+                action: "client_upload_request",
+                client_name: name,
+                movie_title: title,
+                rental_type: type,
+                rental_duration: duration
+            };
+
+            tg.sendData(JSON.stringify(uploadData));
+            alert(`បានបញ្ជូនសំណើ Upload រឿង "${title}" (${duration} ${type}) ទៅកាន់ Admin រួចរាល់!`);
+            toggleClientUploadModal();
+        }
+
         function renderMovies() {
             const movies = getMovies();
             const container = document.getElementById('movieContainer');
             container.innerHTML = '';
+
+            if (movies.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-box">
+                        <i class="fa-solid fa-film"></i>
+                        <div>មិនទាន់មានរឿងនៅក្នុងបញ្ជីនៅឡើយទេ</div>
+                    </div>
+                `;
+                return;
+            }
 
             movies.forEach((movie, index) => {
                 const card = document.createElement('div');
@@ -139,8 +266,8 @@
                 card.innerHTML = `
                     <div class="poster-container">
                         <span class="badge-sale">💎 លក់</span>
-                        <button class="btn-delete-item" style="display: ${isAdminVisible ? 'block' : 'none'}" onclick="deleteMovie(${index})">🗑️ លុប</button>
-                        <img class="movie-poster" src="${movie.poster}" alt="Poster" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
+                        <button class="btn-delete-item" style="display: ${isAdminLoggedIn ? 'block' : 'none'}" onclick="deleteMovie(${index})">🗑️ លុប</button>
+                        <img class="movie-poster" src="${movie.poster || 'https://via.placeholder.com/300x450?text=No+Poster'}" alt="Poster">
                     </div>
                     <div class="movie-details">
                         <div class="movie-title">${movie.title}</div>
@@ -154,18 +281,9 @@
             });
         }
 
-        // បើក/បិទ ផ្ទាំង Admin
-        function toggleAdminPanel() {
-            isAdminVisible = !isAdminVisible;
-            document.getElementById('adminPanel').style.display = isAdminVisible ? 'block' : 'none';
-            renderMovies(); // Update បង្ហាញប៊ូតុង Delete
-        }
-
-        // បញ្ចូលរឿងថ្មី (Add Movie)
-        function addNewMovie() {
-            const title = document.getElementById('movieTitle').value.trim();
-            const poster = document.getElementById('moviePoster').value.trim();
-            const price = document.getElementById('moviePrice').value.trim();
+        function addAdminMovie() {
+            const title = document.getElementById('adminMovieTitle').value.trim();
+            const price = document.getElementById('adminPrice').value.trim();
 
             if (!title) {
                 alert('សូមបញ្ចូលចំណងជើងរឿង!');
@@ -177,39 +295,30 @@
                 id: Date.now(),
                 title: title,
                 price: price || '$2.00',
-                poster: poster || 'https://via.placeholder.com/300x450?text=Movie+Poster'
+                poster: 'https://via.placeholder.com/300x450?text=Movie+Poster'
             });
 
-            localStorage.setItem('pree_movies', JSON.stringify(movies));
-            
-            // Clear input
-            document.getElementById('movieTitle').value = '';
-            document.getElementById('moviePoster').value = '';
-
+            localStorage.setItem('pree_custom_movies', JSON.stringify(movies));
+            document.getElementById('adminMovieTitle').value = '';
+            toggleAdminPanel();
             renderMovies();
-            alert('បានបញ្ចូលរឿងថ្មីជោគជ័យ!');
+            alert('បាន Upload និងរក្សាទុកជោគជ័យ!');
         }
 
-        // លុបរឿង (Delete Movie)
         function deleteMovie(index) {
             if (confirm('តើបងពិតជាចង់លុបរឿងនេះចោលមែនទេ?')) {
                 const movies = getMovies();
                 movies.splice(index, 1);
-                localStorage.setItem('pree_movies', JSON.stringify(movies));
+                localStorage.setItem('pree_custom_movies', JSON.stringify(movies));
                 renderMovies();
             }
         }
 
-        // ទិញរឿង (Send to Bot)
         function buyMovie(title, price) {
-            tg.sendData(JSON.stringify({
-                movie: title,
-                price: price
-            }));
+            tg.sendData(JSON.stringify({ movie: title, price: price }));
             alert(`អ្នកបានជ្រើសរើសទិញ៖ ${title} (${price})`);
         }
 
-        // ដំណើរការដំបូង
         renderMovies();
     </script>
 </body>
