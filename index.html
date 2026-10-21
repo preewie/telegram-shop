@@ -187,6 +187,7 @@
             <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">⚙️ កំណត់កញ្ចប់តម្លៃតាមចំនួនថ្ងៃ (៣០ថ្ងៃ ដាក់ VIP តែម្តង)៖</h4>
             <div id="adminPkgListContainer"></div>
             <button class="btn-secondary" style="background: #2563eb; width: 100%; margin-top: 5px;" onclick="addNewPkgOption()">➕ បន្ថរួមកញ្ចប់ថ្មី</button>
+            <button class="btn-action" style="background: #22c55e; width: 100%; margin-top: 8px;" onclick="saveOwnerPackage()">💾 រក្សាទុកកញ្ចប់ទាំងអស់</button>
         </div>
 
         <div style="margin-bottom: 12px; background: #0f172a; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
@@ -362,7 +363,7 @@
                 { id: 1, days: 5, price: "$5.00" },
                 { id: 2, days: 10, price: "$8.00" },
                 { id: 3, days: 20, price: "$15.00" },
-                { id: 4, days: 30, price: "$20.00" } // 30 ថ្ងៃ ក្លាយជា VIP ស្វ័យប្រវត្តិ
+                { id: 4, days: 30, price: "$20.00" }
             ];
         }
         function savePackageOptions(options) { localStorage.setItem('pree_pkg_options', JSON.stringify(options)); }
@@ -469,9 +470,13 @@
             const updated = [];
 
             for (let i = 0; i < pkgs.length; i++) {
-                const days = parseInt(document.getElementById(`pkg_days_${i}`).value) || 1;
-                const price = document.getElementById(`pkg_price_${i}`).value.trim();
-                updated.push({ id: pkgs[i].id || Date.now() + i, days, price });
+                const daysInput = document.getElementById(`pkg_days_${i}`);
+                const priceInput = document.getElementById(`pkg_price_${i}`);
+                if (daysInput && priceInput) {
+                    const days = parseInt(daysInput.value) || 1;
+                    const price = priceInput.value.trim();
+                    updated.push({ id: pkgs[i].id || Date.now() + i, days, price });
+                }
             }
 
             savePackageOptions(updated);
