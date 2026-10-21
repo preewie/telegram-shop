@@ -3,42 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HCH Digital Pro - Mini App</title>
+    <title>PREE WIE Shop - Movie App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Khmer, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Khmer, sans-serif; }
         body { background-color: #0b0f19; color: #ffffff; padding-bottom: 80px; }
         
-        /* Header Section */
+        /* Header */
         .header { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: #131b2e; border-bottom: 1px solid #1e293b; }
         .user-info { display: flex; align-items: center; gap: 10px; }
-        .avatar { width: 35px; height: 35px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .credit-badge { background: linear-gradient(90deg, #1d4ed8, #3b82f6); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-        
-        /* Top Navigation Buttons */
+        .avatar { width: 38px; height: 38px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: white; }
+        .admin-toggle-btn { background: #1e293b; border: 1px solid #3b82f6; color: #38bdf8; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+
+        /* Admin Panel Modal / Section */
+        #adminPanel { display: none; background: #131b2e; padding: 15px; margin: 15px; border-radius: 12px; border: 1px solid #3b82f6; }
+        #adminPanel h3 { margin-bottom: 12px; color: #38bdf8; font-size: 16px; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+        .form-control { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; font-size: 14px; }
+        .btn-submit { background: #22c55e; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 5px; }
+
+        /* Top Nav */
         .top-nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 12px 15px; }
-        .nav-btn { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 8px; text-align: center; color: #94a3b8; font-size: 11px; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-btn { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 8px; text-align: center; color: #94a3b8; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .nav-btn.active { background: #2563eb; color: #fff; border-color: #3b82f6; }
 
-        /* Movie Grid Section */
-        .section-title { padding: 10px 15px 5px; font-size: 16px; font-weight: bold; }
+        /* Movie Grid */
+        .section-title { padding: 10px 15px 5px; font-size: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         .movie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 10px 15px; }
         .movie-card { background: #131b2e; border-radius: 14px; overflow: hidden; border: 1px solid #1e293b; display: flex; flex-direction: column; position: relative; }
-        .poster-container { position: relative; width: 100%; height: 230px; }
+        .poster-container { position: relative; width: 100%; height: 210px; background: #1e293b; }
         .movie-poster { width: 100%; height: 100%; object-fit: cover; }
-        .badge-type { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); color: #38bdf8; padding: 3px 8px; border-radius: 6px; font-size: 10px; }
+        .badge-sale { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); color: #38bdf8; padding: 3px 8px; border-radius: 6px; font-size: 10px; }
+        .btn-delete-item { position: absolute; top: 8px; right: 8px; background: #ef4444; color: white; border: none; border-radius: 6px; padding: 4px 8px; font-size: 11px; cursor: pointer; display: none; }
         
         .movie-details { padding: 10px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .movie-title { font-size: 13px; font-weight: bold; line-height: 1.4; margin-bottom: 6px; color: #f1f5f9; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .movie-title { font-size: 13px; font-weight: bold; line-height: 1.4; margin-bottom: 6px; color: #f1f5f9; min-height: 36px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .price-tag { color: #38bdf8; font-size: 14px; font-weight: bold; margin-bottom: 8px; }
         .buy-btn { background: #2563eb; color: white; border: none; padding: 8px; border-radius: 8px; width: 100%; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .buy-btn:active { transform: scale(0.98); }
 
-        /* Bottom Navigation Bar */
+        /* Bottom Nav */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0f172a; border-top: 1px solid #1e293b; display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
         .bottom-item { color: #64748b; font-size: 11px; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .bottom-item.active { color: #e11d48; }
+        .bottom-item.active { color: #2563eb; }
         .bottom-item i { font-size: 18px; }
     </style>
 </head>
@@ -53,12 +61,30 @@
                 <div style="font-size: 10px; color: #94a3b8;">@Preeaiwie_bot</div>
             </div>
         </div>
-        <div class="credit-badge">
-            <i class="fa-solid fa-gem"></i> បញ្ចូល Credit
-        </div>
+        <button class="admin-toggle-btn" onclick="toggleAdminPanel()">
+            <i class="fa-solid fa-user-gear"></i> Admin Panel
+        </button>
     </div>
 
-    <!-- Top Quick Buttons -->
+    <!-- Admin Panel (កន្លែង Upload / បញ្ចូលរឿង) -->
+    <div id="adminPanel">
+        <h3>➕ ផ្ទាំង Admin: បញ្ចូលរឿងថ្មី</h3>
+        <div class="form-group">
+            <label>ចំណងជើងរឿង (ឧទាហរណ៍៖ រឿង A ឬ រឿង B):</label>
+            <input type="text" id="movieTitle" class="form-control" placeholder="បញ្ចូលឈ្មោះរឿង...">
+        </div>
+        <div class="form-group">
+            <label>Link រូបភាព Poster (URL):</label>
+            <input type="text" id="moviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
+        </div>
+        <div class="form-group">
+            <label>តម្លៃ ($):</label>
+            <input type="text" id="moviePrice" class="form-control" value="$2.00">
+        </div>
+        <button class="btn-submit" onclick="addNewMovie()">💾 បញ្ចូលរឿងនេះទៅក្នុង Website</button>
+    </div>
+
+    <!-- Top Menu -->
     <div class="top-nav">
         <div class="nav-btn active"><i class="fa-solid fa-user"></i> មេឌៀ</div>
         <div class="nav-btn"><i class="fa-solid fa-paper-plane"></i> ឆានែល</div>
@@ -66,74 +92,16 @@
         <div class="nav-btn"><i class="fa-solid fa-key"></i> AI Key</div>
     </div>
 
-    <div class="section-title">🎬 រឿងភាគមកថ្មី</div>
-
-    <!-- Movie List Grid -->
-    <div class="movie-grid">
-        
-        <!-- Movie Item 1 -->
-        <div class="movie-card">
-            <div class="poster-container">
-                <span class="badge-type">💎 លក់</span>
-                <img class="movie-poster" src="https://picsum.photos/300/450?random=1" alt="Poster">
-            </div>
-            <div class="movie-details">
-                <div class="movie-title">ដំរូវអំណាចនៃបងស្រីថ្លៃ (ដាច់ចប់)</div>
-                <div class="price-tag">$1.00</div>
-                <button class="buy-btn" onclick="buyMovie('ដំរូវអំណាចនៃបងស្រីថ្លៃ', '$1.00')">
-                    <i class="fa-solid fa-cart-shopping"></i> ទិញកញ្ចប់នេះ
-                </button>
-            </div>
-        </div>
-
-        <!-- Movie Item 2 -->
-        <div class="movie-card">
-            <div class="poster-container">
-                <span class="badge-type">💎 លក់</span>
-                <img class="movie-poster" src="https://picsum.photos/300/450?random=2" alt="Poster">
-            </div>
-            <div class="movie-details">
-                <div class="movie-title">បន្ថយខ្លួន ដើម្បីចាប់អ្នកបម្រើ និងប្តីរបស់ខ្លួន (ដាច់ចប់)</div>
-                <div class="price-tag">$1.00</div>
-                <button class="buy-btn" onclick="buyMovie('បន្ថយខ្លួន ដើម្បីចាប់អ្នកបម្រើ', '$1.00')">
-                    <i class="fa-solid fa-cart-shopping"></i> ទិញកញ្ចប់នេះ
-                </button>
-            </div>
-        </div>
-
-        <!-- Movie Item 3 -->
-        <div class="movie-card">
-            <div class="poster-container">
-                <span class="badge-type">💎 លក់</span>
-                <img class="movie-poster" src="https://picsum.photos/300/450?random=3" alt="Poster">
-            </div>
-            <div class="movie-details">
-                <div class="movie-title">រឿងភាគពិសេស - ស្តេចចុងភៅ</div>
-                <div class="price-tag">$2.00</div>
-                <button class="buy-btn" onclick="buyMovie('ស្តេចចុងភៅ', '$2.00')">
-                    <i class="fa-solid fa-cart-shopping"></i> ទិញកញ្ចប់នេះ
-                </button>
-            </div>
-        </div>
-
-        <!-- Movie Item 4 -->
-        <div class="movie-card">
-            <div class="poster-container">
-                <span class="badge-type">💎 លក់</span>
-                <img class="movie-poster" src="https://picsum.photos/300/450?random=4" alt="Poster">
-            </div>
-            <div class="movie-details">
-                <div class="movie-title">រឿងភាគពិសេស - អាថ៌កំបាំង</div>
-                <div class="price-tag">$2.00</div>
-                <button class="buy-btn" onclick="buyMovie('អាថ៌កំបាំង', '$2.00')">
-                    <i class="fa-solid fa-cart-shopping"></i> ទិញកញ្ចប់នេះ
-                </button>
-            </div>
-        </div>
-
+    <div class="section-title">
+        <span>🎬 បញ្ជីរឿងទាំងអស់</span>
     </div>
 
-    <!-- Bottom Navigation -->
+    <!-- Movie Display Area (បញ្ជីរឿងបង្ហាញ) -->
+    <div class="movie-grid" id="movieContainer">
+        <!-- រឿងនឹងត្រូវបង្ហាញនៅត្រង់នេះតាមរយៈ JavaScript -->
+    </div>
+
+    <!-- Bottom Menu -->
     <div class="bottom-nav">
         <a href="#" class="bottom-item"><i class="fa-solid fa-play"></i>បកប្រែរឿង</a>
         <a href="#" class="bottom-item"><i class="fa-solid fa-wand-magic-sparkles"></i>បកប្រែ PRO</a>
@@ -145,13 +113,104 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        // ទិន្នន័យរឿងគំរូដើម
+        const defaultMovies = [
+            { id: 1, title: "រឿងភាគពិសេស A (ដាច់ចប់)", price: "$2.00", poster: "https://picsum.photos/300/450?random=1" },
+            { id: 2, title: "រឿងភាគពិសេស B (ដាច់ចប់)", price: "$1.00", poster: "https://picsum.photos/300/450?random=2" }
+        ];
+
+        let isAdminVisible = false;
+
+        // ទាញទិន្នន័យពី Storage
+        function getMovies() {
+            const stored = localStorage.getItem('pree_movies');
+            return stored ? JSON.parse(stored) : defaultMovies;
+        }
+
+        // បង្ហាញបញ្ជីរឿងនៅលើអេក្រង់
+        function renderMovies() {
+            const movies = getMovies();
+            const container = document.getElementById('movieContainer');
+            container.innerHTML = '';
+
+            movies.forEach((movie, index) => {
+                const card = document.createElement('div');
+                card.className = 'movie-card';
+                card.innerHTML = `
+                    <div class="poster-container">
+                        <span class="badge-sale">💎 លក់</span>
+                        <button class="btn-delete-item" style="display: ${isAdminVisible ? 'block' : 'none'}" onclick="deleteMovie(${index})">🗑️ លុប</button>
+                        <img class="movie-poster" src="${movie.poster}" alt="Poster" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
+                    </div>
+                    <div class="movie-details">
+                        <div class="movie-title">${movie.title}</div>
+                        <div class="price-tag">${movie.price}</div>
+                        <button class="buy-btn" onclick="buyMovie('${movie.title}', '${movie.price}')">
+                            <i class="fa-solid fa-cart-shopping"></i> ទិញកញ្ចប់នេះ
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // បើក/បិទ ផ្ទាំង Admin
+        function toggleAdminPanel() {
+            isAdminVisible = !isAdminVisible;
+            document.getElementById('adminPanel').style.display = isAdminVisible ? 'block' : 'none';
+            renderMovies(); // Update បង្ហាញប៊ូតុង Delete
+        }
+
+        // បញ្ចូលរឿងថ្មី (Add Movie)
+        function addNewMovie() {
+            const title = document.getElementById('movieTitle').value.trim();
+            const poster = document.getElementById('moviePoster').value.trim();
+            const price = document.getElementById('moviePrice').value.trim();
+
+            if (!title) {
+                alert('សូមបញ្ចូលចំណងជើងរឿង!');
+                return;
+            }
+
+            const movies = getMovies();
+            movies.push({
+                id: Date.now(),
+                title: title,
+                price: price || '$2.00',
+                poster: poster || 'https://via.placeholder.com/300x450?text=Movie+Poster'
+            });
+
+            localStorage.setItem('pree_movies', JSON.stringify(movies));
+            
+            // Clear input
+            document.getElementById('movieTitle').value = '';
+            document.getElementById('moviePoster').value = '';
+
+            renderMovies();
+            alert('បានបញ្ចូលរឿងថ្មីជោគជ័យ!');
+        }
+
+        // លុបរឿង (Delete Movie)
+        function deleteMovie(index) {
+            if (confirm('តើបងពិតជាចង់លុបរឿងនេះចោលមែនទេ?')) {
+                const movies = getMovies();
+                movies.splice(index, 1);
+                localStorage.setItem('pree_movies', JSON.stringify(movies));
+                renderMovies();
+            }
+        }
+
+        // ទិញរឿង (Send to Bot)
         function buyMovie(title, price) {
             tg.sendData(JSON.stringify({
-                movie_title: title,
+                movie: title,
                 price: price
             }));
-            tg.showAlert(`អ្នកបានជ្រើសរើសទិញ៖ ${title} (${price})`);
+            alert(`អ្នកបានជ្រើសរើសទិញ៖ ${title} (${price})`);
         }
+
+        // ដំណើរការដំបូង
+        renderMovies();
     </script>
 </body>
 </html>
