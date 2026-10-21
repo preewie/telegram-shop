@@ -52,6 +52,10 @@
         .pkg-price { font-size: 18px; color: #22c55e; font-weight: bold; }
 
         /* Package Selection Buttons for Client */
+        .type-selector { display: flex; gap: 10px; margin-bottom: 10px; }
+        .type-tab { flex: 1; padding: 8px; background: #0f172a; border: 1px solid #334155; text-align: center; border-radius: 8px; font-size: 12px; cursor: pointer; color: #94a3b8; }
+        .type-tab.active { background: #2563eb; color: white; border-color: #3b82f6; font-weight: bold; }
+
         .pkg-option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
         .pkg-option-btn { background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 8px; text-align: center; color: white; cursor: pointer; font-size: 12px; }
         .pkg-option-btn.selected { background: #2563eb; border-color: #3b82f6; font-weight: bold; }
@@ -117,7 +121,13 @@
             <i class="fa-solid fa-xmark close-btn" onclick="closePanels()"></i>
         </h3>
         
-        <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">សូមជ្រើសរើសកញ្ចប់រយៈពេលថ្ងៃ៖</div>
+        <!-- Tab ប្តូររវាង កញ្ចប់ថ្ងៃ និង កញ្ចប់វីដេអូ -->
+        <div class="type-selector">
+            <div class="type-tab active" id="tabTypeDays" onclick="switchBuyMode('days')">📅 កញ្ចប់តាមថ្ងៃ</div>
+            <div class="type-tab" id="tabTypeVids" onclick="switchBuyMode('videos')">🎬 កញ្ចប់តាមវីដេអូ</div>
+        </div>
+
+        <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;" id="buyModeLabel">សូមចុចជ្រើសរើសកញ្ចប់រយៈពេលថ្ងៃខាងក្រោម៖</div>
         <div class="pkg-option-grid" id="pkgOptionContainer"></div>
 
         <div class="pkg-card" style="margin-top: 10px;">
@@ -183,12 +193,21 @@
             </div>
         </div>
 
-        <div style="background: #0f172a; border: 1px solid #3b82f6; padding: 12px; border-radius: 10px; margin-bottom: 15px;">
-            <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">⚙️ កំណត់កញ្ចប់តម្លៃតាមចំនួនថ្ងៃ (៣០ថ្ងៃ ដាក់ VIP តែម្តង)៖</h4>
-            <div id="adminPkgListContainer"></div>
-            <button class="btn-secondary" style="background: #2563eb; width: 100%; margin-top: 5px;" onclick="addNewPkgOption()">➕ បន្ថរួមកញ្ចប់ថ្មី</button>
-            <button class="btn-action" style="background: #22c55e; width: 100%; margin-top: 8px;" onclick="saveOwnerPackage()">💾 រក្សាទុកកញ្ចប់ទាំងអស់</button>
+        <!-- ផ្នែក Master Control កញ្ចប់ថ្ងៃ -->
+        <div style="background: #0f172a; border: 1px solid #3b82f6; padding: 12px; border-radius: 10px; margin-bottom: 12px;">
+            <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">📅 កំណត់កញ្ចប់តម្លៃតាម "ចំនួនថ្ងៃ" (៣០ថ្ងៃ គឺ VIP ស្វ័យប្រវត្តិ)៖</h4>
+            <div id="adminPkgDaysContainer"></div>
+            <button class="btn-secondary" style="background: #2563eb; width: 100%; margin-top: 5px;" onclick="addPkgDayOption()">➕ បន្ថរួមកញ្ចប់ថ្ងៃ</button>
         </div>
+
+        <!-- ផ្នែក Master Control កញ្ចប់វីដេអូ -->
+        <div style="background: #0f172a; border: 1px solid #3b82f6; padding: 12px; border-radius: 10px; margin-bottom: 12px;">
+            <h4 style="font-size: 13px; color: #38bdf8; margin-bottom: 8px;">🎬 កំណត់កញ្ចប់តម្លៃតាម "ចំនួនវីដេអូ"៖</h4>
+            <div id="adminPkgVidsContainer"></div>
+            <button class="btn-secondary" style="background: #2563eb; width: 100%; margin-top: 5px;" onclick="addPkgVidOption()">➕ បន្ថរួមកញ្ចប់វីដេអូ</button>
+        </div>
+
+        <button class="btn-action" style="background: #22c55e; width: 100%; margin-bottom: 15px;" onclick="saveOwnerPackagesAll()">💾 រក្សាទុកកញ្ចប់ទាំងអស់</button>
 
         <div style="margin-bottom: 12px; background: #0f172a; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-size: 12px; color: #94a3b8;">កូដសម្ងាត់ Master PIN (Default: 9999)</span>
@@ -357,8 +376,8 @@
         function saveSales(sales) { localStorage.setItem('pree_sales_records', JSON.stringify(sales)); }
 
         // កញ្ចប់ថ្ងៃ (៣០ថ្ងៃ គឺ VIP តែម្តង)
-        function getPackageOptions() {
-            const stored = localStorage.getItem('pree_pkg_options');
+        function getPackageDaysOptions() {
+            const stored = localStorage.getItem('pree_pkg_days');
             return stored ? JSON.parse(stored) : [
                 { id: 1, days: 5, price: "$5.00" },
                 { id: 2, days: 10, price: "$8.00" },
@@ -366,13 +385,31 @@
                 { id: 4, days: 30, price: "$20.00" }
             ];
         }
-        function savePackageOptions(options) { localStorage.setItem('pree_pkg_options', JSON.stringify(options)); }
+        function savePackageDaysOptions(options) { localStorage.setItem('pree_pkg_days', JSON.stringify(options)); }
+
+        // កញ្ចប់ចំនួនវីដេអូ
+        function getPackageVidsOptions() {
+            const stored = localStorage.getItem('pree_pkg_vids');
+            return stored ? JSON.parse(stored) : [
+                { id: 101, count: 10, price: "$3.00" },
+                { id: 102, count: 20, price: "$5.00" },
+                { id: 103, count: 25, price: "$6.00" },
+                { id: 104, count: 30, price: "$7.00" },
+                { id: 105, count: 35, price: "$8.00" },
+                { id: 106, count: 40, price: "$9.00" },
+                { id: 107, count: 50, price: "$10.00" }
+            ];
+        }
+        function savePackageVidsOptions(options) { localStorage.setItem('pree_pkg_vids', JSON.stringify(options)); }
 
         let currentRole = localStorage.getItem('pree_session_role') || 'user';
         let loggedInClientId = localStorage.getItem('pree_session_client_id') || null;
         let currentChannel = 'owner';
         let activePurchaseMovie = null;
-        let selectedPkgIndex = 0;
+        
+        let buyMode = 'days'; // 'days' or 'videos'
+        let selectedDayIndex = 0;
+        let selectedVidIndex = 0;
 
         function checkAutoLogin() {
             if (currentRole === 'master') {
@@ -394,7 +431,8 @@
                 closePanels();
                 renderMasterAnalytics();
                 renderMasterClientList();
-                renderAdminPackageList();
+                renderAdminPackageDaysList();
+                renderAdminPackageVidsList();
                 document.getElementById('ownerQrInput').value = getMasterQR();
                 document.getElementById('masterAdminPanel').style.display = 'block';
             } else if (currentRole === 'client' && loggedInClientId) {
@@ -428,59 +466,104 @@
             }
         }
 
-        function renderAdminPackageList() {
-            const pkgs = getPackageOptions();
-            const container = document.getElementById('adminPkgListContainer');
+        function renderAdminPackageDaysList() {
+            const pkgs = getPackageDaysOptions();
+            const container = document.getElementById('adminPkgDaysContainer');
             container.innerHTML = '';
 
             pkgs.forEach((p, idx) => {
                 const isVip = (p.days === 30);
-                const labelName = isVip ? 'VIP (30 ថ្ងៃ)' : `${p.days} ថ្ងៃ`;
+                const labelName = isVip ? 'VIP (៣០ ថ្ងៃ)' : `${p.days} ថ្ងៃ`;
                 const div = document.createElement('div');
-                div.style.cssText = "background: #0f172a; padding: 8px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #334155;";
+                div.style.cssText = "background: #131b2e; padding: 8px; border-radius: 8px; margin-bottom: 6px; border: 1px solid #334155;";
                 div.innerHTML = `
-                    <div style="font-size: 11px; color: #38bdf8; margin-bottom: 4px;">កញ្ចប់៖ ${labelName}</div>
+                    <div style="font-size: 11px; color: #38bdf8; font-weight: bold; margin-bottom: 4px;">${labelName}</div>
                     <div style="display: flex; gap: 6px; margin-bottom: 4px;">
-                        <input type="number" id="pkg_days_${idx}" class="form-control" value="${p.days}" placeholder="ចំនួនថ្ងៃ">
-                        <input type="text" id="pkg_price_${idx}" class="form-control" value="${p.price}" placeholder="តម្លៃ ($)">
+                        <input type="number" id="pkg_day_val_${idx}" class="form-control" value="${p.days}">
+                        <input type="text" id="pkg_day_price_${idx}" class="form-control" value="${p.price}">
                     </div>
-                    <button class="btn-secondary" style="background: #ef4444; width: 100%; font-size: 10px;" onclick="removePkgOption(${idx})">🗑️ លុបកញ្ចប់នេះ</button>
+                    <button class="btn-secondary" style="background: #ef4444; width: 100%; font-size: 10px;" onclick="removePkgDay(${idx})">🗑️ លុប</button>
                 `;
                 container.appendChild(div);
             });
         }
 
-        function addNewPkgOption() {
-            const pkgs = getPackageOptions();
+        function addPkgDayOption() {
+            const pkgs = getPackageDaysOptions();
             pkgs.push({ id: Date.now(), days: 7, price: "$7.00" });
-            savePackageOptions(pkgs);
-            renderAdminPackageList();
+            savePackageDaysOptions(pkgs);
+            renderAdminPackageDaysList();
         }
 
-        function removePkgOption(idx) {
-            let pkgs = getPackageOptions();
+        function removePkgDay(idx) {
+            let pkgs = getPackageDaysOptions();
             pkgs.splice(idx, 1);
-            savePackageOptions(pkgs);
-            renderAdminPackageList();
+            savePackageDaysOptions(pkgs);
+            renderAdminPackageDaysList();
         }
 
-        function saveOwnerPackage() {
-            if (currentRole !== 'master') return alert('គ្មានសិទ្ធិអនុវត្ត!');
-            const pkgs = getPackageOptions();
-            const updated = [];
+        function renderAdminPackageVidsList() {
+            const pkgs = getPackageVidsOptions();
+            const container = document.getElementById('adminPkgVidsContainer');
+            container.innerHTML = '';
 
-            for (let i = 0; i < pkgs.length; i++) {
-                const daysInput = document.getElementById(`pkg_days_${i}`);
-                const priceInput = document.getElementById(`pkg_price_${i}`);
-                if (daysInput && priceInput) {
-                    const days = parseInt(daysInput.value) || 1;
-                    const price = priceInput.value.trim();
-                    updated.push({ id: pkgs[i].id || Date.now() + i, days, price });
+            pkgs.forEach((p, idx) => {
+                const div = document.createElement('div');
+                div.style.cssText = "background: #131b2e; padding: 8px; border-radius: 8px; margin-bottom: 6px; border: 1px solid #334155;";
+                div.innerHTML = `
+                    <div style="font-size: 11px; color: #38bdf8; font-weight: bold; margin-bottom: 4px;">${p.count} វីដេអូ</div>
+                    <div style="display: flex; gap: 6px; margin-bottom: 4px;">
+                        <input type="number" id="pkg_vid_count_${idx}" class="form-control" value="${p.count}">
+                        <input type="text" id="pkg_vid_price_${idx}" class="form-control" value="${p.price}">
+                    </div>
+                    <button class="btn-secondary" style="background: #ef4444; width: 100%; font-size: 10px;" onclick="removePkgVid(${idx})">🗑️ លុប</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addPkgVidOption() {
+            const pkgs = getPackageVidsOptions();
+            pkgs.push({ id: Date.now(), count: 15, price: "$4.00" });
+            savePackageVidsOptions(pkgs);
+            renderAdminPackageVidsList();
+        }
+
+        function removePkgVid(idx) {
+            let pkgs = getPackageVidsOptions();
+            pkgs.splice(idx, 1);
+            savePackageVidsOptions(pkgs);
+            renderAdminPackageVidsList();
+        }
+
+        function saveOwnerPackagesAll() {
+            if (currentRole !== 'master') return alert('គ្មានសិទ្ធិអនុវត្ត!');
+            
+            // Save Days
+            const dayPkgs = getPackageDaysOptions();
+            const updatedDays = [];
+            for (let i = 0; i < dayPkgs.length; i++) {
+                const dInput = document.getElementById(`pkg_day_val_${i}`);
+                const pInput = document.getElementById(`pkg_day_price_${i}`);
+                if (dInput && pInput) {
+                    updatedDays.push({ id: dayPkgs[i].id || Date.now() + i, days: parseInt(dInput.value) || 1, price: pInput.value.trim() });
                 }
             }
+            savePackageDaysOptions(updatedDays);
 
-            savePackageOptions(updated);
-            alert('បានរក្សាទុកកញ្ចប់តម្លៃ និងចំនួនថ្ងៃជោគជ័យ!');
+            // Save Vids
+            const vidPkgs = getPackageVidsOptions();
+            const updatedVids = [];
+            for (let i = 0; i < vidPkgs.length; i++) {
+                const cInput = document.getElementById(`pkg_vid_count_${i}`);
+                const pInput = document.getElementById(`pkg_vid_price_${i}`);
+                if (cInput && pInput) {
+                    updatedVids.push({ id: vidPkgs[i].id || Date.now() + i, count: parseInt(cInput.value) || 1, price: pInput.value.trim() });
+                }
+            }
+            savePackageVidsOptions(updatedVids);
+
+            alert('បានរក្សាទុកកញ្ចប់តម្លៃថ្ងៃ និងវីដេអូទាំងអស់ជោគជ័យ!');
         }
 
         function renderMasterAnalytics() {
@@ -599,36 +682,84 @@
 
         function openBuyChannelModal() {
             closePanels();
+            buyMode = 'days';
+            selectedDayIndex = 0;
+            selectedVidIndex = 0;
+            updateBuyModeTabs();
             renderPkgOptionsForUser();
             document.getElementById('buyChannelModal').style.display = 'flex';
         }
 
+        function switchBuyMode(mode) {
+            buyMode = mode;
+            updateBuyModeTabs();
+            renderPkgOptionsForUser();
+        }
+
+        function updateBuyModeTabs() {
+            const tabDays = document.getElementById('tabTypeDays');
+            const tabVids = document.getElementById('tabTypeVids');
+            const label = document.getElementById('buyModeLabel');
+
+            if (buyMode === 'days') {
+                tabDays.className = 'type-tab active';
+                tabVids.className = 'type-tab';
+                label.innerText = 'សូមចុចជ្រើសរើសកញ្ចប់រយៈពេលថ្ងៃខាងក្រោម៖';
+            } else {
+                tabDays.className = 'type-tab';
+                tabVids.className = 'type-tab active';
+                label.innerText = 'សូមចុចជ្រើសរើសកញ្ចប់ចំនួនវីដេអូខាងក្រោម៖';
+            }
+        }
+
         function renderPkgOptionsForUser() {
-            const pkgs = getPackageOptions();
             const container = document.getElementById('pkgOptionContainer');
             container.innerHTML = '';
 
-            if (pkgs.length === 0) return;
-            if (selectedPkgIndex >= pkgs.length) selectedPkgIndex = 0;
+            if (buyMode === 'days') {
+                const pkgs = getPackageDaysOptions();
+                if (pkgs.length === 0) return;
+                if (selectedDayIndex >= pkgs.length) selectedDayIndex = 0;
 
-            pkgs.forEach((p, idx) => {
-                const isVip = (p.days === 30);
-                const titleStr = isVip ? 'VIP' : `${p.days} ថ្ងៃ`;
+                pkgs.forEach((p, idx) => {
+                    const isVip = (p.days === 30);
+                    const titleStr = isVip ? 'VIP' : `${p.days} ថ្ងៃ`;
 
-                const btn = document.createElement('div');
-                btn.className = `pkg-option-btn ${selectedPkgIndex === idx ? 'selected' : ''}`;
-                btn.innerHTML = `<strong>${titleStr}</strong><br><span style="color:#22c55e;">${p.price}</span>`;
-                btn.onclick = () => {
-                    selectedPkgIndex = idx;
-                    renderPkgOptionsForUser();
-                };
-                container.appendChild(btn);
-            });
+                    const btn = document.createElement('div');
+                    btn.className = `pkg-option-btn ${selectedDayIndex === idx ? 'selected' : ''}`;
+                    btn.innerHTML = `<strong>${titleStr}</strong><br><span style="color:#22c55e;">${p.price}</span>`;
+                    btn.onclick = () => {
+                        selectedDayIndex = idx;
+                        renderPkgOptionsForUser();
+                    };
+                    container.appendChild(btn);
+                });
 
-            const selected = pkgs[selectedPkgIndex];
-            const isVipSel = (selected.days === 30);
-            document.getElementById('pkgTitleDisplay').innerText = isVipSel ? 'VIP' : `${selected.days} ថ្ងៃ`;
-            document.getElementById('pkgPriceDisplay').innerText = selected.price;
+                const selected = pkgs[selectedDayIndex];
+                const isVipSel = (selected.days === 30);
+                document.getElementById('pkgTitleDisplay').innerText = isVipSel ? 'VIP' : `${selected.days} ថ្ងៃ`;
+                document.getElementById('pkgPriceDisplay').innerText = selected.price;
+
+            } else {
+                const pkgs = getPackageVidsOptions();
+                if (pkgs.length === 0) return;
+                if (selectedVidIndex >= pkgs.length) selectedVidIndex = 0;
+
+                pkgs.forEach((p, idx) => {
+                    const btn = document.createElement('div');
+                    btn.className = `pkg-option-btn ${selectedVidIndex === idx ? 'selected' : ''}`;
+                    btn.innerHTML = `<strong>${p.count} វីដេអូ</strong><br><span style="color:#22c55e;">${p.price}</span>`;
+                    btn.onclick = () => {
+                        selectedVidIndex = idx;
+                        renderPkgOptionsForUser();
+                    };
+                    container.appendChild(btn);
+                });
+
+                const selected = pkgs[selectedVidIndex];
+                document.getElementById('pkgTitleDisplay').innerText = `${selected.count} វីដេអូ`;
+                document.getElementById('pkgPriceDisplay').innerText = selected.price;
+            }
         }
 
         function submitRegisterClient() {
@@ -637,12 +768,26 @@
 
             if (!name || !pin) return alert('សូមបំពេញឈ្មោះ និងកំណត់ PIN របស់អ្នក!');
 
-            const pkgs = getPackageOptions();
-            const selected = pkgs[selectedPkgIndex] || pkgs[0];
-
             const clients = getClients();
             const clientId = 'client_' + Date.now();
-            const expireAt = Date.now() + (selected.days * 24 * 60 * 60 * 1000);
+            let expireAt = 0;
+            let pTitle = '';
+            let pPrice = '';
+
+            if (buyMode === 'days') {
+                const pkgs = getPackageDaysOptions();
+                const selected = pkgs[selectedDayIndex] || pkgs[0];
+                expireAt = Date.now() + (selected.days * 24 * 60 * 60 * 1000);
+                const isVipSel = (selected.days === 30);
+                pTitle = isVipSel ? 'VIP' : `${selected.days} ថ្ងៃ`;
+                pPrice = selected.price;
+            } else {
+                const pkgs = getPackageVidsOptions();
+                const selected = pkgs[selectedVidIndex] || pkgs[0];
+                expireAt = Date.now() + (30 * 24 * 60 * 60 * 1000); // Default 30 days for video package
+                pTitle = `${selected.count} វីដេអូ`;
+                pPrice = selected.price;
+            }
 
             clients.push({ 
                 id: clientId, 
@@ -655,10 +800,8 @@
 
             const masterQr = getMasterQR();
             if (masterQr) {
-                const isVipSel = (selected.days === 30);
-                const pTitle = isVipSel ? 'VIP' : `${selected.days} ថ្ងៃ`;
                 document.getElementById('payTitle').innerText = `ទូទាត់ទិញ Channel (${pTitle})`;
-                document.getElementById('payPrice').innerText = selected.price;
+                document.getElementById('payPrice').innerText = pPrice;
                 document.getElementById('payQrImg').src = masterQr;
                 document.getElementById('paymentModal').style.display = 'flex';
             }
@@ -750,7 +893,7 @@
             const clients = getClients();
             const client = clients.find(c => c.id === clientId);
             if (client) {
-                const pkgs = getPackageOptions();
+                const pkgs = getPackageDaysOptions();
                 const defDays = pkgs[0] ? pkgs[0].days : 5;
                 client.expireAt = Date.now() + (defDays * 24 * 60 * 60 * 1000);
                 saveClients(clients);
