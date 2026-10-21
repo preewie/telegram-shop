@@ -1,8 +1,8 @@
 import hmac
 import json
 import os
+import time
 from urllib.parse import urlparse
-
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from flask import Flask, jsonify, request
@@ -17,10 +17,12 @@ ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN", "*").strip()
 # CORS is a browser policy, not authentication. The write route still checks
 # MASTER_API_PASSWORD on every request.
 allowed_origins = "*" if ALLOWED_ORIGIN == "*" else [x.strip() for x in ALLOWED_ORIGIN.split(",") if x.strip()]
-CORS(app, resources={r"/api/*": {"origins": allowed_origins}},
-     allow_headers=["Content-Type", "X-Admin-Password"],
-     methods=["GET", "PUT", "OPTIONS"])
-
+CORS(
+    app,
+    resources={r"/api/*": {"origins": allowed_origins}},
+    allow_headers=["Content-Type", "X-Admin-Password", "Authorization"],
+    methods=["GET", "PUT", "POST", "OPTIONS"]
+)
 
 def db_connect():
     if not DATABASE_URL:
