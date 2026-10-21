@@ -402,19 +402,23 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>៣. ជ្រើសរើសរូបភាព Poster ពីទូរស័ព្ទ៖</label>
-                <input type="file" id="clientPosterFile" accept="image/*" class="form-control">
+                <label>៣. រូបភាព Poster (ជ្រើសរើស File ឬបិទភ្ជាប់ Link)៖</label>
+                <div class="qr-input-row">
+                    <input type="text" id="clientMoviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
+                    <input type="file" id="clientPosterFile" accept="image/*" style="display:none;" onchange="handleClientPosterFileSelect(this)">
+                    <button class="btn-secondary" style="background:#2563eb; white-space:nowrap;" onclick="document.getElementById('clientPosterFile').click()">📁 ជ្រើសរើសរូប</button>
+                </div>
             </div>
             <div class="form-group">
-                <label>៤. ឬបិទភ្ជាប់ Link រូបភាព Poster (Optional)៖</label>
-                <input type="text" id="clientMoviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
+                <label>៤. វីដេអូ (Upload File វីដេអូ ឬបិទភ្ជាប់ Link វីដេអូ)៖</label>
+                <div class="qr-input-row">
+                    <input type="text" id="clientMovieVideoUrl" class="form-control" placeholder="https://example.com/video.mp4">
+                    <input type="file" id="clientVideoFile" accept="video/*" style="display:none;" onchange="handleClientVideoFileSelect(this)">
+                    <button class="btn-secondary" style="background:#2563eb; white-space:nowrap;" onclick="document.getElementById('clientVideoFile').click()">📁 ជ្រើសរើសវីដេអូ</button>
+                </div>
             </div>
             <div class="form-group">
-                <label>៥. បិទភ្ជាប់ Link វីដេអូ (MP4 URL / Telegram Video Link)៖</label>
-                <input type="text" id="clientMovieVideoUrl" class="form-control" placeholder="https://example.com/video.mp4">
-            </div>
-            <div class="form-group">
-                <label>៦. កំណត់តម្លៃលក់រឿងរបស់អ្នក ($)៖</label>
+                <label>៥. កំណត់តម្លៃលក់រឿងរបស់អ្នក ($)៖</label>
                 <input type="text" id="clientMoviePrice" class="form-control" value="$2.00">
             </div>
             <button class="btn-action" onclick="addClientMovie()">💾 ដាក់បញ្ចូលរឿងចូល Channel ខ្ញុំ</button>
@@ -438,19 +442,23 @@
             </select>
         </div>
         <div class="form-group">
-            <label>៣. ជ្រើសរើសរូបភាព Poster ពីទូរស័ព្ទ៖</label>
-            <input type="file" id="ownerPosterFile" accept="image/*" class="form-control">
+            <label>៣. រូបភាព Poster (ជ្រើសរើស File ឬបិទភ្ជាប់ Link)៖</label>
+            <div class="qr-input-row">
+                <input type="text" id="ownerMoviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
+                <input type="file" id="ownerPosterFile" accept="image/*" style="display:none;" onchange="handleOwnerPosterFileSelect(this)">
+                <button class="btn-secondary" style="background:#2563eb; white-space:nowrap;" onclick="document.getElementById('ownerPosterFile').click()">📁 ជ្រើសរើសរូប</button>
+            </div>
         </div>
         <div class="form-group">
-            <label>៤. ឬបិទភ្ជាប់ Link រូបភាព Poster (Optional)៖</label>
-            <input type="text" id="ownerMoviePoster" class="form-control" placeholder="https://example.com/poster.jpg">
+            <label>៤. វីដេអូ (Upload File វីដេអូ ឬបិទភ្ជាប់ Link វីដេអូ)៖</label>
+            <div class="qr-input-row">
+                <input type="text" id="ownerMovieVideoUrl" class="form-control" placeholder="https://example.com/video.mp4">
+                <input type="file" id="ownerVideoFile" accept="video/*" style="display:none;" onchange="handleOwnerVideoFileSelect(this)">
+                <button class="btn-secondary" style="background:#2563eb; white-space:nowrap;" onclick="document.getElementById('ownerVideoFile').click()">📁 ជ្រើសរើសវីដេអូ</button>
+            </div>
         </div>
         <div class="form-group">
-            <label>៥. បិទភ្ជាប់ Link វីដេអូ (MP4 URL / Telegram Video Link)៖</label>
-            <input type="text" id="ownerMovieVideoUrl" class="form-control" placeholder="https://example.com/video.mp4">
-        </div>
-        <div class="form-group">
-            <label>៦. តម្លៃលក់រឿង ($)៖</label>
+            <label>៥. តម្លៃលក់រឿង ($)៖</label>
             <input type="text" id="ownerMoviePrice" class="form-control" value="$2.00">
         </div>
         <button class="btn-action" onclick="addOwnerMovie()">💾 ដាក់បញ្ចូលរឿង</button>
@@ -1495,7 +1503,6 @@
                 const canDelete = (currentRole === 'master') || (currentRole === 'client' && loggedInClientId === currentChannel);
                 const card = document.createElement('div');
                 card.className = 'movie-card';
-                // កែសម្រួលឲ្យពេលចុចលើ Poster ឬ Title ហៅមុខងារ openMovieDetail ផ្ដល់ទាំង Title និង Video URL
                 card.innerHTML = `
                     <div class="poster-container" onclick="openMovieDetail('${movie.title.replace(/'/g, "\\'")}', '${movie.type || 'ភាគ (Episode)'}', '${encodeURIComponent(movie.videoUrl || '')}')">
                         <span class="badge-type">${movie.type || 'ភាគ (Episode)'}</span>
@@ -1556,6 +1563,65 @@
             }
         }
 
+        function handleVideoUpload(fileInput, textInputVal, callback) {
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    callback(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else if (textInputVal) {
+                callback(textInputVal);
+            } else {
+                callback('');
+            }
+        }
+
+        function handleClientPosterFileSelect(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('clientMoviePoster').value = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleClientVideoFileSelect(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('clientMovieVideoUrl').value = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleOwnerPosterFileSelect(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('ownerMoviePoster').value = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleOwnerVideoFileSelect(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('ownerMovieVideoUrl').value = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         function addOwnerMovie() {
             dismissKeyboard();
             if (currentRole !== 'master') return alert('គ្មានសិទ្ធិអនុវត្ត!');
@@ -1563,30 +1629,35 @@
             const type = document.getElementById('ownerMovieType').value;
             const fileInput = document.getElementById('ownerPosterFile');
             const posterLink = document.getElementById('ownerMoviePoster').value.trim();
-            const videoUrl = document.getElementById('ownerMovieVideoUrl').value.trim();
+            
+            const videoFileInput = document.getElementById('ownerVideoFile');
+            const videoLink = document.getElementById('ownerMovieVideoUrl').value.trim();
             const price = document.getElementById('ownerMoviePrice').value.trim();
 
             if (!title) return alert('សូមបំពេញចំណងជើងរឿង!');
 
             handleImageUpload(fileInput, posterLink, function (posterUrl) {
-                const movies = getMovies();
-                movies.push({
-                    id: Date.now(),
-                    channel: 'owner',
-                    title: title,
-                    type: type,
-                    price: price || '$2.00',
-                    poster: posterUrl,
-                    videoUrl: videoUrl
-                });
+                handleVideoUpload(videoFileInput, videoLink, function (videoUrl) {
+                    const movies = getMovies();
+                    movies.push({
+                        id: Date.now(),
+                        channel: 'owner',
+                        title: title,
+                        type: type,
+                        price: price || '$2.00',
+                        poster: posterUrl,
+                        videoUrl: videoUrl
+                    });
 
-                saveMovies(movies);
-                document.getElementById('ownerMovieTitle').value = '';
-                document.getElementById('ownerMoviePoster').value = '';
-                document.getElementById('ownerMovieVideoUrl').value = '';
-                fileInput.value = '';
-                renderMovies();
-                alert('បានបញ្ចូលរឿងចូល Master Channel ដោយជោគជ័យ!');
+                    saveMovies(movies);
+                    document.getElementById('ownerMovieTitle').value = '';
+                    document.getElementById('ownerMoviePoster').value = '';
+                    document.getElementById('ownerMovieVideoUrl').value = '';
+                    fileInput.value = '';
+                    videoFileInput.value = '';
+                    renderMovies();
+                    alert('បានបញ្ចូលរឿងចូល Master Channel ដោយជោគជ័យ!');
+                });
             });
         }
 
@@ -1607,30 +1678,35 @@
             const type = document.getElementById('clientMovieType').value;
             const fileInput = document.getElementById('clientPosterFile');
             const posterLink = document.getElementById('clientMoviePoster').value.trim();
-            const videoUrl = document.getElementById('clientMovieVideoUrl').value.trim();
+
+            const videoFileInput = document.getElementById('clientVideoFile');
+            const videoLink = document.getElementById('clientMovieVideoUrl').value.trim();
             const price = document.getElementById('clientMoviePrice').value.trim();
 
             if (!title) return alert('សូមបំពេញចំណងជើងរឿង!');
 
             handleImageUpload(fileInput, posterLink, function (posterUrl) {
-                const movies = getMovies();
-                movies.push({
-                    id: Date.now(),
-                    channel: loggedInClientId,
-                    title: title,
-                    type: type,
-                    price: price || '$2.00',
-                    poster: posterUrl,
-                    videoUrl: videoUrl
-                });
+                handleVideoUpload(videoFileInput, videoLink, function (videoUrl) {
+                    const movies = getMovies();
+                    movies.push({
+                        id: Date.now(),
+                        channel: loggedInClientId,
+                        title: title,
+                        type: type,
+                        price: price || '$2.00',
+                        poster: posterUrl,
+                        videoUrl: videoUrl
+                    });
 
-                saveMovies(movies);
-                document.getElementById('clientMovieTitle').value = '';
-                document.getElementById('clientMoviePoster').value = '';
-                document.getElementById('clientMovieVideoUrl').value = '';
-                fileInput.value = '';
-                renderMovies();
-                alert('បាន Upload រឿងចូល Channel របស់អ្នកដោយស្វ័យប្រវត្តិ!');
+                    saveMovies(movies);
+                    document.getElementById('clientMovieTitle').value = '';
+                    document.getElementById('clientMoviePoster').value = '';
+                    document.getElementById('clientMovieVideoUrl').value = '';
+                    fileInput.value = '';
+                    videoFileInput.value = '';
+                    renderMovies();
+                    alert('បាន Upload រឿងចូល Channel របស់អ្នកដោយស្វ័យប្រវត្តិ!');
+                });
             });
         }
 
