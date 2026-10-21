@@ -876,46 +876,139 @@ async function syncPackagesFromServer() {
         }
 
         /* [កែតម្រូវត្រង់នេះ៖ ធានារក្សាទុកពិតប្រាកដ និង Refresh UI ភ្លាមៗ] */
-        function saveOwnerPackagesAll() {
-            dismissKeyboard();
-            if (currentRole !== 'master') return alert('គ្មានសិទ្ធិអនុវត្ត!');
-            
-            const dayPkgs = getPackageDaysOptions();
-            const updatedDays = [];
-            for (let i = 0; i < dayPkgs.length; i++) {
-                const dInput = document.getElementById(`pkg_day_val_${i}`);
-                const pInput = document.getElementById(`pkg_day_price_${i}`);
-                if (dInput && pInput) {
-                    updatedDays.push({ 
-                        id: dayPkgs[i].id || Date.now() + i, 
-                        days: parseInt(dInput.value) || 1, 
-                        price: pInput.value.trim() 
-                    });
-                }
+        
+async function saveOwnerPackagesAll() {
+    dismissKeyboard();
+
+    if (currentRole !== 'master') {
+        alert('គ្មានសិទ្ធិអនុវត្ត!');
+        return;
+    }
+
+    const serverPassword = prompt('សូមបញ្ចូល Master API Password:');
+    if (!serverPassword) {
+        alert('បានបោះបង់ការរក្សាទុក។');
+        return;
+    }
+
+    try {
+        // 1. ប្រមូលកញ្ចប់តម្លៃថ្ងៃ
+        const dayPkgs = getPackageDaysOptions();
+        const updatedDays = [];
+
+        for (let i = 0; i < dayPkgs.length; i++) {
+            const dInput = document.getElementById(`pkg_day_val_${i}`);
+            const pInput = document.getElementById(`pkg_day_price_${i}`);
+
+            if (!dInput || !pInput) {
+                throw new Error('រកមិនឃើញប្រអប់បញ្ចូលតម្លៃថ្ងៃ។');
             }
-            savePackageDaysOptions(updatedDays);
 
-            const vidPkgs = getPackageVidsOptions();
-            const updatedVids = [];
-            for (let i = 0; i < vidPkgs.length; i++) {
-                const cInput = document.getElementById(`pkg_vid_count_${i}`);
-                const pInput = document.getElementById(`pkg_vid_price_${i}`);
-                if (cInput && pInput) {
-                    updatedVids.push({ 
-                        id: vidPkgs[i].id || Date.now() + i, 
-                        count: parseInt(cInput.value) || 1, 
-                        price: pInput.value.trim() 
-                    });
-                }
+            const days = Number(dInput.value);
+            const price = pInput.value.trim();
+
+            if (!Number.isInteger(days) || days < 1 || !price) {
+                throw new Error(`សូមពិនិត្យកញ្ចប់ថ្ងៃលេខ ${i + 1}។`);
             }
-            savePackageVidsOptions(updatedVids);
 
-            // Refresh បង្ហាញបញ្ជីថ្មីឡើងវិញដើម្បីបញ្ជាក់ថាបានរក្សាទុកពិតប្រាកដ
-            renderAdminPackageDaysList();
-            renderAdminPackageVidsList();
-
-            alert('បានរក្សាទុកកញ្ចប់តម្លៃថ្ងៃ និងវីដេអូទាំងអស់ចូលក្នុងប្រព័ន្ធជោគជ័យ!');
+            updatedDays.push({
+                id: dayPkgs[i].id || Date.now() + i,
+                days,
+                price
+            });
         }
+
+        // 2. ប្រមូលកញ្ចប់តម្លៃវីដេអូ
+        const vidPkgs = getPackageVidsOptions();
+        const updatedVids = [];
+
+        for (let i = 0; i < vidPkgs.length; i++) {
+            const cInput = document.getElementById(`pkg_vid_count_${i}`);
+            const pInput = document.getElementById(`pkg_vid_price_${i}`);
+
+            if (!cInput || !pInput) {
+                throw new Error('រកមិនឃើញប្រអប់បញ្ចូលចំនួនវីដេអូ។');
+            }
+
+            const count = Number(cInput.value);
+            const price = pInput.value.trim();
+
+            if (!Number.isInteger(count) || count < 1 || !price) {
+                throw new Error(`សូមពិនិត្យកញ្ចប់វីដេអូលេខ ${i + 1}។`);
+            }
+
+            updatedVids.push({
+                id: vidPkgs[i].id || Date.now() + i,
+                count,
+                price
+            });
+        }
+
+        // 3. Login ទៅ Backend
+        const loginUrl = PACKAGE_API_URL.replace(
+            '/api/channel-packages',
+            '/api/admin/login'
+        );
+
+        const loginResponse = await fetch(loginUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                password: serverPassword
+            })
+        });
+
+        const loginData = await loginResponse.json().catch(() => ({}));
+
+        if (!loginResponse.ok || !loginData.token) {
+            throw new Error(
+                loginData.error || 'Login មិនជោគជ័យ។ សូមពិនិត្យ Password និង Backend។'
+            );
+        }
+
+        // 4. រក្សាទុកទៅ PostgreSQL តាម Backend
+        const saveResponse = await fetch(PACKAGE_API_URL, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${loginData.token}`
+            },
+            body: JSON.stringify({
+                days: updatedDays,
+                videos: updatedVids
+            })
+        });
+
+        const saveData = await saveResponse.json().catch(() => ({}));
+
+        if (!saveResponse.ok) {
+            throw new Error(
+                saveData.error || 'រក្សាទុកទៅ Database មិនជោគជ័យ។'
+            );
+        }
+
+        // 5. រក្សាទុកក្នុង Local UI ក្រោយ Backend បញ្ជាក់ជោគជ័យ
+        savePackageDaysOptions(updatedDays);
+        savePackageVidsOptions(updatedVids);
+
+        renderAdminPackageDaysList();
+        renderAdminPackageVidsList();
+
+        alert('រក្សាទុកកញ្ចប់ថ្ងៃ និងវីដេអូទៅ Database ជោគជ័យ!');
+
+        // 6. ទាញទិន្នន័យថ្មីពី Server
+        if (typeof syncPackagesFromServer === 'function') {
+            await syncPackagesFromServer();
+        }
+
+    } catch (error) {
+        console.error('Save packages error:', error);
+        alert('រក្សាទុកមិនជោគជ័យ៖ ' + error.message);
+    }
+}
+
 
         function renderMasterAnalytics() {
             const movieSales = getMovieSales();
