@@ -19,6 +19,7 @@
         /* Client Banner Action Bar */
         .client-banner { background: linear-gradient(90deg, #1e293b, #0f172a); border: 1px solid #334155; padding: 12px 15px; margin: 10px 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
         .btn-buy-channel { background: #22c55e; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .btn-invite { background: #0284c7; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
         /* Navigation Tabs */
         .channel-tabs { display: flex; gap: 8px; padding: 10px 15px; overflow-x: auto; background: #0f172a; border-bottom: 1px solid #1e293b; min-height: 50px; align-items: center; }
@@ -111,9 +112,14 @@
             <div style="font-size: 12px; font-weight: bold; color: #f1f5f9;">ចង់បង្កើត Channel Upload រឿង?</div>
             <div style="font-size: 10px; color: #94a3b8;">ទិញសេវាកម្មដើម្បីបាន Channel & PIN ផ្ទាល់ខ្លួន</div>
         </div>
-        <button class="btn-buy-channel" onclick="openBuyChannelModal()">
-            <i class="fa-solid fa-plus-circle"></i> ទិញ Channel
-        </button>
+        <div style="display: flex; gap: 6px;">
+            <button class="btn-invite" onclick="inviteFriends()">
+                <i class="fa-solid fa-user-plus"></i> Invite
+            </button>
+            <button class="btn-buy-channel" onclick="openBuyChannelModal()">
+                <i class="fa-solid fa-plus-circle"></i> ទិញ Channel
+            </button>
+        </div>
     </div>
 
     <!-- Navigation Tabs -->
@@ -137,7 +143,7 @@
 
         <div class="pkg-card" style="margin-top: 10px;">
             <div class="pkg-title" id="pkgTitleDisplay">5 ថ្ងៃ</div>
-            <div class="pkg-price" id="pkgPriceDisplay">$5.00</div>
+            <div class="pkg-price" id="pkgPriceDisplay">$1.50</div>
         </div>
 
         <div class="form-group">
@@ -461,6 +467,18 @@
             } catch (e) {}
         }, { passive: true });
 
+        // មុខងារ Invite អតិថិជន Telegram
+        function inviteFriends() {
+            dismissKeyboard();
+            const botUsername = 'Preeaiwie_bot'; 
+            const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}&text=${encodeURIComponent('សូមអញ្ជើញមកទស្សនានិងទិញសេវាកម្ម Mini App របស់ PREE WIE Shop ទាំងអស់គ្នា!')}`;
+            if (tg && tg.openTelegramLink) {
+                tg.openTelegramLink(inviteUrl);
+            } else {
+                window.open(inviteUrl, '_blank');
+            }
+        }
+
         function getMasterPin() { return localStorage.getItem('pree_master_pin') || '9999'; }
         function getMasterQR() { return localStorage.getItem('pree_master_qr') || ''; }
         function getClients() { const stored = localStorage.getItem('pree_clients_list'); return stored ? JSON.parse(stored) : []; }
@@ -474,29 +492,26 @@
         function getClientSales() { const stored = localStorage.getItem('pree_client_sales'); return stored ? JSON.parse(stored) : []; }
         function saveClientSales(sales) { localStorage.setItem('pree_client_sales', JSON.stringify(sales)); }
 
-        // កញ្ចប់ថ្ងៃ
+        // កញ្ចប់ថ្ងៃ - Dynamic Realtime Sync
         function getPackageDaysOptions() {
             const stored = localStorage.getItem('pree_pkg_days');
             return stored ? JSON.parse(stored) : [
-                { id: 1, days: 5, price: "$5.00" },
-                { id: 2, days: 10, price: "$8.00" },
-                { id: 3, days: 20, price: "$15.00" },
-                { id: 4, days: 30, price: "$20.00" }
+                { id: 1, days: 5, price: "$1.50" },
+                { id: 2, days: 10, price: "$2.10" },
+                { id: 3, days: 20, price: "$2.60" },
+                { id: 4, days: 30, price: "$3.50" }
             ];
         }
         function savePackageDaysOptions(options) { localStorage.setItem('pree_pkg_days', JSON.stringify(options)); }
 
-        // កញ្ចប់វីដេអូ
+        // កញ្ចប់វីដេអូ - Dynamic Realtime Sync
         function getPackageVidsOptions() {
             const stored = localStorage.getItem('pree_pkg_vids');
             return stored ? JSON.parse(stored) : [
-                { id: 101, count: 10, price: "$3.00" },
-                { id: 102, count: 20, price: "$5.00" },
-                { id: 103, count: 25, price: "$6.00" },
-                { id: 104, count: 30, price: "$7.00" },
-                { id: 105, count: 35, price: "$8.00" },
-                { id: 106, count: 40, price: "$9.00" },
-                { id: 107, count: 50, price: "$10.00" }
+                { id: 101, count: 5, price: "$1.50" },
+                { id: 102, count: 10, price: "$2.10" },
+                { id: 103, count: 20, price: "$2.60" },
+                { id: 104, count: 30, price: "$3.50" }
             ];
         }
         function savePackageVidsOptions(options) { localStorage.setItem('pree_pkg_vids', JSON.stringify(options)); }
@@ -651,7 +666,7 @@
 
         function addPkgDayOption() {
             const pkgs = getPackageDaysOptions();
-            pkgs.push({ id: Date.now(), days: 7, price: "$7.00" });
+            pkgs.push({ id: Date.now(), days: 7, price: "$1.00" });
             savePackageDaysOptions(pkgs);
             renderAdminPackageDaysList();
         }
@@ -685,7 +700,7 @@
 
         function addPkgVidOption() {
             const pkgs = getPackageVidsOptions();
-            pkgs.push({ id: Date.now(), count: 15, price: "$4.00" });
+            pkgs.push({ id: Date.now(), count: 15, price: "$2.00" });
             savePackageVidsOptions(pkgs);
             renderAdminPackageVidsList();
         }
