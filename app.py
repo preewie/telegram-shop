@@ -161,9 +161,17 @@ def save_channel_packages():
     if not MASTER_API_PASSWORD:
         return jsonify({"error": "Server admin password is not configured"}), 503
 
-    provided = request.headers.get("X-Admin-Password", "")
-    if not hmac.compare_digest(provided, MASTER_API_PASSWORD):
+    
+    auth_header = request.headers.get("Authorization", "")
+    token = (
+        auth_header[7:]
+        if auth_header.startswith("Bearer ")
+        else ""
+    )
+
+    if not verify_admin_token(token):
         return jsonify({"error": "Unauthorized"}), 401
+
 
     data = request.get_json(silent=True)
     if not isinstance(data, dict):
