@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="km">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>Pree Wie — Master Package Settings</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0b1020; --panel:#151d30; --line:#2a3650; --text:#f3f6ff; --muted:#a9b5cc; --accent:#8b5cf6; --accent2:#6d4be8; --good:#34d399; --bad:#fb7185; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:radial-gradient(circle at top,#182442 0,#0b1020 55%); color:var(--text); min-height:100vh; }
+    .wrap { width:min(960px,100%); margin:0 auto; padding:24px 16px 48px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:22px; }
+    .brand { display:flex; align-items:center; gap:12px; }
+    .logo { width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#a78bfa,#6d28d9);font-weight:900;font-size:19px;box-shadow:0 8px 25px #6d28d933; }
+    h1 { font-size:clamp(20px,4vw,28px); margin:0; letter-spacing:.2px; }
+    .sub { color:var(--muted); font-size:13px; margin-top:4px; }
+    .pill { border:1px solid var(--line); border-radius:999px; padding:7px 11px; color:var(--muted); font-size:12px; white-space:nowrap; }
+    .panel { background:#121a2bdc; border:1px solid var(--line); border-radius:20px; padding:20px; margin-bottom:18px; box-shadow:0 18px 45px #0002; }
+    h2 { margin:0 0 8px; font-size:19px; }
+    p { color:var(--muted); line-height:1.6; }
+    .field { display:flex; flex-direction:column; gap:7px; margin:14px 0; }
+    label { color:#dce4f7; font-size:13px; }
+    input { width:100%; min-width:0; padding:12px 13px; border-radius:11px; border:1px solid #33415f; background:#0c1425; color:var(--text); font:inherit; outline:none; }
+    input:focus { border-color:#a78bfa; box-shadow:0 0 0 3px #8b5cf633; }
+    button { border:0; border-radius:11px; padding:12px 15px; background:var(--accent); color:white; font-weight:750; font-size:14px; cursor:pointer; }
+    button:hover { background:var(--accent2); }
+    button:disabled { opacity:.55; cursor:wait; }
+    button.secondary { background:#26324a; border:1px solid #3a4966; }
+    button.danger { background:#4a2434; border:1px solid #76374c; }
+    .actions { display:flex; gap:9px; flex-wrap:wrap; margin-top:14px; }
+    .status { border-radius:11px; padding:11px 13px; margin-top:13px; font-size:13px; line-height:1.5; display:none; overflow-wrap:anywhere; }
+    .status.show { display:block; }
+    .status.good { color:#a7f3d0; background:#064e3b44; border:1px solid #065f46; }
+    .status.bad { color:#fecdd3; background:#88133733; border:1px solid #9f1239; }
+    .section-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
+    .count { color:var(--muted); font-size:12px; }
+    .rows { display:flex; flex-direction:column; gap:10px; }
+    .package-row { display:grid; grid-template-columns:1fr 1fr 1.2fr auto; gap:10px; align-items:end; border:1px solid #293650; background:#0d1526; padding:12px; border-radius:14px; }
+    .package-row .field { margin:0; }
+    .package-row .field label { font-size:12px; color:var(--muted); }
+    .remove { padding:10px 12px; }
+    .hidden { display:none !important; }
+    .note { font-size:12px; color:var(--muted); }
+    .top-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    footer { text-align:center; color:#7f8ba4; font-size:12px; padding:12px; }
+    @media(max-width:620px) {
+      .wrap { padding:18px 12px 32px; }
+      .panel { padding:15px; border-radius:16px; }
+      header { align-items:flex-start; }
+      .package-row { grid-template-columns:1fr 1fr; }
+      .package-row .price-field { grid-column:1 / 2; }
+      .package-row .remove-cell { grid-column:2 / 3; display:flex; justify-content:flex-end; }
+      .package-row .remove { width:100%; }
+      .pill { display:none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">PW</div>
+        <div>
+          <h1>Pree Wie</h1>
+          <div class="sub">Master • ការគ្រប់គ្រងកញ្ចប់តម្លៃ</div>
+        </div>
+      </div>
+      <div class="pill" id="connectionPill">កំពុងភ្ជាប់ Server…</div>
+    </header>
+
+    <section class="panel" id="loginPanel">
+      <h2>ចូលជា Master</h2>
+      <p>បញ្ចូល Master API Password ដែលបានកំណត់នៅ Render Environment។ វាមិនមែនជា Master PIN របស់ទំព័រចាស់ទេ។</p>
+      <form id="loginForm">
+        <div class="field">
+          <label for="password">Master API Password</label>
+          <input id="password" type="password" autocomplete="current-password" required placeholder="បញ្ចូល Password">
+        </div>
+        <button id="loginButton" type="submit">ចូលប្រើ</button>
+      </form>
+      <div id="loginStatus" class="status" role="status"></div>
+    </section>
+
+    <section id="editor" class="hidden">
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <h2>កញ្ចប់សមាជិកភាពតាមថ្ងៃ</h2>
+            <div class="note">កែចំនួនថ្ងៃ និងតម្លៃ រួចចុច Save ទៅ PostgreSQL។</div>
+          </div>
+          <span id="daysCount" class="count"></span>
+        </div>
+        <div id="daysRows" class="rows"></div>
+        <div class="actions">
+          <button type="button" id="addDay">+ បន្ថែមកញ្ចប់ថ្ងៃ</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <h2>កញ្ចប់វីដេអូ</h2>
+            <div class="note">កែចំនួនវីដេអូ និងតម្លៃ។</div>
+          </div>
+          <span id="videosCount" class="count"></span>
+        </div>
+        <div id="videosRows" class="rows"></div>
+        <div class="actions">
+          <button type="button" id="addVideo">+ បន្ថែមកញ្ចប់វីដេអូ</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="top-actions">
+          <button type="button" id="saveButton">រក្សាទុកទាំងអស់</button>
+          <button type="button" id="reloadButton" class="secondary">ទាញទិន្នន័យពី Server</button>
+          <button type="button" id="logoutButton" class="danger">ចាកចេញ</button>
+        </div>
+        <div id="editorStatus" class="status" role="status"></div>
+        <p class="note">ក្រោយ Save ជោគជ័យ ទំព័រនឹងទាញទិន្នន័យពី Server មកវិញ ដើម្បីបញ្ជាក់ថាតម្លៃបានរក្សាទុក។</p>
+      </div>
+    </section>
+    <footer>Pree Wie • Package settings</footer>
+  </main>
+
+  <script>
+    // បើ Backend URL របស់អ្នកខុសពីនេះ សូមកែតែបន្ទាត់នេះ។
+    const API_BASE = "https://pree-wie-backend.onrender.com";
+    const PACKAGE_API_URL = `${API_BASE}/api/channel-packages`;
+    const LOGIN_API_URL = `${API_BASE}/api/admin/login`;
+    const TOKEN_KEY = "pree_wie_master_api_token";
+
+    let packages = { days: [], videos: [] };
+    let authToken = sessionStorage.getItem(TOKEN_KEY) || "";
+
+    const $ = (id) => document.getElementById(id);
+
+    function setStatus(id, message, kind) {
+      const el = $(id);
+      el.textContent = message;
+      el.className = `status show ${kind}`;
+    }
+
+    function clearStatus(id) {
+      const el = $(id);
+      el.textContent = "";
+      el.className = "status";
+    }
+
+    async function requestJson(url, options = {}) {
+      const response = await fetch(url, options);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const error = new Error(data.error || `HTTP ${response.status}`);
+        error.status = response.status;
+        throw error;
+      }
+      return data;
+    }
+
+    async function checkHealth() {
+      try {
+        await requestJson(`${API_BASE}/api/health`);
+        $("connectionPill").textContent = "Server និង Database ភ្ជាប់ហើយ";
+      } catch (error) {
+        $("connectionPill").textContent = "Server មិនទាន់ភ្ជាប់";
+      }
+    }
+
+    async function login(password) {
+      const data = await requestJson(LOGIN_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password })
+      });
+      if (!data.token) throw new Error("Server មិនបានផ្ញើ Login token");
+      authToken = data.token;
+      sessionStorage.setItem(TOKEN_KEY, authToken);
+      $("loginPanel").classList.add("hidden");
+      $("editor").classList.remove("hidden");
+      await loadPackages();
+    }
+
+    function logout(message = "បានចាកចេញពី Master។") {
+      authToken = "";
+      sessionStorage.removeItem(TOKEN_KEY);
+      $("editor").classList.add("hidden");
+      $("loginPanel").classList.remove("hidden");
+      $("password").value = "";
+      setStatus("loginStatus", message, "good");
+    }
+
+    async function loadPackages() {
+      clearStatus("editorStatus");
+      try {
+        const data = await requestJson(PACKAGE_API_URL, {
+          method: "GET",
+          cache: "no-store"
+        });
+        if (!Array.isArray(data.days) || !Array.isArray(data.videos)) {
+          throw new Error("ទម្រង់ទិន្នន័យពី Server មិនត្រឹមត្រូវ");
+        }
+        packages = {
+          days: data.days.map(x => ({ id: Number(x.id), days: Number(x.days), price: String(x.price ?? "") })),
+          videos: data.videos.map(x => ({ id: Number(x.id), count: Number(x.count), price: String(x.price ?? "") }))
+        };
+        renderRows();
+        setStatus("editorStatus", "បានទាញទិន្នន័យចុងក្រោយពី PostgreSQL។", "good");
+      } catch (error) {
+        if (error.status === 401) {
+          logout("Session ផុតកំណត់។ សូមចូលម្តងទៀត។");
+          return;
+        }
+        setStatus("editorStatus", `មិនអាចទាញទិន្នន័យបាន៖ ${error.message}`, "bad");
+      }
+    }
+
+    function makeInput(labelText, value, type, fieldClass, onInput) {
+      const wrapper = document.createElement("div");
+      wrapper.className = `field ${fieldClass || ""}`;
+      const label = document.createElement("label");
+      label.textContent = labelText;
+      const input = document.createElement("input");
+      input.type = type || "text";
+      input.value = value ?? "";
+      if (type === "number") {
+        input.min = "1";
+        input.step = "1";
+        input.inputMode = "numeric";
+      }
+      input.addEventListener("input", () => onInput(input.value));
+      wrapper.append(label, input);
+      return wrapper;
+    }
+
+    function renderRows() {
+      renderDayRows();
+      renderVideoRows();
+    }
+
+    function renderDayRows() {
+      const host = $("daysRows");
+      host.replaceChildren();
+      $("daysCount").textContent = `${packages.days.length} កញ្ចប់`;
+      packages.days.forEach((pkg, index) => {
+        const row = document.createElement("div");
+        row.className = "package-row";
+        row.append(
+          makeInput("ចំនួនថ្ងៃ", pkg.days, "number", "", value => { packages.days[index].days = value; }),
+          makeInput("តម្លៃ", pkg.price, "text", "price-field", value => { packages.days[index].price = value; })
+        );
+        const idWrap = document.createElement("div");
+        idWrap.className = "field";
+        const idLabel = document.createElement("label");
+        idLabel.textContent = "Package ID";
+        const idInput = document.createElement("input");
+        idInput.type = "number";
+        idInput.min = "1";
+        idInput.step = "1";
+        idInput.value = pkg.id;
+        idInput.addEventListener("input", () => { packages.days[index].id = idInput.value; });
+        idWrap.append(idLabel, idInput);
+        row.append(idWrap);
+        const removeCell = document.createElement("div");
+        removeCell.className = "remove-cell";
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "danger remove";
+        remove.textContent = "លុប";
+        remove.addEventListener("click", () => {
+          packages.days.splice(index, 1);
+          renderDayRows();
+        });
+        removeCell.append(remove);
+        row.append(removeCell);
+        host.append(row);
+      });
+    }
+
+    function renderVideoRows() {
+      const host = $("videosRows");
+      host.replaceChildren();
+      $("videosCount").textContent = `${packages.videos.length} កញ្ចប់`;
+      packages.videos.forEach((pkg, index) => {
+        const row = document.createElement("div");
+        row.className = "package-row";
+        row.append(
+          makeInput("ចំនួនវីដេអូ", pkg.count, "number", "", value => { packages.videos[index].count = value; }),
+          makeInput("តម្លៃ", pkg.price, "text", "price-field", value => { packages.videos[index].price = value; })
+        );
+        const idWrap = document.createElement("div");
+        idWrap.className = "field";
+        const idLabel = document.createElement("label");
+        idLabel.textContent = "Package ID";
+        const idInput = document.createElement("input");
+        idInput.type = "number";
+        idInput.min = "1";
+        idInput.step = "1";
+        idInput.value = pkg.id;
+        idInput.addEventListener("input", () => { packages.videos[index].id = idInput.value; });
+        idWrap.append(idLabel, idInput);
+        row.append(idWrap);
+        const removeCell = document.createElement("div");
+        removeCell.className = "remove-cell";
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "danger remove";
+        remove.textContent = "លុប";
+        remove.addEventListener("click", () => {
+          packages.videos.splice(index, 1);
+          renderVideoRows();
+        });
+        removeCell.append(remove);
+        row.append(removeCell);
+        host.append(row);
+      });
+    }
+
+    function validateBeforeSave() {
+      for (const [index, item] of packages.days.entries()) {
+        if (!Number.isInteger(Number(item.id)) || Number(item.id) < 1 ||
+            !Number.isInteger(Number(item.days)) || Number(item.days) < 1 ||
+            !String(item.price).trim()) {
+          throw new Error(`សូមពិនិត្យកញ្ចប់ថ្ងៃលេខ ${index + 1}`);
+        }
+      }
+      for (const [index, item] of packages.videos.entries()) {
+        if (!Number.isInteger(Number(item.id)) || Number(item.id) < 1 ||
+            !Number.isInteger(Number(item.count)) || Number(item.count) < 1 ||
+            !String(item.price).trim()) {
+          throw new Error(`សូមពិនិត្យកញ្ចប់វីដេអូលេខ ${index + 1}`);
+        }
+      }
+      const dayIds = packages.days.map(x => Number(x.id));
+      const videoIds = packages.videos.map(x => Number(x.id));
+      if (new Set(dayIds).size !== dayIds.length) throw new Error("Package ID កញ្ចប់ថ្ងៃមិនអាចស្ទួនគ្នា");
+      if (new Set(videoIds).size !== videoIds.length) throw new Error("Package ID កញ្ចប់វីដេអូមិនអាចស្ទួនគ្នា");
+    }
+
+    async function savePackages() {
+      if (!authToken) {
+        logout("Session មិនមានទេ។ សូមចូលម្តងទៀត។");
+        return;
+      }
+      const button = $("saveButton");
+      button.disabled = true;
+      clearStatus("editorStatus");
+      try {
+        validateBeforeSave();
+        const payload = {
+          days: packages.days.map(x => ({ id: Number(x.id), days: Number(x.days), price: String(x.price).trim() })),
+          videos: packages.videos.map(x => ({ id: Number(x.id), count: Number(x.count), price: String(x.price).trim() }))
+        };
+        await requestJson(PACKAGE_API_URL, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${authToken}`
+          },
+          body: JSON.stringify(payload)
+        });
+        // Always reload from server after saving; the server response is the source of truth.
+        await loadPackages();
+        setStatus("editorStatus", "រក្សាទុកទៅ PostgreSQL ជោគជ័យ ហើយបានផ្ទៀងផ្ទាត់ទិន្នន័យពី Server។", "good");
+      } catch (error) {
+        if (error.status === 401) {
+          logout("Login token ផុតកំណត់ ឬមិនត្រឹមត្រូវ។ សូមចូលម្តងទៀត។");
+        } else {
+          setStatus("editorStatus", `រក្សាទុកមិនជោគជ័យ៖ ${error.message}`, "bad");
+        }
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    $("loginForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      const button = $("loginButton");
+      button.disabled = true;
+      clearStatus("loginStatus");
+      try {
+        await login($("password").value);
+        $("password").value = "";
+      } catch (error) {
+        setStatus("loginStatus", `ចូលមិនជោគជ័យ៖ ${error.message}`, "bad");
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    $("addDay").addEventListener("click", () => {
+      const nextId = Math.max(0, ...packages.days.map(x => Number(x.id) || 0)) + 1;
+      packages.days.push({ id: nextId, days: 5, price: "$0.00" });
+      renderDayRows();
+    });
+
+    $("addVideo").addEventListener("click", () => {
+      const nextId = Math.max(100, ...packages.videos.map(x => Number(x.id) || 0)) + 1;
+      packages.videos.push({ id: nextId, count: 5, price: "$0.00" });
+      renderVideoRows();
+    });
+
+    $("saveButton").addEventListener("click", savePackages);
+    $("reloadButton").addEventListener("click", loadPackages);
+    $("logoutButton").addEventListener("click", () => logout());
+
+    checkHealth();
+    if (authToken) {
+      $("loginPanel").classList.add("hidden");
+      $("editor").classList.remove("hidden");
+      loadPackages().catch(() => logout("សូមចូលម្តងទៀត។"));
+    }
+  </script>
+</body>
+</html>
