@@ -1,5 +1,5 @@
 import hashlib
-import hma
+import hmac
 import json
 import os
 import secrets
