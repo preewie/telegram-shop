@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: pree-wie-mini-app
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: MASTER_USERNAME
+        value: master
+      - key: MASTER_PASSWORD
+        sync: false
+      - key: MASTER_DISPLAY_NAME
+        value: Pree Wie Master
+      - key: ABA_MASTER_QR_URL
+        value: ""
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: MAX_UPLOAD_MB
+        value: "500"
+      - key: LOG_LEVEL
+        value: INFO
