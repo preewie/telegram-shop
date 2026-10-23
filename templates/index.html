@@ -1,1 +1,15 @@
-
+<!doctype html>
+<html lang="km"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pree Wie</title><style>
+:root{color-scheme:dark;--bg:#0c1020;--panel:#151b30;--muted:#aeb8d0;--accent:#a78bfa;--line:#303954}*{box-sizing:border-box}body{margin:0;background:linear-gradient(140deg,#10172b,#090b14);color:#f5f6ff;font-family:system-ui,-apple-system,sans-serif}header{padding:18px 5%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);gap:12px;flex-wrap:wrap}a{color:#d5c9ff;text-decoration:none}.btn,button{display:inline-block;background:var(--accent);color:#100d20;padding:10px 14px;border:0;border-radius:10px;font-weight:700;cursor:pointer}main{max-width:1100px;margin:auto;padding:24px 5%}.hero{padding:26px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(120deg,#211a3b,#12192b);margin-bottom:24px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}.poster{width:100%;aspect-ratio:16/9;object-fit:cover;background:#222943}.body{padding:14px}.muted{color:var(--muted);font-size:.92rem}.price{font-size:1.1rem;font-weight:800;margin:10px 0}.flash{padding:12px;margin:10px 0;background:#272b42;border-radius:10px}.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}h1{margin:0 0 8px}h2{margin-top:26px}
+</style></head><body>
+<header><a href="/"><strong>🎬 Pree Wie</strong></a><nav class="actions">
+{% if user %}<span>{{ user.display_name }}</span><a class="btn" href="/dashboard">Dashboard</a><form method="post" action="/logout"><button>ចាកចេញ</button></form>
+{% else %}<a href="/login">ចូលគណនី</a><a class="btn" href="/register">បង្កើត Client</a>{% endif %}</nav></header>
+<main><section class="hero"><h1>សម្រាយរឿងប្រចាំថ្ងៃ</h1><p class="muted">រកមើលរឿងថ្មីៗ ទិញរឿង និងបង្ហោះរឿងតាមកញ្ចប់សមាជិកភាព។</p>
+{% if not user %}<div class="actions"><a class="btn" href="/register">បង្កើតគណនី Client</a><a href="/login">ខ្ញុំមានគណនីរួចហើយ</a></div>{% endif %}</section>
+{% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}<div class="flash">{{ message }}</div>{% endfor %}{% endwith %}
+<h2>រឿងថ្មីៗ</h2><div class="grid">{% for s in stories %}<article class="card">
+{% if s.poster_url %}<img class="poster" src="{{ s.poster_url }}" alt="{{ s.title }}">{% else %}<div class="poster"></div>{% endif %}
+<div class="body"><h3>{{ s.title }}</h3><p class="muted">{{ s.description[:120] }}</p><p class="muted">ម្ចាស់រឿង៖ {{ s.owner_name }}</p><div class="price">${{ '%.2f'|format(s.price) }}</div><a class="btn" href="/story/{{ s.id }}">មើលរឿង</a></div></article>
+{% else %}<p class="muted">មិនទាន់មានរឿងទេ។</p>{% endfor %}</div></main></body></html>
