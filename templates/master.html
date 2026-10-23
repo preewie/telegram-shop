@@ -1,0 +1,25 @@
+<!doctype html><html lang="km"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Master Dashboard</title><style>
+body{background:#0c1020;color:#f5f6ff;font-family:system-ui;margin:0;padding:20px}main{max-width:1100px;margin:auto}a{color:#d5c9ff}.panel{background:#151b30;border:1px solid #303954;border-radius:14px;padding:16px;margin:14px 0}.btn,button{background:#a78bfa;color:#100d20;border:0;padding:8px 12px;border-radius:8px;font-weight:bold;cursor:pointer}table{width:100%;border-collapse:collapse}td,th{padding:9px;border-bottom:1px solid #303954;text-align:left}.muted{color:#aeb8d0}.flash{padding:10px;background:#272b42;margin:8px 0;border-radius:8px}input{padding:8px;background:#0c1020;color:white;border:1px solid #303954;border-radius:8px}</style></head><body><main>
+<a href="/">← Pree Wie</a><h1>Master Dashboard</h1><p>សួស្តី Master {{ user.display_name }} · <a href="/profile">Profile / Password / ABA KHQR</a> · <a class="btn" href="/master/story/new">+ បន្ថែមរឿងជួស Client</a></p>
+{% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}<div class="flash">{{ message }}</div>{% endfor %}{% endwith %}
+
+<div class="panel"><h2>ពិនិត្យការទិញកញ្ចប់ (Client Package Payments)</h2>
+<table><tr><th>Client</th><th>កញ្ចប់</th><th>តម្លៃ</th><th>បង្កាន់ដៃ</th><th>សកម្មភាព</th></tr>
+{% for pp in package_payments %}<tr><td>{{ pp.display_name }} (@{{ pp.username }})</td><td>{{ pp.package_title }}</td><td>${{ '%.2f'|format(pp.amount) }}</td><td>{% if pp.receipt_url %}<a href="{{ pp.receipt_url }}" target="_blank">មើលបង្កាន់ដៃ</a>{% endif %}</td><td>
+<form method="post" action="/master/package-payment/{{ pp.id }}/approve" style="display:inline"><button>អនុម័ត</button></form>
+<form method="post" action="/master/package-payment/{{ pp.id }}/reject" style="display:inline"><button style="background:#ef4444;color:white">បដិសេធ</button></form>
+</td></tr>{% else %}<tr><td colspan="5" class="muted">មិនមានការទូទាត់រង់ចាំពិនិត្យទេ។</td></tr>{% endfor %}</table></div>
+
+<div class="panel"><h2>គ្រប់គ្រងកញ្ចប់ (Package Settings)</h2>
+<form method="post" action="/master/package/new" style="margin-bottom:14px"><input name="title" placeholder="ឈ្មោះកញ្ចប់" required> <input name="days" type="number" placeholder="ចំនួនថ្ងៃ" required min="1"> <input name="price" type="number" step=".01" placeholder="តម្លៃ USD" required min="0"> <button>+ បង្កើតកញ្ចប់</button></form>
+<table><tr><th>ឈ្មោះ</th><th>ចំនួនថ្ងៃ</th><th>តម្លៃ</th><th>ស្ថានភាព</th><th>សកម្មភាព</th></tr>
+{% for p in packages %}<tr><td>{{ p.title }}</td><td>{{ p.days }} ថ្ងៃ</td><td>${{ '%.2f'|format(p.price) }}</td><td>{{ 'សកម្ម' if p.active else 'បិទ' }}</td><td><form method="post" action="/master/package/{{ p.id }}/toggle"><button>{{ 'បិទ' if p.active else 'បើក' }}</button></form></td></tr>{% endfor %}</table></div>
+
+<div class="panel"><h2>បញ្ជី Client ទាំងអស់</h2>
+<table><tr><th>Username</th><th>ឈ្មោះ</th><th>ABA QR</th><th>កញ្ចប់ផុតកំណត់</th></tr>
+{% for c in clients %}<tr><td>@{{ c.username }}</td><td>{{ c.display_name }}</td><td>{% if c.aba_qr_url %}<a href="{{ c.aba_qr_url }}" target="_blank">មើល QR</a>{% else %}<span class="muted">គ្មាន</span>{% endif %}</td><td>{{ c.expires_at if c.expires_at else 'គ្មាន' }}</td></tr>{% endfor %}</table></div>
+
+<div class="panel"><h2>រឿងទាំងអស់ក្នុងប្រព័ន្ធ</h2>
+<table><tr><th>ចំណងជើង</th><th>ម្ចាស់រឿង</th><th>តម្លៃ</th><th>ចំនួនអ្នកទិញ</th></tr>
+{% for s in stories %}<tr><td><a href="/story/{{ s.id }}">{{ s.title }}</a></td><td>{{ s.owner_name }}</td><td>${{ '%.2f'|format(s.price) }}</td><td>{{ s.buyer_count }}</td></tr>{% endfor %}</table></div>
+</main></body></html>
