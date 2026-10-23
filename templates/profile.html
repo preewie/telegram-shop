@@ -1,0 +1,37 @@
+<!doctype html><html lang="km"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Profile</title><style>
+:root{color-scheme:dark;--bg:#090d19;--panel:#131b2e;--card:#1a233d;--muted:#94a3b8;--accent:#8b5cf6;--border:#2a3655;--text:#f8fafc}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;margin:0;padding:20px;display:flex;align-items:center;justify-content:center;min-height:100vh}
+main{width:100%;max-width:500px;background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:24px}
+a{color:#c4b5fd;text-decoration:none}
+h1{margin:0 0 16px;font-size:1.4rem}
+label{display:block;margin-bottom:6px;font-size:0.9rem;color:var(--muted)}
+input{width:100%;padding:10px 12px;margin-bottom:14px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:#fff;font-size:0.95rem;outline:none}
+button{background:var(--accent);color:#fff;border:0;padding:12px;border-radius:10px;font-weight:bold;width:100%;cursor:pointer;font-size:1rem}
+.flash{padding:10px;background:#1e293b;border-left:4px solid var(--accent);border-radius:8px;margin-bottom:14px;font-size:0.9rem}
+hr{border:0;border-top:1px solid var(--border);margin:16px 0}
+</style></head><body><main>
+<a href="/dashboard">← Dashboard</a>
+<h1>Profile & ABA KHQR</h1>
+{% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}<div class="flash">{{ message }}</div>{% endfor %}{% endwith %}
+<form method="post" enctype="multipart/form-data">
+  <label>ឈ្មោះបង្ហាញ (Display Name)</label>
+  <input name="display_name" value="{{ user.display_name }}" required>
+  <p class="muted" style="margin-top:-8px;margin-bottom:14px;font-size:0.85rem;">Username: @{{ user.username }} (មិនអាចប្ដូរបានទេ)</p>
+  
+  <label>ABA KHQR ផ្ទាល់ខ្លួន (សម្រាប់รับប្រាក់ទិញរឿង ឬកញ្ចប់)</label>
+  <input type="file" name="aba_qr" accept="image/*">
+  {% if user.aba_qr_url %}
+    <p style="margin-top:-8px;margin-bottom:14px;"><a href="{{ user.aba_qr_url }}" target="_blank">🔍 មើល QR បច្ចុប្បន្ន</a></p>
+  {% endif %}
+
+  <hr>
+  <h3 style="font-size:1.1rem;margin-bottom:10px;">ប្ដូរ Password</h3>
+  <label>Password ចាស់</label>
+  <input type="password" name="old_password" autocomplete="current-password" placeholder="••••••••">
+  
+  <label>Password ថ្មី (យ៉ាងតិច 8 តួ)</label>
+  <input type="password" name="new_password" minlength="8" autocomplete="new-password" placeholder="••••••••">
+  
+  <button>រក្សាទុកការផ្លាស់ប្ដូរ</button>
+</form>
+</main></body></html>

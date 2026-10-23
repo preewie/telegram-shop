@@ -1,0 +1,32 @@
+<!doctype html><html lang="km"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Master បន្ថែមរឿង</title><style>
+:root{color-scheme:dark;--bg:#090d19;--panel:#131b2e;--card:#1a233d;--muted:#94a3b8;--accent:#8b5cf6;--border:#2a3655;--text:#f8fafc}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;margin:0;padding:20px}
+main{max-width:600px;margin:auto;background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:24px}
+a{color:#c4b5fd;text-decoration:none}
+h1{margin:4px 0 8px;font-size:1.5rem}
+label{display:block;margin:12px 0 6px;font-size:0.9rem;color:var(--muted);font-weight:600}
+input,textarea,select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:#fff;font-size:0.95rem;outline:none}
+button{background:var(--accent);color:#fff;border:0;padding:14px;border-radius:12px;font-weight:bold;width:100%;cursor:pointer;font-size:1rem;margin-top:20px}
+</style></head><body><main>
+<a href="/dashboard">← Dashboard</a>
+<h1>Master បន្ថែមរឿងជួស Client</h1>
+<form method="post" enctype="multipart/form-data">
+  <label>ជ្រើសរើសម្ចាស់រឿង (Client ឬ Master)</label>
+  <select name="owner_id">
+    {% for o in owners %}
+      <option value="{{ o.id }}">{{ o.display_name }} (@{{ o.username }}) — {{ o.role }}</option>
+    {% endfor %}
+  </select>
+  <label>ចំណងជើង</label>
+  <input name="title" required placeholder="ចំណងជើងរឿង...">
+  <label>ពិពណ៌នា</label>
+  <textarea name="description" rows="3" placeholder="សេចក្ដីពិពណ៌នា..."></textarea>
+  <label>តម្លៃ USD</label>
+  <input name="price" type="number" min="0" step=".01" value="1.00" required>
+  <label>Poster</label>
+  <input name="poster" type="file" accept="image/*">
+  <label>វីដេអូ</label>
+  <input name="video" type="file" accept="video/*" required>
+  <button>រក្សាទុករឿង</button>
+</form>
+</main></body></html>

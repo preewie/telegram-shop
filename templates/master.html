@@ -1,0 +1,109 @@
+<!doctype html><html lang="km"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Master Dashboard</title><style>
+:root{color-scheme:dark;--bg:#090d19;--panel:#131b2e;--card:#1a233d;--muted:#94a3b8;--accent:#8b5cf6;--border:#2a3655;--text:#f8fafc}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;margin:0;padding:20px}
+main{max-width:1200px;margin:auto}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+a{color:#c4b5fd;text-decoration:none}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px}
+.btn{background:var(--accent);color:#fff;border:0;padding:8px 14px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:0.85rem}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+td,th{padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:0.9rem}
+th{color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+.flash{padding:12px;background:#1e293b;border-left:4px solid var(--accent);border-radius:8px;margin-bottom:14px;font-size:0.9rem}
+input{padding:8px 12px;background:var(--card);color:#fff;border:1px solid var(--border);border-radius:8px;font-size:0.9rem}
+</style></head><body><main>
+<header>
+  <div>
+    <a href="/">← Pree Wie</a>
+    <h1 style="margin:4px 0 0;font-size:1.5rem;">👑 Master Dashboard</h1>
+  </div>
+  <div>
+    <a class="btn" href="/profile" style="background:#334155;">⚙️ Profile & ABA QR</a>
+    <a class="btn" href="/master/story/new">+ បន្ថែមរឿងជួស Client</a>
+  </div>
+</header>
+
+<p class="muted">សួស្តី Master <strong>{{ user.display_name }}</strong></p>
+
+{% with messages=get_flashed_messages(with_categories=true) %}
+  {% for category,message in messages %}<div class="flash">{{ message }}</div>{% endfor %}
+{% endwith %}
+
+<div class="panel">
+  <h2 style="margin-top:0;font-size:1.1rem;">ពិនិត្យការទូទាត់ប្រាក់ទិញកញ្ចប់ពី Client (Package Payments)</h2>
+  <table>
+    <tr><th>Client</th><th>កញ្ចប់</th><th>តម្លៃ</th><th>បង្កាន់ដៃ</th><th>សកម្មភាព</th></tr>
+    {% for pp in package_payments %}
+      <tr>
+        <td>{{ pp.display_name }} (@{{ pp.username }})</td>
+        <td>{{ pp.package_title }}</td>
+        <td>${{ '%.2f'|format(pp.amount) }}</td>
+        <td>{% if pp.receipt_url %}<a href="{{ pp.receipt_url }}" target="_blank">មើលបង្កាន់ដៃ</a>{% endif %}</td>
+        <td>
+          <form method="post" action="/master/package-payment/{{ pp.id }}/approve" style="display:inline"><button class="btn" style="background:#10b981;">អនុម័ត</button></form>
+          <form method="post" action="/master/package-payment/{{ pp.id }}/reject" style="display:inline"><button class="btn" style="background:#ef4444;">បដិសេធ</button></form>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5" class="muted">មិនមានការទូទាត់កញ្ចប់រង់ចាំពិនិត្យទេ។</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="panel">
+  <h2 style="margin-top:0;font-size:1.1rem;">គ្រប់គ្រងកញ្ចប់សមាជិកភាព (Master Only)</h2>
+  <form method="post" action="/master/package/new" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+    <input name="title" placeholder="ชื่อកញ្ចប់ (ឧ. 30 ថ្ងៃ)" required>
+    <input name="days" type="number" placeholder="ចំនួនថ្ងៃ" required min="1" style="width:120px;">
+    <input name="price" type="number" step=".01" placeholder="តម្លៃ USD" required min="0" style="width:120px;">
+    <button class="btn">+ បង្កើតកញ្ចប់ថ្មី</button>
+  </form>
+  <table>
+    <tr><th>ឈ្មោះ</th><th>ចំនួនថ្ងៃ</th><th>តម្លៃ</th><th>ស្ថានភាព</th><th>សកម្មភាព</th></tr>
+    {% for p in packages %}
+      <tr>
+        <td>{{ p.title }}</td>
+        <td>{{ p.days }} ថ្ងៃ</td>
+        <td>${{ '%.2f'|format(p.price) }}</td>
+        <td>{{ 'សកម្ម' if p.active else 'បិទ' }}</td>
+        <td>
+          <form method="post" action="/master/package/{{ p.id }}/toggle">
+            <button class="btn" style="background:#334155;">{{ 'បិទ' if p.active else 'បើក' }}</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="panel">
+  <h2 style="margin-top:0;font-size:1.1rem;">បញ្ជី Client ទាំងអស់ក្នុងប្រព័ន្ធ</h2>
+  <table>
+    <tr><th>Username</th><th>ឈ្មោះ</th><th>ABA QR</th><th>កញ្ចប់ផុតកំណត់</th></tr>
+    {% for c in clients %}
+      <tr>
+        <td>@{{ c.username }}</td>
+        <td>{{ c.display_name }}</td>
+        <td>{% if c.aba_qr_url %}<a href="{{ c.aba_qr_url }}" target="_blank">មើល QR</a>{% else %}<span class="muted">គ្មាន</span>{% endif %}</td>
+        <td>{{ c.expires_at if c.expires_at else 'គ្មានសកម្មភាព' }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="panel">
+  <h2 style="margin-top:0;font-size:1.1rem;">រឿងทั้งหมดក្នុងប្រព័ន្ធ</h2>
+  <table>
+    <tr><th>ចំណងជើង</th><th>ម្ចាស់រឿង</th><th>តម្លៃ</th><th>អ្នកទិញ</th></tr>
+    {% for s in stories %}
+      <tr>
+        <td><a href="/story/{{ s.id }}">{{ s.title }}</a></td>
+        <td>{{ s.owner_name }}</td>
+        <td>${{ '%.2f'|format(s.price) }}</td>
+        <td>{{ s.buyer_count }} នាក់</td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+</main></body></html>

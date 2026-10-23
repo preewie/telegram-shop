@@ -1,0 +1,43 @@
+<!doctype html><html lang="km"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>គណនី - Pree Wie</title><style>
+:root{color-scheme:dark;--bg:#090d19;--panel:#131b2e;--card:#1a233d;--muted:#94a3b8;--accent:#8b5cf6;--border:#2a3655;--text:#f8fafc}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;margin:0;padding:20px;display:flex;align-items:center;justify-content:center;min-height:100vh}
+main{width:100%;max-width:420px;background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:0 15px 35px rgba(0,0,0,0.4)}
+.logo{font-size:1.1rem;font-weight:700;color:#c4b5fd;text-decoration:none;display:inline-block;margin-bottom:16px}
+h1{margin:0 0 16px;font-size:1.5rem;color:#fff}
+label{display:block;margin-bottom:6px;font-size:0.9rem;color:var(--muted)}
+input{width:100%;padding:12px 14px;margin-bottom:16px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:#fff;font-size:1rem;outline:none}
+input:focus{border-color:var(--accent)}
+button{width:100%;background:var(--accent);color:#fff;border:0;padding:12px;border-radius:10px;font-weight:bold;font-size:1rem;cursor:pointer;margin-top:4px}
+button:hover{opacity:0.9}
+.flash{padding:10px 12px;margin-bottom:14px;background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;font-size:0.85rem}
+.switch{text-align:center;margin-top:16px;font-size:0.9rem;color:var(--muted)}
+.switch a{color:#c4b5fd;font-weight:600}
+</style></head><body><main>
+<a class="logo" href="/">← Pree Wie</a>
+<h1>{{ 'បង្កើតគណនី Client ថ្មី' if mode=='register' else 'ចូលគណនី' }}</h1>
+{% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}<div class="flash">{{ message }}</div>{% endfor %}{% endwith %}
+<form method="post">
+  {% if mode=='register' %}
+    <label>ឈ្មោះបង្ហាញ (Display Name)</label>
+    <input name="display_name" required maxlength="120" placeholder="បញ្ចូលឈ្មោះរបស់អ្នក">
+    <label>Username (អក្សរឡាតាំង យ៉ាងតិច 3 តួ)</label>
+    <input name="username" required minlength="3" maxlength="80" autocomplete="username" placeholder="username">
+    <label>Password (យ៉ាងតិច 8 តួ)</label>
+    <input type="password" name="password" required minlength="8" autocomplete="new-password" placeholder="••••••••">
+    <button>ចុះឈ្មោះជា Client</button>
+  {% else %}
+    <label>Username</label>
+    <input name="username" required autocomplete="username" placeholder="username">
+    <label>Password</label>
+    <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••">
+    <button>ចូលប្រព័ន្ធ</button>
+  {% endif %}
+</form>
+<div class="switch">
+  {% if mode=='register' %}
+    មានគណនីរួចហើយ? <a href="/login">ចូលគណនី</a>
+  {% else %}
+    មិនទាន់មានគណនី Client? <a href="/register">ចុះឈ្មោះទីនេះ</a>
+  {% endif %}
+</div>
+</main></body></html>
