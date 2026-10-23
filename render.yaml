@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: pree-wie-mini-app
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: INIT_DB_ON_START
+        value: "true"
+      - key: LOG_LEVEL
+        value: INFO
