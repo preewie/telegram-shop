@@ -11,7 +11,19 @@ import cloudinary, cloudinary.uploader, cloudinary.utils
 
 app = Flask(__name__, static_folder='public', static_url_path='')
 raw_db = os.getenv('DATABASE_URL', 'sqlite:///pree_wie_dev.db')
-if raw_db.startswith('postgres://'): raw_db = raw_db.replace('postgres://', 'postgresql://', 1)
+
+if raw_db.startswith('postgres://'):
+    raw_db = raw_db.replace(
+        'postgres://',
+        'postgresql+psycopg2://',
+        1
+    )
+elif raw_db.startswith('postgresql://'):
+    raw_db = raw_db.replace(
+        'postgresql://',
+        'postgresql+psycopg2://',
+        1
+    )
 app.config.update(SQLALCHEMY_DATABASE_URI=raw_db, SQLALCHEMY_TRACK_MODIFICATIONS=False,
                   JWT_SECRET_KEY=os.getenv('JWT_SECRET_KEY', secrets.token_hex(32)),
                   MAX_CONTENT_LENGTH=int(os.getenv('MAX_UPLOAD_MB','500'))*1024*1024)
