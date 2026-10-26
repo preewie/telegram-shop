@@ -28,7 +28,7 @@ def ensure_schema():
     conn = get_db_connection()
     try:
         with conn.cursor() as cur:
-            cur.execute(\"\"\"
+            cur.execute("""
                 CREATE TABLE IF NOT EXISTS users (
                     id SERIAL PRIMARY KEY,
                     username VARCHAR(100) UNIQUE NOT NULL,
@@ -38,8 +38,8 @@ def ensure_schema():
                     package_expires_at TIMESTAMP,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-            \"\"\")
-            cur.execute(\"\"\"
+            """)
+            cur.execute("""
                 CREATE TABLE IF NOT EXISTS packages (
                     id SERIAL PRIMARY KEY,
                     name VARCHAR(100) NOT NULL,
@@ -48,8 +48,8 @@ def ensure_schema():
                     price DECIMAL(10,2) NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-            \"\"\")
-            cur.execute(\"\"\"
+            """)
+            cur.execute("""
                 CREATE TABLE IF NOT EXISTS stories (
                     id SERIAL PRIMARY KEY,
                     client_id INT REFERENCES users(id) ON DELETE CASCADE,
@@ -61,17 +61,17 @@ def ensure_schema():
                     price DECIMAL(10,2) NOT NULL DEFAULT 1.00,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-            \"\"\")
+            """)
             # Critical fix: add the missing owner column to older stories tables.
-            cur.execute(\"ALTER TABLE stories ADD COLUMN IF NOT EXISTS client_id INT REFERENCES users(id) ON DELETE CASCADE\")
-            cur.execute(\"ALTER TABLE stories ADD COLUMN IF NOT EXISTS title VARCHAR(255) NOT NULL DEFAULT ''\")
-            cur.execute(\"ALTER TABLE stories ADD COLUMN IF NOT EXISTS description TEXT\")
-            cur.execute(\"ALTER TABLE stories ADD COLUMN IF NOT EXISTS poster_url TEXT NOT NULL DEFAULT ''\")
-            cur.execute(\"ALTER TABLE stories ADD COLUMN IF NOT EXISTS video_url TEXT NOT NULL DEFAULT ''\")
-            cur.execute(\"ALTER TABLE stories ADD COLUMN IF NOT EXISTS file_url TEXT\")
-            cur.execute(\"ALTER TABLE stories ADD COLUMN IF NOT EXISTS price DECIMAL(10,2) NOT NULL DEFAULT 1.00\")
-            cur.execute(\"ALTER TABLE stories ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\")
-            cur.execute(\"\"\"
+            cur.execute("ALTER TABLE stories ADD COLUMN IF NOT EXISTS client_id INT REFERENCES users(id) ON DELETE CASCADE")
+            cur.execute("ALTER TABLE stories ADD COLUMN IF NOT EXISTS title VARCHAR(255) NOT NULL DEFAULT ''")
+            cur.execute("ALTER TABLE stories ADD COLUMN IF NOT EXISTS description TEXT")
+            cur.execute("ALTER TABLE stories ADD COLUMN IF NOT EXISTS poster_url TEXT NOT NULL DEFAULT ''")
+            cur.execute("ALTER TABLE stories ADD COLUMN IF NOT EXISTS video_url TEXT NOT NULL DEFAULT ''")
+            cur.execute("ALTER TABLE stories ADD COLUMN IF NOT EXISTS file_url TEXT")
+            cur.execute("ALTER TABLE stories ADD COLUMN IF NOT EXISTS price DECIMAL(10,2) NOT NULL DEFAULT 1.00")
+            cur.execute("ALTER TABLE stories ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+            cur.execute("""
                 CREATE TABLE IF NOT EXISTS orders (
                     id SERIAL PRIMARY KEY,
                     buyer_id INT REFERENCES users(id) ON DELETE SET NULL,
@@ -84,7 +84,7 @@ def ensure_schema():
                     status VARCHAR(20) DEFAULT 'pending',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-            \"\"\")
+            """)
         conn.commit()
     finally:
         conn.close()
