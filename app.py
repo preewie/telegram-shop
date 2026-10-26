@@ -17,9 +17,18 @@ cloudinary.config(
 )
 
 def get_db_connection():
-    db_url = os.environ.get('DATABASE_URL')
-    conn = psycopg2.connect(db_url, cursor_factory=RealDictCursor)
-    return conn
+    db_url = os.environ.get("DATABASE_URL")
+
+    if not db_url:
+        raise RuntimeError(
+            "DATABASE_URL is missing in Render Environment Variables"
+        )
+
+    return psycopg2.connect(
+        db_url,
+        cursor_factory=RealDictCursor,
+        connect_timeout=10
+    )
 
 @app.route('/')
 def index():
