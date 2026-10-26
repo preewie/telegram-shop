@@ -39,7 +39,10 @@ def ensure_schema():
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
+                        cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS qr_code_url TEXT")
+            cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS package_expires_at TIMESTAMP")
             cur.execute("""
+                CREATE TABLE IF NOT EXISTS packages (
                 CREATE TABLE IF NOT EXISTS packages (
                     id SERIAL PRIMARY KEY,
                     name VARCHAR(100) NOT NULL,
